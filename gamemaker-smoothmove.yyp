@@ -21,6 +21,7 @@
     "IDEVersion": "2023.6.0.92",
   },
   "resources": [
+    {"id":{"name":"fnt_tiny","path":"fonts/fnt_tiny/fnt_tiny.yy",},},
     {"id":{"name":"o_test_smooth_move","path":"objects/o_test_smooth_move/o_test_smooth_move.yy",},},
     {"id":{"name":"spr_test_smooth_move_background","path":"sprites/spr_test_smooth_move_background/spr_test_smooth_move_background.yy",},},
     {"id":{"name":"spr_test_smooth_move_player","path":"sprites/spr_test_smooth_move_player/spr_test_smooth_move_player.yy",},},

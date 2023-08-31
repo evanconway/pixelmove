@@ -4,6 +4,7 @@
     {"name":"test","order":2,"path":"folders/SmoothMove/test.yy",},
   ],
   "ResourceOrderSettings": [
+    {"name":"fnt_tiny","order":18,"path":"fonts/fnt_tiny/fnt_tiny.yy",},
     {"name":"o_test_smooth_move","order":1,"path":"objects/o_test_smooth_move/o_test_smooth_move.yy",},
     {"name":"spr_test_smooth_move_background","order":2,"path":"sprites/spr_test_smooth_move_background/spr_test_smooth_move_background.yy",},
     {"name":"spr_test_smooth_move_player","order":3,"path":"sprites/spr_test_smooth_move_player/spr_test_smooth_move_player.yy",},

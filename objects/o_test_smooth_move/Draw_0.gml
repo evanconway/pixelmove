@@ -14,18 +14,29 @@ if (!_up && _rt && _dn && !_lt) _angle = 3*pi/4;
 if (!_up && !_rt && _dn && _lt) _angle = 5*pi/4;
 if (_up && !_rt && !_dn && _lt) _angle = 7*pi/4;
 
-var _vel = _angle >= 0 ? 1 : 0;
+var _vel = _angle >= 0 ? sin(pi/4)/2 : 0;
 
-smooth_move_vector(smooth_move, _angle, _vel);
+if (keyboard_check(vk_anykey)) {
+	show_debug_message("key down");
+}
 
-x = smooth_move_get_x(smooth_move);
-y = smooth_move_get_y(smooth_move);
+smooth_move_by_vector(smooth_move, _angle, _vel);
+
+var _x = smooth_move_get_x(smooth_move);
+var _y = smooth_move_get_y(smooth_move);
+
+x = _x;
+y = _y;
 
 draw_self();
-draw_set_color(c_fuchsia);
-//draw_rectangle(bbox_left, bbox_top, bbox_right, bbox_bottom, true);
-draw_set_color(c_red);
-draw_point(bbox_left, bbox_top);
-draw_point(bbox_left, bbox_bottom - 1);
-draw_point(bbox_right - 1, bbox_top);
-draw_point(bbox_right - 1, bbox_bottom - 1);
+
+if (_x != positions[positions_index][0] || _y != positions[positions_index][1]) {
+	positions_index += 1;
+	if (positions_index >= array_length(positions)) positions_index = 0;
+	positions[positions_index] = [_x, _y];
+}
+
+draw_set_color(c_lime);
+for (var _i = 0; _i < array_length(positions); _i++) {
+	draw_point(positions[_i][0], positions[_i][1]);
+}
