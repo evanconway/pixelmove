@@ -3,6 +3,8 @@
   "ResourceOrderSettings": [
     {"name":"fnt_tiny","order":2,"path":"fonts/fnt_tiny/fnt_tiny.yy",},
     {"name":"o_demo_smooth_move","order":3,"path":"objects/o_demo_smooth_move/o_demo_smooth_move.yy",},
+    {"name":"o_test_control_stick","order":8,"path":"objects/o_test_control_stick/o_test_control_stick.yy",},
+    {"name":"rm_test_control_stick","order":7,"path":"rooms/rm_test_control_stick/rm_test_control_stick.yy",},
     {"name":"spr_demo_smooth_move_background","order":5,"path":"sprites/spr_demo_smooth_move_background/spr_demo_smooth_move_background.yy",},
     {"name":"spr_demo_smooth_move_player","order":6,"path":"sprites/spr_demo_smooth_move_player/spr_demo_smooth_move_player.yy",},
     {"name":"test_smoothmove","order":2,"path":"scripts/test_smoothmove/test_smoothmove.yy",},

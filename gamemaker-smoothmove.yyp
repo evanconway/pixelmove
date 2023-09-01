@@ -22,6 +22,8 @@
   "resources": [
     {"id":{"name":"fnt_tiny","path":"fonts/fnt_tiny/fnt_tiny.yy",},},
     {"id":{"name":"o_demo_smooth_move","path":"objects/o_demo_smooth_move/o_demo_smooth_move.yy",},},
+    {"id":{"name":"o_test_control_stick","path":"objects/o_test_control_stick/o_test_control_stick.yy",},},
+    {"id":{"name":"rm_test_control_stick","path":"rooms/rm_test_control_stick/rm_test_control_stick.yy",},},
     {"id":{"name":"spr_demo_smooth_move_background","path":"sprites/spr_demo_smooth_move_background/spr_demo_smooth_move_background.yy",},},
     {"id":{"name":"spr_demo_smooth_move_player","path":"sprites/spr_demo_smooth_move_player/spr_demo_smooth_move_player.yy",},},
     {"id":{"name":"SmoothMove","path":"scripts/SmoothMove/SmoothMove.yy",},},
@@ -30,6 +32,7 @@
     {"id":{"name":"rm_demo_smooth_move","path":"rooms/rm_demo_smooth_move/rm_demo_smooth_move.yy",},},
   ],
   "RoomOrderNodes": [
+    {"roomId":{"name":"rm_test_control_stick","path":"rooms/rm_test_control_stick/rm_test_control_stick.yy",},},
     {"roomId":{"name":"rm_demo_smooth_move","path":"rooms/rm_demo_smooth_move/rm_demo_smooth_move.yy",},},
   ],
   "TextureGroups": [
