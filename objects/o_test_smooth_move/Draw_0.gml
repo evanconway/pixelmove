@@ -14,7 +14,7 @@ if (!_up && _rt && _dn && !_lt) _angle = 3*pi/4;
 if (!_up && !_rt && _dn && _lt) _angle = 5*pi/4;
 if (_up && !_rt && !_dn && _lt) _angle = 7*pi/4;
 
-var _vel = _angle >= 0 ? 0.707 : 0;
+var _vel = _angle >= 0 ? 1.4 : 0;
 
 smooth_move_by_vector(smooth_move, _angle, _vel);
 

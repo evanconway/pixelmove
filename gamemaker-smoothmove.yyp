@@ -26,6 +26,7 @@
     {"id":{"name":"spr_test_smooth_move_background","path":"sprites/spr_test_smooth_move_background/spr_test_smooth_move_background.yy",},},
     {"id":{"name":"spr_test_smooth_move_player","path":"sprites/spr_test_smooth_move_player/spr_test_smooth_move_player.yy",},},
     {"id":{"name":"SmoothMove","path":"scripts/SmoothMove/SmoothMove.yy",},},
+    {"id":{"name":"test_smoothmove","path":"scripts/test_smoothmove/test_smoothmove.yy",},},
     {"id":{"name":"camera","path":"scripts/camera/camera.yy",},},
     {"id":{"name":"test_smooth_move","path":"rooms/test_smooth_move/test_smooth_move.yy",},},
   ],

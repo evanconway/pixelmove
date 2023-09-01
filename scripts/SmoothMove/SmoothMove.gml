@@ -23,6 +23,24 @@ function SmoothMove(_x, _y) constructor {
 	};
 	
 	/**
+	 * Wrapper function around sin that snaps the result to 0 if it's within 0.001 of 0.
+	 *
+	 * @param {real} _angle angle in radians
+	 */
+	function snap_sin(_angle) {
+		return snap_to_zero(sin(_angle));
+	}
+	
+	/**
+	 * Wrapper function around cos that snaps the result to 0 if it's within 0.001 of 0.
+	 *
+	 * @param {real} _angle angle in radians
+	 */
+	function snap_cos(_angle) {
+		return snap_to_zero(cos(_angle));
+	}
+	
+	/**
 	 * Returns the give value rounded whichever direction is closest to 0.
 	 */
 	function round_to_zero(_value) {
@@ -57,8 +75,10 @@ function SmoothMove(_x, _y) constructor {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_vector_magnitude_x(_smooth_move) {
-	var _unit_magnitude = _smooth_move.snap_to_zero(sin(_smooth_move.vector_angle));
-	return _smooth_move.round_to_thousandths(_unit_magnitude * _smooth_move.vector_magnitude);
+	with (_smooth_move) {
+		var _unit_magnitude = snap_sin(vector_angle);
+		return round_to_thousandths(_unit_magnitude * vector_magnitude);
+	}
 }
 
 /**
@@ -67,8 +87,10 @@ function smooth_move_get_vector_magnitude_x(_smooth_move) {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_vector_magnitude_y(_smooth_move) {
-	var _unit_magnitude = _smooth_move.snap_to_zero(cos(_smooth_move.vector_angle)) * -1;
-	return _smooth_move.round_to_thousandths(_unit_magnitude * _smooth_move.vector_magnitude);
+	with (_smooth_move) {
+		var _unit_magnitude = snap_cos(vector_angle) * -1;
+		return round_to_thousandths(_unit_magnitude * vector_magnitude);
+	}
 }
 
 /**
@@ -147,5 +169,4 @@ function smooth_move_set_vector(_smooth_move, _angle, _magnitude) {
 function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	smooth_move_set_vector(_smooth_move, _angle, _magnitude);
 	smooth_move_advance(_smooth_move);
-	//show_debug_message($"{smooth_move_get_x(_smooth_move)}, {smooth_move_get_y(_smooth_move)}");
 }

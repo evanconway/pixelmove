@@ -9,6 +9,7 @@
     {"name":"spr_test_smooth_move_background","order":2,"path":"sprites/spr_test_smooth_move_background/spr_test_smooth_move_background.yy",},
     {"name":"spr_test_smooth_move_player","order":3,"path":"sprites/spr_test_smooth_move_player/spr_test_smooth_move_player.yy",},
     {"name":"SmoothMove","order":1,"path":"scripts/SmoothMove/SmoothMove.yy",},
+    {"name":"test_smoothmove","order":4,"path":"scripts/test_smoothmove/test_smoothmove.yy",},
     {"name":"camera","order":17,"path":"scripts/camera/camera.yy",},
   ],
 }
