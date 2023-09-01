@@ -13,12 +13,12 @@ function SmoothMove(_x, _y) constructor {
 	movements = 0; // number of times instance has moved by vector
 	
 	/**
-	 * Rounds given value to 0 if within tolerance range. This is mostly to deal
+	 * Rounds given value to 0 if it's already close. This is mostly to deal
 	 * with sin and cos not returning a perfect 0 on certain values.
 	 *
 	 * @param {real} _value
 	 */
-	function tolerance(_value) {
+	function snap_to_zero(_value) {
 		return abs(_value) < 0.001 ? 0 : _value;
 	};
 	
@@ -29,12 +29,17 @@ function SmoothMove(_x, _y) constructor {
 		return _value > 0 ? floor(_value) : ceil(_value);
 	}
 	
+	function round_to_thousandths(_value) {
+		var _result = floor(_value * 1000 + 0.5) / 1000;
+		return _result;
+	}
+	
 	/**
 	 * Get the real x position of this SmoothMove derived from movements and vector magnitude.
 	 */
 	get_x_from_movements = function() {
 		var _x_magnitude = smooth_move_get_vector_magnitude_x(self);
-		return start_x + _x_magnitude * movements;
+		return round_to_zero(start_x + _x_magnitude * movements);
 	};
 	
 	/**
@@ -42,7 +47,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	get_y_from_movements = function() {
 		var _y_magnitude = smooth_move_get_vector_magnitude_y(self);
-		return start_y + _y_magnitude * movements;
+		return round_to_zero(start_y + _y_magnitude * movements);
 	}
 }
 
@@ -52,8 +57,8 @@ function SmoothMove(_x, _y) constructor {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_vector_magnitude_x(_smooth_move) {
-	var _unit_magnitude = _smooth_move.tolerance(sin(_smooth_move.vector_angle));
-	return _unit_magnitude * _smooth_move.vector_magnitude;
+	var _unit_magnitude = _smooth_move.snap_to_zero(sin(_smooth_move.vector_angle));
+	return _smooth_move.round_to_thousandths(_unit_magnitude * _smooth_move.vector_magnitude);
 }
 
 /**
@@ -62,8 +67,8 @@ function smooth_move_get_vector_magnitude_x(_smooth_move) {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_vector_magnitude_y(_smooth_move) {
-	var _unit_magnitude = _smooth_move.tolerance(cos(_smooth_move.vector_angle)) * -1;
-	return _unit_magnitude * _smooth_move.vector_magnitude;
+	var _unit_magnitude = _smooth_move.snap_to_zero(cos(_smooth_move.vector_angle)) * -1;
+	return _smooth_move.round_to_thousandths(_unit_magnitude * _smooth_move.vector_magnitude);
 }
 
 /**
@@ -76,11 +81,12 @@ function smooth_move_get_x(_smooth_move) {
 		if (vector_magnitude == 0) return start_x;
 		var _rise = smooth_move_get_vector_magnitude_y(self);
 		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) >= abs(_rise)) return round_to_zero(get_x_from_movements());
+		if (abs(_run) >= abs(_rise)) return get_x_from_movements();
 		
 		// derive x position from linear line function of y
 		var _slope = _run/_rise;
-		var _x = _slope * get_y_from_movements() + start_x;
+		var _y_diff = smooth_move_get_y(self) - start_y;
+		var _x = (_slope * _y_diff) + start_x;
 		return round_to_zero(_x);
 	}
 }
@@ -95,7 +101,7 @@ function smooth_move_get_y(_smooth_move) {
 		if (vector_magnitude == 0) return start_y;
 		var _rise = smooth_move_get_vector_magnitude_y(self);
 		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) < abs(_rise)) return round_to_zero(get_y_from_movements());
+		if (abs(_run) < abs(_rise)) return get_y_from_movements();
 		
 		// derive y position from linear line function of x
 		var _slope = _rise/_run;
@@ -141,4 +147,5 @@ function smooth_move_set_vector(_smooth_move, _angle, _magnitude) {
 function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	smooth_move_set_vector(_smooth_move, _angle, _magnitude);
 	smooth_move_advance(_smooth_move);
+	//show_debug_message($"{smooth_move_get_x(_smooth_move)}, {smooth_move_get_y(_smooth_move)}");
 }
