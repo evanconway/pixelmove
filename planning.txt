@@ -1,0 +1,11 @@
+31st of August, 2023
+
+We're redoing the old bresenham line movement system we did a while ago. But this time we're doing it cleaner.
+
+Last time I used this overly complicated linear line equation system, but in reality we can just use sine and cosine and a vector to derive our ending x position. Or so I thought. We've run into some sort of bug where, now that I've rigged this up to an analog stick with variable degrees, our movement gets stuck and stops at certain points. Since our logic resets the movement and starting point of the SmoothMove instance whenever the angle or vector changes, my first thought is that the frequent angle changes that occur when using an analog stick trigger frequent resets. So the object feels "stuck" when changing directions. 
+
+However, I also noticed that the moving up and to the left stays very fast. Moving down and to the right is the worst. I think it's very likely there is a floor() somewhere in our code that favors movement to the left and up. Let's look around for that first.
+
+We were able to resolve the inconsistency of the sticking (we were rounding our final result, instead of the adjustments). But now the object just feels like it's consistently sticking. I'm confident that our issue is abandoning any progress along the x/y axis made when changing the angle. My first thought to fix this is, strangely enough, going back to something similar we had in the old system. In that system we kept track of the distance travelled along the x/y axis. And those values only reset once there was no change, or the direction flipped.
+
+I think we should try this. However I'm relaizing this means we'll be constantly infering the x/y magnitude of the stored vector. At this point I think it makes more sense to have SmoothMove store an x/y magnitude instead of an angle and magnitude. But create functions that use a vector to set the x/y magnitude. 

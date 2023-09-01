@@ -14,7 +14,18 @@ if (!_up && _rt && _dn && !_lt) _angle = 3*pi/4;
 if (!_up && !_rt && _dn && _lt) _angle = 5*pi/4;
 if (_up && !_rt && !_dn && _lt) _angle = 7*pi/4;
 
-var _vel = _angle >= 0 ? 1.4 : 0;
+var _vel = _angle >= 0 ? 0.5 : 0;
+
+stick = gamepad_get_left_stick_data();
+stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
+stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
+if (stick_mag > 0) {
+	_angle = stick_angle;
+	_vel = stick_mag;
+}
+
+prev_x = smooth_move_get_x(smooth_move);
+prev_y = smooth_move_get_y(smooth_move);
 
 smooth_move_by_vector(smooth_move, _angle, _vel);
 

@@ -11,6 +11,8 @@ function SmoothMove(_x, _y) constructor {
 	vector_angle = 0;
 	vector_magnitude = 0;
 	movements = 0; // number of times instance has moved by vector
+	distance_x = 0;
+	distance_y = 0;
 	
 	/**
 	 * Rounds given value to 0 if it's already close. This is mostly to deal
@@ -44,6 +46,7 @@ function SmoothMove(_x, _y) constructor {
 	 * Returns the give value rounded whichever direction is closest to 0.
 	 */
 	function round_to_zero(_value) {
+		if (_value == 0) return 0;
 		return _value > 0 ? floor(_value) : ceil(_value);
 	}
 	
@@ -57,7 +60,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	get_x_from_movements = function() {
 		var _x_magnitude = smooth_move_get_vector_magnitude_x(self);
-		return round_to_zero(start_x + _x_magnitude * movements);
+		return start_x + round_to_zero(_x_magnitude * movements);
 	};
 	
 	/**
@@ -65,7 +68,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	get_y_from_movements = function() {
 		var _y_magnitude = smooth_move_get_vector_magnitude_y(self);
-		return round_to_zero(start_y + _y_magnitude * movements);
+		return start_y + round_to_zero(_y_magnitude * movements);
 	}
 }
 

@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "camera",
+  "name": "util",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {

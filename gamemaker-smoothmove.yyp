@@ -27,7 +27,7 @@
     {"id":{"name":"spr_demo_smooth_move_player","path":"sprites/spr_demo_smooth_move_player/spr_demo_smooth_move_player.yy",},},
     {"id":{"name":"SmoothMove","path":"scripts/SmoothMove/SmoothMove.yy",},},
     {"id":{"name":"test_smoothmove","path":"scripts/test_smoothmove/test_smoothmove.yy",},},
-    {"id":{"name":"camera","path":"scripts/camera/camera.yy",},},
+    {"id":{"name":"util","path":"scripts/util/util.yy",},},
     {"id":{"name":"rm_demo_smooth_move","path":"rooms/rm_demo_smooth_move/rm_demo_smooth_move.yy",},},
   ],
   "RoomOrderNodes": [
