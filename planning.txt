@@ -8,4 +8,8 @@ However, I also noticed that the moving up and to the left stays very fast. Movi
 
 We were able to resolve the inconsistency of the sticking (we were rounding our final result, instead of the adjustments). But now the object just feels like it's consistently sticking. I'm confident that our issue is abandoning any progress along the x/y axis made when changing the angle. My first thought to fix this is, strangely enough, going back to something similar we had in the old system. In that system we kept track of the distance travelled along the x/y axis. And those values only reset once there was no change, or the direction flipped.
 
-I think we should try this. However I'm relaizing this means we'll be constantly infering the x/y magnitude of the stored vector. At this point I think it makes more sense to have SmoothMove store an x/y magnitude instead of an angle and magnitude. But create functions that use a vector to set the x/y magnitude. 
+I think we should try this. However I'm relaizing this means we'll be constantly infering the x/y magnitude of the stored vector. At this point I think it makes more sense to have SmoothMove store an x/y magnitude instead of an angle and magnitude. But create functions that use a vector to set the x/y magnitude.
+
+Wait, I might be being an idiot. Can we just keep track of the distance traveled by x/y magnitudes relative to a start X, round those distances traveled towards 0 when calculating the x/y position, and simply reset the distance traveled to 0 and the starting position when the sign of the magnitude changes?
+
+That did not work. I believe that's because anything short of an equation deriving one y per x, or the reverse, allows for more than one y per x. And that's what creates the waggle we're trying so hard to get rid of.

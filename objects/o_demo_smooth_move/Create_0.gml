@@ -1,4 +1,4 @@
-camera_init_basic(160, 90, 10);
+camera_init_basic(200, 112, 10);
 smooth_move = new SmoothMove(x, y);
 //game_set_speed(3, gamespeed_fps);
 

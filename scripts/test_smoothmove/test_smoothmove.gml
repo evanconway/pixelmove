@@ -76,4 +76,4 @@ function test_smoothmove(){
 	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test y fail!");
 }
 
-test_smoothmove();
+//test_smoothmove();

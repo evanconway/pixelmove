@@ -21,7 +21,7 @@ stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 if (stick_mag > 0) {
 	_angle = stick_angle;
-	_vel = stick_mag;
+	_vel = stick_mag * 0.1;
 }
 
 prev_x = smooth_move_get_x(smooth_move);
