@@ -12,7 +12,6 @@
   "defaultScriptType": 1,
   "Folders": [
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"SmoothMove","folderPath":"folders/SmoothMove.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"test","folderPath":"folders/SmoothMove/test.yy",},
   ],
   "IncludedFiles": [],
   "isEcma": false,

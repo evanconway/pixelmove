@@ -8,8 +8,165 @@ However, I also noticed that the moving up and to the left stays very fast. Movi
 
 We were able to resolve the inconsistency of the sticking (we were rounding our final result, instead of the adjustments). But now the object just feels like it's consistently sticking. I'm confident that our issue is abandoning any progress along the x/y axis made when changing the angle. My first thought to fix this is, strangely enough, going back to something similar we had in the old system. In that system we kept track of the distance travelled along the x/y axis. And those values only reset once there was no change, or the direction flipped.
 
-I think we should try this. However I'm relaizing this means we'll be constantly infering the x/y magnitude of the stored vector. At this point I think it makes more sense to have SmoothMove store an x/y magnitude instead of an angle and magnitude. But create functions that use a vector to set the x/y magnitude.
+I think we should try this. However I'm relaizing this means we'll be constantly inferring the x/y magnitude of the stored vector. At this point I think it makes more sense to have SmoothMove store an x/y magnitude instead of an angle and magnitude. But create functions that use a vector to set the x/y magnitude.
 
 Wait, I might be being an idiot. Can we just keep track of the distance traveled by x/y magnitudes relative to a start X, round those distances traveled towards 0 when calculating the x/y position, and simply reset the distance traveled to 0 and the starting position when the sign of the magnitude changes?
 
 That did not work. I believe that's because anything short of an equation deriving one y per x, or the reverse, allows for more than one y per x. And that's what creates the waggle we're trying so hard to get rid of.
+
+
+1st of September, 2023
+
+We were able to fix the sticking issue. When the x/y magnitudes changed, we simply set the x/y to the currently calculated positions, but also removed the integer portion of the distance_x/y value. For example, on magnitude change:
+
+start_x: 0;
+distance_x: 7.4
+
+would become
+
+start_x: 7;
+distance_x: 0.4;
+
+
+We also reset the distance_x/y to 0 on sign change of magnitudes. We've run into another bug now after some more rigorous testing. We're keeping track of distance travelled for both x and y. However since we infer either x or y from a line equation based off the slope, at any given time one of the sitance values is pointless to track. It's also "wrong" compared to the line equation. 
+
+For example, imagine we started at 0,0 and moved 5 times with the vector (-0.7, 0.3). From simple math we could conclude our end position would be (-3.5, 1.5). And the internal state of our SmoothMove would reflect this:
+
+start_x: 0
+start_y: 0
+distance_x: -3.5
+distance_y: 1.5
+
+Remember that we infer y from x with this slope of 0.3/-0.7. And in this case our exact y turns out to be 1.5, the same as the y infered from distance. Now let's change the vectors we're travelling with to (-0.02, 0.1). When we first change this our SmoothMove state will reset the distance x/y and the start x/y and our internal state will become:
+
+start_x: -3
+start_y: 1
+distance_x: -0.5
+distance_y: 0.5
+
+Now let's travel with this vector 5 times. Our state becomes.
+
+start_x: -3
+start_y: 1
+distance_x: -0.6
+distance_y: 1
+
+Notice that the distance travelled is maintained for both axis. Now in this scenario our rise is greater than our run, so we infer our x from our y, which with this slope of -0.2 yeilds an x of -3.4. You'll notice that this is not quite the same as our above distance_x + start_x of -3.6. Luckily since we round to integers towards 0 for changes, our final x is the same with either. But now let's change the vector to (-0.1, -0.3):
+
+start_x: -3
+start_y: 2
+distance_x: -0.6
+distance_y: 0
+
+And let's travel 4 times:
+
+start_x: -3
+start_y: 2
+distance_x: -1
+distance_y: -1.2
+
+Since our rise travels further than our run, we infer our x from our y. So with a slope of 0.333 we can infer our true x from 0.333 * -1.2 + -3, which gives us -3.3996. This is quite different from the x we could infer from just adding start_x and distance_x, which gives us -4. And most importantly, since our logic rounds changees towards 0 when inferring x/y so we return integers, our change value of 0.333 * 01.2 is -0.3996 which rounds to 0. So the final value is -3. That's definitely not -4.  
+
+So what's the problem? The problem here is that keeping track of the distance x/y separately yields an untrue change in vectors when the slope changes from being y/x to x/y. In the above state we infer x from y by calculating a new "distance_x" from a line equation, and in this case that change is 0.333 * -1.2, which is -0.3996. But our internal distance_x is -1. So if we changed vectors to a flipped slope our internal state would change to:
+
+start_x: -4
+start_y: 1
+distance_x: 0
+distance_y: -0.2
+
+And this is wrong! It should be:
+
+start_x: -3
+start_y: 1
+distance_x: -0.4 // -0.3996 rounded
+distance_y: -0.2
+
+But also note that if we flipped to a slope with a greater run than rise, we'd be inferring our y from our x, and so the true "distance_y" wouldn't be -0.2. It would be whatever change we got from our slope * -0.4, or whatever the x distance would be after travelling.
+
+So, now that we've explained the bug, how can we solve it? I actually think the solution isn't too tricky. We already explained how we can infer the true distance x/y from the current slope. I think that we get ride of distance_x/y in favor of just a single distance variable. And use the slope to infer if this distance is along the x or y axis when determing final x/y values. Whenever the vector changes, if the slope has flipped from greater run to greater rise, or the reverse, we calculate the new distance using the old slope and old distance. As an example, let's reimagine the movements from above but using this new system. 
+
+start: (0,0)
+vector (-0.7, 0.3) 5 times
+vector (-0.02, 0.1) 5 times
+vector (-0.1, -0.3) 4 times
+
+Our new starting state would be (and lets include the vector for clarity this time):
+
+magnitude_x: 0
+magnitude_y: 0
+start_x: 0
+start_y: 0
+distance: 0
+// inferred true position:		(0, 0)
+// changes towards 0 position:	(0, 0)
+
+Now we'll set the vector to (-0.7, 0.3) and travel 5 times. Note that this has a greater x travel distance than y, so we infer y from x. Our state is now:
+
+magnitude_x: -0.7
+magnitude_y: 0.3
+start_x: 0
+start_y: 0
+distance: -3.5
+// inferred true position:		(-3.5,	1.5)
+// changes towards 0 position:	(-3,	1)
+
+Change vector to (-0.02, 0.1). Notice that this has a greater run than rise, so our distance will be changed to the difference between the rounded towards 0 interger y and the true inferred y. But to do this we can simply reset the starting and distance values, then multiply distance by the old slope:
+
+// done with actual values calculation
+true_y =			-3.5*(0.3/-0.7)+0 = 1.5
+towards_zero_y = round_towards_zero(-3.5*(0.3/-0.7))+0 = 1
+new_distance = 1 - 1.5 = -0.5;
+
+// done with new distance and old slope calculated
+magnitude_x: -0.02
+magnitude_y: 0.1
+start_x: -3
+start_y: 1
+distance: -0.5
+
+distance * slope = -0.5*(0.3/-0.7) = 0.1
+
+
+By coincidence this would be the same as our distance before. But regardless we have our new state:
+
+magnitude_x: -0.02
+magnitude_y: 0.1
+start_x: -3
+start_y: 1
+distance: 0.5
+// inferred true position:		(-3.1,	1.5)
+// changes towards 0 position:	(-3,	1)
+
+Notice that the true x position changed from before. Although not ideal, I prefer this to our less organized system from before. At least this is consistent. Now we travel 5 times:
+
+magnitude_x: -0.02
+magnitude_y: 0.1
+start_x: -3
+start_y: 1
+distance: 1
+// inferred true position:		(-3.2,	2)
+// changes towards 0 position:	(-3,	2)
+
+Change vector to (-0.1, -0.3)
+
+magnitude_x: -0.1
+magnitude_y: -0.3
+start_x: -3
+start_y: 2
+distance: 0
+// inferred true position:		(-3,	2)
+// changes towards 0 position:	(-3,	2)
+
+Now travel 4 times:
+
+magnitude_x: -0.1
+magnitude_y: -0.3
+start_x: -3
+start_y: 2
+distance: -1.2
+// inferred true position:		(-3.4,	0.8)
+// changes towards 0 position:	(-3,	1)
+
+
+
+Ok, I've been trying to implement the changes I described above. But I am running into all kinds of issues with capturing the true distance after changing slope type. I've decided that, although perhaps less mathematically elegant, our old system was much simpler and worked just fine. To reiterate, what we used to do was keep track of the distance travelled for both x and y. However when the user requested the position of x/y we would infer one of them based off the slope of the vector. This meant one of those values was basically useless until the slope changed. And when the slope did change we'd reset the starting and distance x/y. What this ultimately means is that when the slope does change, our new axis value will switch from being inferred to being what it would have been had we not been inferring it. Contrary to what I said above. I think this is fine. We end up throwing out the distance of the x/y we were travelling on when we switch slopes anyway, so we end up with imperfection one way or another. This way is just much easier to code and read.

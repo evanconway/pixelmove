@@ -28,3 +28,12 @@ function gamepad_get_left_stick_data() {
 	}
 	return _result;
 }
+
+/**
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_tostring(_smooth_move) {
+	with (_smooth_move) {
+		return $"start_x: {start_x}\n start_y: {start_y}\n magnitude_x: {magnitude_x}\n magnitude_y: {magnitude_y}\n distance_x: {distance_x}\n distance_y: {distance_y}\n x: {smooth_move_get_x(self)}\n y: {smooth_move_get_y(self)}";
+	}
+}

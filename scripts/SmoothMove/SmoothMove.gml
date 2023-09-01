@@ -59,34 +59,31 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
+	 * SmoothMove works by inferring x and y positions based off the 2D vector it's moved by.
+	 * This function returns true if the x magnitude of the vector is greater than the y
+	 * magnitude, indicating that the y position should be inferred from the x position.
+	 * Returns false if the reverse is true. This function also allows other values to
+	 * used instead of the SmoothMove's internal values.
+	 *
+	 */
+	infer_y_from_x = function(_magnitude_x = magnitude_x, _magnitude_y = magnitude_y) {
+		return (abs(_magnitude_x) >= abs(_magnitude_y));
+	};
+	
+	/**
+	 * Get the slope to be used to infer an x or y position. The slope changes depending on
+	 * whether the x or y magnitude of the 2D vector is greater.
+	 */
+	slope = function(_magnitude_x = magnitude_x, _magnitude_y = magnitude_y) {
+		return infer_y_from_x(_magnitude_x, _magnitude_y) ? _magnitude_y/_magnitude_x : _magnitude_x/_magnitude_y;
+	}
+	
+	/**
 	 * Get the magnitude of the vector resulting from the x and y magnitudes.
 	 */
 	get_vector_magnitude = function() {
 		return round_to_thousandths(sqrt(sqr(magnitude_x) + sqr(magnitude_y)));
 	}
-	
-	// feather ignore once all
-	toString = function() {
-		return $"start_x: {start_x}\n start_y: {start_y}\n magnitude_x: {magnitude_x}\n magnitude_y: {magnitude_y}\n distance_x: {distance_x}\n distance_y: {distance_y}\n x: {smooth_move_get_x(self)}\n y: {smooth_move_get_y(self)}";
-	}
-}
-
-/**
- * Get the x magnitude of the vector of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_vector_magnitude_x(_smooth_move) {
-	return _smooth_move.magnitude_x;
-}
-
-/**
- * Get the y magnitude of the vector of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_vector_magnitude_y(_smooth_move) {
-	return _smooth_move.magnitude_y;
 }
 
 /**
@@ -97,19 +94,17 @@ function smooth_move_get_vector_magnitude_y(_smooth_move) {
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
 		if (get_vector_magnitude() == 0) return start_x;
-		var _rise = smooth_move_get_vector_magnitude_y(self);
-		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) >= abs(_rise)) {
+		if (infer_y_from_x()) {
 			var _change = round_to_zero(distance_x)
 			var _result = start_x + _change;
 			return _result;
 		}
 		
 		// derive x position from linear line function of y
-		var _slope = _run/_rise;
+		var _slope = slope();
 		var _y_diff = smooth_move_get_y(self) - start_y;
-		var _x = (_slope * _y_diff) + start_x;
-		return round_to_zero(_x);
+		var _x = round_to_zero(_slope * _y_diff) + start_x;
+		return _x;
 	}
 }
 
@@ -121,19 +116,17 @@ function smooth_move_get_x(_smooth_move) {
 function smooth_move_get_y(_smooth_move) {
 	with(_smooth_move) {
 		if (get_vector_magnitude() == 0) return start_y;
-		var _rise = smooth_move_get_vector_magnitude_y(self);
-		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) < abs(_rise)) {
+		if (!infer_y_from_x()) {
 			var _change = round_to_zero(distance_y)
 			var _result = start_y + _change;
 			return _result;
 		}
 		
 		// derive y position from linear line function of x
-		var _slope = _rise/_run;
+		var _slope = slope();
 		var _x_diff = smooth_move_get_x(self) - start_x;
-		var _y = (_slope * _x_diff) + start_y;
-		return round_to_zero(_y);
+		var _y = round_to_zero(_slope * _x_diff) + start_y;
+		return _y;
 	}
 }
 
@@ -144,8 +137,8 @@ function smooth_move_get_y(_smooth_move) {
  */
 function smooth_move_advance(_smooth_move) {
 	with (_smooth_move) {
-		distance_x += magnitude_x;
-		distance_y += magnitude_y;
+		distance_x = round_to_thousandths(distance_x + magnitude_x);
+		distance_y = round_to_thousandths(distance_y + magnitude_y);
 	}
 }
 
@@ -165,6 +158,8 @@ function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y)
 		start_y = _y;
 		distance_x -= round_to_zero(distance_x);
 		distance_y -= round_to_zero(distance_y);
+		if (sign(_magnitude_x) != sign(magnitude_x)) distance_x = 0;
+		if (sign(_magnitude_y) != sign(magnitude_y)) distance_y = 0;
 		magnitude_x = _magnitude_x;
 		magnitude_y = _magnitude_y;
 	}

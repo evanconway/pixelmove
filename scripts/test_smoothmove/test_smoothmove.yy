@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "test",
-    "path": "folders/SmoothMove/test.yy",
+    "name": "SmoothMove",
+    "path": "folders/SmoothMove.yy",
   },
 }

@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "test",
-    "path": "folders/SmoothMove/test.yy",
+    "name": "gamemaker-smoothmove",
+    "path": "gamemaker-smoothmove.yyp",
   },
   "parentObjectId": null,
   "persistent": false,
