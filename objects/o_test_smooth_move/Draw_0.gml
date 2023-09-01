@@ -14,11 +14,10 @@ if (!_up && _rt && _dn && !_lt) _angle = 3*pi/4;
 if (!_up && !_rt && _dn && _lt) _angle = 5*pi/4;
 if (_up && !_rt && !_dn && _lt) _angle = 7*pi/4;
 
-var _vel = _angle >= 0 ? sin(pi/4)/2 : 0;
+//_angle = 7*pi/4;
+//_angle = pi/4;
 
-if (keyboard_check(vk_anykey)) {
-	show_debug_message("key down");
-}
+var _vel = _angle >= 0 ? sin(pi/4)/2 : 0;
 
 smooth_move_by_vector(smooth_move, _angle, _vel);
 
@@ -29,6 +28,10 @@ x = _x;
 y = _y;
 
 draw_self();
+
+if (keyboard_check_pressed(ord("C"))) {
+	positions = create_positions();
+}
 
 if (_x != positions[positions_index][0] || _y != positions[positions_index][1]) {
 	positions_index += 1;
