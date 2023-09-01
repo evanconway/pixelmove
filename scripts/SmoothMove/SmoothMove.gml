@@ -42,30 +42,20 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Returns the give value rounded whichever direction is closest to 0.
+	 * @param {real} _value
 	 */
-	function round_to_zero(_value) {
-		if (_value == 0) return 0;
-		return _value > 0 ? floor(_value) : ceil(_value);
-	}
-	
 	function round_to_thousandths(_value) {
 		var _result = floor(_value * 1000 + 0.5) / 1000;
 		return _result;
 	}
 	
 	/**
-	 * Get the real x position of this SmoothMove derived from start position and distance traveled x value.
+	 * Returns the give value rounded whichever direction is closest to 0.
 	 */
-	get_x_from_movements = function() {
-		return start_x + distance_x;
-	};
-	
-	/**
-	 * Get the real y position of this SmoothMove derived from start position and distance traveled y value.
-	 */
-	get_y_from_movements = function() {
-		return start_y + distance_y;
+	function round_to_zero(_value) {
+		if (_value == 0) return 0;
+		_value = round_to_thousandths(_value);
+		return _value > 0 ? floor(_value) : ceil(_value);
 	}
 	
 	/**
@@ -109,7 +99,11 @@ function smooth_move_get_x(_smooth_move) {
 		if (get_vector_magnitude() == 0) return start_x;
 		var _rise = smooth_move_get_vector_magnitude_y(self);
 		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) >= abs(_rise)) return start_x + round_to_zero(distance_x);
+		if (abs(_run) >= abs(_rise)) {
+			var _change = round_to_zero(distance_x)
+			var _result = start_x + _change;
+			return _result;
+		}
 		
 		// derive x position from linear line function of y
 		var _slope = _run/_rise;
@@ -129,7 +123,11 @@ function smooth_move_get_y(_smooth_move) {
 		if (get_vector_magnitude() == 0) return start_y;
 		var _rise = smooth_move_get_vector_magnitude_y(self);
 		var _run = smooth_move_get_vector_magnitude_x(self);
-		if (abs(_run) < abs(_rise)) return start_y + round_to_zero(distance_y);
+		if (abs(_run) < abs(_rise)) {
+			var _change = round_to_zero(distance_y)
+			var _result = start_y + _change;
+			return _result;
+		}
 		
 		// derive y position from linear line function of x
 		var _slope = _rise/_run;
@@ -163,18 +161,10 @@ function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y)
 		if (_magnitude_x == magnitude_x && _magnitude_y == magnitude_y) return;
 		var _x = smooth_move_get_x(self);
 		var _y = smooth_move_get_y(self);
-		
-		if (_magnitude_x != magnitude_x) {
-			start_x = _x;
-			distance_x -= round_to_zero(distance_x);
-		}
-		if (sign(_magnitude_x) != sign(magnitude_x)) distance_x = 0;
-		
-		if (_magnitude_y != magnitude_y) {
-			start_y = _y;
-			distance_y -= round_to_zero(distance_y);
-		}
-		if (sign(_magnitude_y) != sign(magnitude_y)) distance_y = 0;
+		start_x = _x;
+		start_y = _y;
+		distance_x -= round_to_zero(distance_x);
+		distance_y -= round_to_zero(distance_y);
 		magnitude_x = _magnitude_x;
 		magnitude_y = _magnitude_y;
 	}
@@ -190,8 +180,8 @@ function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y)
 function smooth_move_set_vector(_smooth_move, _angle, _magnitude) {
 	while (_angle < 0) _angle += 2*pi;	
 	with (_smooth_move) {
-		var _magnitude_x = round_to_thousandths(snap_sin(_angle) * _magnitude);
-		var _magnitude_y = round_to_thousandths(snap_cos(_angle) * _magnitude) * -1;
+		var _magnitude_x = snap_sin(_angle) * _magnitude;
+		var _magnitude_y = snap_cos(_angle) * _magnitude * -1;
 		smooth_move_set_xy_magnitudes(self, _magnitude_x, _magnitude_y);
 	}
 }

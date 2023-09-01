@@ -18,7 +18,7 @@ function gamepad_get_left_stick_data() {
 		axis_v: 0,
 	};
 	for (var _i = 0; _i < gamepad_get_device_count(); _i++) {
-		gamepad_set_axis_deadzone(_i, 0.3);
+		gamepad_set_axis_deadzone(_i, 0.15);
 		var _h = gamepad_axis_value(_i, gp_axislh);
 		var _v = gamepad_axis_value(_i, gp_axislv);
 		if (_h != 0 || _v != 0) {
