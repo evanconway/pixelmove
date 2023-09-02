@@ -62,20 +62,19 @@ function SmoothMove(_x, _y) constructor {
 	 * SmoothMove works by inferring x and y positions based off the 2D vector it's moved by.
 	 * This function returns true if the x magnitude of the vector is greater than the y
 	 * magnitude, indicating that the y position should be inferred from the x position.
-	 * Returns false if the reverse is true. This function also allows other values to
-	 * used instead of the SmoothMove's internal values.
+	 * Returns false if the reverse is true.
 	 *
 	 */
-	infer_y_from_x = function(_magnitude_x = magnitude_x, _magnitude_y = magnitude_y) {
-		return (abs(_magnitude_x) >= abs(_magnitude_y));
+	infer_y_from_x = function() {
+		return (abs(magnitude_x) >= abs(magnitude_y));
 	};
 	
 	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
 	 * whether the x or y magnitude of the 2D vector is greater.
 	 */
-	slope = function(_magnitude_x = magnitude_x, _magnitude_y = magnitude_y) {
-		return infer_y_from_x(_magnitude_x, _magnitude_y) ? _magnitude_y/_magnitude_x : _magnitude_x/_magnitude_y;
+	slope = function() {
+		return infer_y_from_x() ? magnitude_y/magnitude_x : magnitude_x/magnitude_y;
 	}
 	
 	/**
@@ -151,17 +150,40 @@ function smooth_move_advance(_smooth_move) {
  */
 function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
 	with (_smooth_move) {
+		_magnitude_x = round_to_thousandths(_magnitude_x);
+		_magnitude_y = round_to_thousandths(_magnitude_y);
 		if (_magnitude_x == magnitude_x && _magnitude_y == magnitude_y) return;
+		
 		var _x = smooth_move_get_x(self);
 		var _y = smooth_move_get_y(self);
+		
+		var _changed_x = start_x != _x;
+		var _changed_y = start_y != _y;
+		
+		var _int_dist_x = round_to_zero(distance_x);
+		var _int_dist_y = round_to_zero(distance_y);
+		
 		start_x = _x;
 		start_y = _y;
-		distance_x -= round_to_zero(distance_x);
-		distance_y -= round_to_zero(distance_y);
+		
+		distance_x -= _int_dist_x;
+		distance_y -= _int_dist_y;
+		
 		if (sign(_magnitude_x) != sign(magnitude_x)) distance_x = 0;
 		if (sign(_magnitude_y) != sign(magnitude_y)) distance_y = 0;
+		
+		// remember inference type before changing magnitudes
+		var _infer_y_from_x = infer_y_from_x();
+		
 		magnitude_x = _magnitude_x;
 		magnitude_y = _magnitude_y;
+		
+		// if inference type changed, account for missed distance changes
+		var _new_infer_y_from_x = infer_y_from_x();
+		if (_new_infer_y_from_x == _infer_y_from_x) {
+			if (_infer_y_from_x &&!_changed_y) start_y += _int_dist_y;
+			if (!_infer_y_from_x && !_changed_x) start_x += _int_dist_x;
+		}
 	}
 }
 

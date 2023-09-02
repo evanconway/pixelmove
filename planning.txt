@@ -172,4 +172,25 @@ distance: -1.2
 Ok, I've been trying to implement the changes I described above. But I am running into all kinds of issues with capturing the true distance after changing slope type. I've decided that, although perhaps less mathematically elegant, our old system was much simpler and worked just fine. To reiterate, what we used to do was keep track of the distance travelled for both x and y. However when the user requested the position of x/y we would infer one of them based off the slope of the vector. This meant one of those values was basically useless until the slope changed. And when the slope did change we'd reset the starting and distance x/y. What this ultimately means is that when the slope does change, our new axis value will switch from being inferred to being what it would have been had we not been inferring it. Contrary to what I said above. I think this is fine. We end up throwing out the distance of the x/y we were travelling on when we switch slopes anyway, so we end up with imperfection one way or another. This way is just much easier to code and read.
 
 
-It's clear I've made some sort of serious error in my logic. I rigged up something that let's me move a square around with the raw analog stick. It has the jutter/waggle issue that SmoothMove is supposed to fix. But other than that the movement is way smoother. To test further I rigged it to move in a circle by telling it to move by vector, but increasing the angle slightly each frame. It does not move in a circle like we'd expect. Instead it moves in a square shape. Something is very wrong. 
+It's clear I've made some sort of serious error in my logic. I rigged up something that let's me move a square around with the raw analog stick. It has the jutter/waggle issue that SmoothMove is supposed to fix. But other than that the movement is way smoother. To test further I rigged it to move in a circle by telling it to move by vector, but increasing the angle slightly each frame. It does not move in a circle like we'd expect. Instead it moves in a square shape. Something is very wrong.
+
+I believe I have uncovered the secret of why our system doesn't feel smooth, and feels clunky. After carefully watching our circle drawing rig, it's clear that since the x distance resets when the angle changes, the y never actually changes until the slope is so aggressive that it forces a change of y with even the smallest x distance. After about maybe 2 dozen iterations this is the state I'm looking at right now:
+
+start_y: 70			// program started at 70
+start_x: 156 		// program started at 150
+magnitude_x: 0.19
+magnitude_y: -0.063
+distance_x: 0.487
+distance_y: -1.048
+
+Remember that our distance_y is updated even though it's not what we use to calculate the final y. But notice that it's beyond -1! If we weren't using our inference system the y would've changed by now. But the y we infer is the slope times distance_x, which turns out to be -0.16. Not enough to trigger a change. And what's worse, when the angle changes again we go through our reset logic which removes the integer portion of distance_y. This is why the movement has still felt stuck and favoring right angles.
+
+We need to think through how we're going to fix this. I'm confident that we need to adjust the start_y by distance_y when the abs(distance_y) is greater than 1. I tried simply adding the integer value of distance_y to start_y when an angle changes. But this does not work because if the vector stayed the same long enough, then the start_y and distance y were updated correctly.
+
+Perhaps we should try only changing the start_y by the integer of the distance_y if the inferred y on vector change is the same as start_y. This may work because it accounts for situations where the y would've changed had the vector not been changing, but ignores situations where it has changed already. So it's like a "catch" for missed y changes.
+
+(note the above also refers to x changes when we're inferring x from y)
+
+Our small fix certainly helps a lot, but we're not quite there. There are now small skips in the line sometimes. And our circle algorithm doesn't draw a perfect circle, and I'm sure it should. 
+
+We've improved it. But it's clear we don't fully understand what's happening under the hood, or what should be happeneing. From observation and expermientation. We found out that gaps were likely happening when the slope type changed. By only accounting for the missed x/y changes when slope type changed, we were able to get rid of some gaps. But I still see gaps happen sometimes. And I'm not sure why.
