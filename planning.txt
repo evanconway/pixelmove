@@ -193,4 +193,6 @@ Perhaps we should try only changing the start_y by the integer of the distance_y
 
 Our small fix certainly helps a lot, but we're not quite there. There are now small skips in the line sometimes. And our circle algorithm doesn't draw a perfect circle, and I'm sure it should. 
 
-We've improved it. But it's clear we don't fully understand what's happening under the hood, or what should be happeneing. From observation and expermientation. We found out that gaps were likely happening when the slope type changed. By only accounting for the missed x/y changes when slope type changed, we were able to get rid of some gaps. But I still see gaps happen sometimes. And I'm not sure why.
+We've improved it. But it's clear we don't fully understand what's happening under the hood, or what should be happeneing. From observation and expermientation. We found out that gaps were likely happening when slope type did not change. By only accounting for the missed x/y changes when slope stays the same, we were able to get rid of some gaps. But I still see gaps happen sometimes. And after digging some more, it's clear that sometimes the gaps appear because of our new fix! I'm tempted to try one more thing for today and then give up. Let's see if we can "store" a change. We'll mark that a distance_x/y integer change should have happened using our current logic. But then when we actually update distances, if the distance update accounts for our stored change, we won't make it. 
+
+The fix didn't work. My brain is fried. We'll have to look at this some other time.

@@ -27,13 +27,13 @@ if (stick_mag > 0) {
 prev_x = smooth_move_get_x(smooth_move);
 prev_y = smooth_move_get_y(smooth_move);
 
-if (x == 153 && y == 15) {
+if (x == 161 && y == 38) {
 	show_debug_message("debug");
 }
 
 //smooth_move_by_vector(smooth_move, _angle, _vel);
 smooth_move_by_vector(smooth_move, angle, 1);
-angle += 0.02;
+angle += 0.033;
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
