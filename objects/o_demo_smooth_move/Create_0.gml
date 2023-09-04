@@ -18,4 +18,7 @@ prev_x = smooth_move_get_x(smooth_move);
 prev_y = smooth_move_get_y(smooth_move);
 
 
-angle = 3*pi/2;
+angle = pi;
+
+
+toggle_y = 0;

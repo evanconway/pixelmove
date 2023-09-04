@@ -239,3 +239,17 @@ angle
 distance
 
 We could infer slope from the angle, and use the logic we have now for determining if we're inferring y from x or x from y. Let's try this.
+
+Oh wow. We ran into the same problem we ran into before over the weekend. This problem is difficult for me to hold entirely in my mind. When the angle changes frequently, every frame for example, if we don't keep track of the distance we would've covered over the off axis, then the only time we can actually switch to the off axis is when the slop of the ange is so aggressive which switch from inferring y from x to the other way around. This is why we kept track of distance for both x and y. 
+
+Let's start calling distance delta.
+
+What I'm wondering now is if there's a way to keep track of the off axis, basically the same way we did with distance_x/y, but this time ensure we're not losing data when the angle changes.
+
+Let's first try making a value to track changes to the off axis as they happen. I have a theory that we could write cod that, once a large enough change in the off axis is detected, we make that change to the off axis regardless of the line equation, and setback the on axis enough to account for this change.
+
+A logic point that I'm having trouble understanding is if this change along the off axis could ever be greater than 1 (or -1). Perhaps after adding to delta we need to see if a change has happened and remove it from our off axis tracking if it has? These are the kinds of uncertainties that make me hesitant to code further. Diving into the problem without a strong understanding of what's going on is just going to breed bugs.
+
+Oh wait. I just had the dumbest idea in the world. What if we allowed SmoothMove to keep track of non-integer start_x/y positions? And we simply calculate the resultant x/y from our vector as we've been doing? We'd only reset the start_x/y to their integer values when tried to advance with a magnitude of 0. Let's see where this gets us first.
+
+This new strat may have been the correct choice all along. However there are still some weird bugs. It's 5:00am and I should've gone to bed so many hours ago. Tomorrow (later today) we'll solve this.

@@ -3,22 +3,21 @@ var _dn = keyboard_check(vk_down);
 var _lt = keyboard_check(vk_left);
 var _rt = keyboard_check(vk_right);
 
-var _angle = -1;
-if (_up && !_rt && !_dn && !_lt) _angle = 0;
-if (!_up && _rt && !_dn && !_lt) _angle = pi/2;
-if (!_up && !_rt && _dn && !_lt) _angle = pi;
-if (!_up && !_rt && !_dn && _lt) _angle = 3*pi/2;
+var _vert = 0;
+var _horz = 0;
 
-if (_up && _rt && !_dn && !_lt) _angle = pi/4;
-if (!_up && _rt && _dn && !_lt) _angle = 3*pi/4;
-if (!_up && !_rt && _dn && _lt) _angle = 5*pi/4;
-if (_up && !_rt && !_dn && _lt) _angle = 7*pi/4;
+if (_up) _vert -= 1;
+if (_dn) _vert += 1;
+if (_rt) _horz += 1;
+if (_lt) _horz -= 1;
 
-var _vel = _angle >= 0 ? 0.5 : 0;
+var _angle = arctan2(_vert, _horz)
+
+var _vel = (_vert != 0 || _horz != 0) ? 0.5 : 0;
 
 stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
-stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
+stick_angle = arctan2(stick.axis_v, stick.axis_h);
 if (stick_mag > 0) {
 	_angle = stick_angle;
 	//_vel = stick_mag * 1;
@@ -28,20 +27,43 @@ if (stick_mag > 0) {
 prev_x = smooth_move_get_x(smooth_move);
 prev_y = smooth_move_get_y(smooth_move);
 
-if (x == 161 && y == 38) {
+if (x == 89 && y == 61) {
 	show_debug_message("debug");
 }
 
 //smooth_move_by_vector(smooth_move, _angle, _vel);
-//smooth_move_by_vector(smooth_move, angle, 1);
-//angle += 0.033;
+smooth_move_by_vector(smooth_move, angle, 1);
+angle += 0.033;
 
+//smooth_move_by_magnitudes(smooth_move, 0.3, 1);
 //smooth_move_by_magnitudes(smooth_move, 1, 0.3);
-smooth_move_by_magnitudes(smooth_move, 0.3, 1);
 //smooth_move_by_magnitudes(smooth_move, 1, -0.3);
+//smooth_move_by_magnitudes(smooth_move, 0.3, -1);
+//smooth_move_by_magnitudes(smooth_move, -0.3, -1);
+//smooth_move_by_magnitudes(smooth_move, -1, -0.3);
+//smooth_move_by_magnitudes(smooth_move, -1, 0.3);
+//smooth_move_by_magnitudes(smooth_move, -0.3, 1);
+
+//smooth_move_by_magnitudes(smooth_move, 0.3, 0);
+//smooth_move_by_magnitudes(smooth_move, -0.3, 0);
+//smooth_move_by_magnitudes(smooth_move, 0, 0.3);
+//smooth_move_by_magnitudes(smooth_move, 0, -0.3);
+
+//smooth_move_by_magnitudes(smooth_move, 0.5, -0.5);
+//smooth_move_by_magnitudes(smooth_move, -0.5, -0.5);
+//smooth_move_by_magnitudes(smooth_move, -0.5, 0.5);
+//smooth_move_by_magnitudes(smooth_move, 0.5, 0.5);
+
+//smooth_move_by_magnitudes(smooth_move, 1, toggle_y);
+//toggle_y = toggle_y == 0 ? 0.3 : 0;
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
+
+var _delta = smooth_move.delta;
+var _total_delta_x = smooth_move.total_delta_x;
+var _total_delta_y = smooth_move.total_delta_y;
+var _off_axis_delta = smooth_move.off_axis_delta;
 
 x = _x;
 y = _y;

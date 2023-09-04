@@ -11,6 +11,11 @@ function SmoothMove(_x, _y) constructor {
 	angle = 0;
 	delta = 0;
 	
+	off_axis_delta = 0;
+	
+	total_delta_x = 0;
+	total_delta_y = 0;
+	
 	/**
 	 * Rounds given value to 0 if it's already close. This is mostly to deal
 	 * with sin and cos not returning a perfect 0 on certain values.
@@ -57,6 +62,13 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
+	 * Given real _a and real _b, returns _a rounded in the direction of floor(_b). 
+	 */
+	function round_towards(_a, _b) {
+		return (_a - floor(_b) >= 0) ? floor(_a) : ceil(_a);
+	}
+	
+	/**
 	 * SmoothMove works by inferring x and y positions based off the 2D vector it's moved by.
 	 * This function returns true if the x magnitude of the vector is greater than the y
 	 * magnitude, indicating that the y position should be inferred from the x position.
@@ -67,25 +79,67 @@ function SmoothMove(_x, _y) constructor {
 		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
 	};
 	
+	get_magnitude_x = function() {
+		return snap_cos(angle) * delta;
+	}
+	
+	get_magnitude_y = function() {
+		return snap_sin(angle) * delta;
+	};
+	
 	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
 	 * whether the x or y magnitude of the 2D vector is greater.
 	 */
 	slope = function() {
+		var _magnitude_x = get_magnitude_x();
+		var _magnitude_y = get_magnitude_y();
 		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
 	}
-	
-	get_magnitude_x = function() {
-		var _cos_value = snap_cos(angle);
-		var _result = _cos_value * delta;
-		return _result;
+}
+
+/**
+ * Get the current x position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_true_x(_smooth_move) {
+	with (_smooth_move) {
+		if (delta == 0) return start_x;
+		if (infer_y_from_x()) {
+			var _change = get_magnitude_x();
+			var _result = start_x + _change;
+			return _result;
+		}
+		
+		// derive x position from linear line function of y
+		var _slope = slope();
+		var _y_diff = smooth_move_get_true_y(self) - start_y;
+		var _x = _slope * _y_diff + start_x;
+		return _x;
 	}
-	
-	get_magnitude_y = function() {
-		var _sin_value = snap_sin(angle);
-		var _result = _sin_value * delta
-		return _result;
-	};
+}
+
+/**
+ * Get the current y position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_true_y(_smooth_move) {
+	with(_smooth_move) {
+		if (delta == 0) return start_y;
+		if (!infer_y_from_x()) {
+			var _change = get_magnitude_y();
+			var _result = start_y + _change;
+			return _result;
+		}
+		
+		// derive y position from linear line function of x
+		var _slope = slope();
+		var _x_diff = smooth_move_get_true_x(self) - start_x;
+		var _y = _slope * _x_diff + start_y;
+		return _y;
+	}
 }
 
 /**
@@ -95,6 +149,8 @@ function SmoothMove(_x, _y) constructor {
  */
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
+		return round_towards(smooth_move_get_true_x(self), start_x);
+		/*
 		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
 			var _change = round_to_zero(get_magnitude_x());
@@ -107,6 +163,7 @@ function smooth_move_get_x(_smooth_move) {
 		var _y_diff = smooth_move_get_y(self) - start_y;
 		var _x = round_to_zero(_slope * _y_diff) + start_x;
 		return _x;
+		*/
 	}
 }
 
@@ -117,6 +174,8 @@ function smooth_move_get_x(_smooth_move) {
  */
 function smooth_move_get_y(_smooth_move) {
 	with(_smooth_move) {
+		return round_towards(smooth_move_get_true_y(self), start_y);
+		/*
 		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
 			var _change = round_to_zero(get_magnitude_y());
@@ -129,6 +188,7 @@ function smooth_move_get_y(_smooth_move) {
 		var _x_diff = smooth_move_get_x(self) - start_x;
 		var _y = round_to_zero(_slope * _x_diff) + start_y;
 		return _y;
+		*/
 	}
 }
 
@@ -143,8 +203,6 @@ function smooth_move_advance(_smooth_move, _magnitude) {
 	}
 }
 
-
-
 /**
  * Set the vector of the given SmoothMove instance.
  *
@@ -154,7 +212,14 @@ function smooth_move_advance(_smooth_move, _magnitude) {
 function smooth_move_set_angle(_smooth_move, _angle) {
 	with (_smooth_move) {
 		while (_angle < 0) _angle += (2 * pi);
-		angle = _angle
+		var _x = smooth_move_get_true_x(self);
+		var _y = smooth_move_get_true_y(self);
+		
+		delta -= sqrt(sqr(_x - start_x) + sqr(_y - start_y));
+		
+		start_x = _x;
+		start_y = _y;
+		angle = _angle;
 	}
 }
 
@@ -167,7 +232,7 @@ function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
 	with (_smooth_move) {
 		// angle of 0 corresponds to straight along positive x axis
 		
-		if (_magnitude_x == 0) return _magnitude_y >= 0 ? pi/2 : 3*pi/2;
+		//if (_magnitude_x == 0) return _magnitude_y >= 0 ? pi/2 : 3*pi/2;
 	
 		var _angle = arctan2(_magnitude_y, _magnitude_x);
 	
