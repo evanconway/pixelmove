@@ -21,7 +21,8 @@ stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 if (stick_mag > 0) {
 	_angle = stick_angle;
-	_vel = stick_mag * 1;
+	//_vel = stick_mag * 1;
+	_vel = 1
 }
 
 prev_x = smooth_move_get_x(smooth_move);
@@ -31,11 +32,11 @@ if (x == 161 && y == 38) {
 	show_debug_message("debug");
 }
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
+//smooth_move_by_vector(smooth_move, _angle, _vel);
 //smooth_move_by_vector(smooth_move, angle, 1);
 //angle += 0.033;
 
-//smooth_move_by_magnitudes(smooth_move, 1, 0.3);
+smooth_move_by_magnitudes(smooth_move, 1, 0.3);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);

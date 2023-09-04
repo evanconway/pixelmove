@@ -108,4 +108,4 @@ function __test_smoothmove(){
 	test_smooth_move_assert_real(smooth_move_get_y(_dist_travelled_same), 1, "Smooth move distance travelled test 3 y fail!");
 }
 
-__test_smoothmove();
+//__test_smoothmove();

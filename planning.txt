@@ -196,3 +196,46 @@ Our small fix certainly helps a lot, but we're not quite there. There are now sm
 We've improved it. But it's clear we don't fully understand what's happening under the hood, or what should be happeneing. From observation and expermientation. We found out that gaps were likely happening when slope type did not change. By only accounting for the missed x/y changes when slope stays the same, we were able to get rid of some gaps. But I still see gaps happen sometimes. And after digging some more, it's clear that sometimes the gaps appear because of our new fix! I'm tempted to try one more thing for today and then give up. Let's see if we can "store" a change. We'll mark that a distance_x/y integer change should have happened using our current logic. But then when we actually update distances, if the distance update accounts for our stored change, we won't make it. 
 
 The fix didn't work. My brain is fried. We'll have to look at this some other time.
+
+
+3rd of September, 2023
+
+Coming back to this with a fresher head. Still don't really understand what's going on underneath the hood, but I have some thoughts I should get down.
+
+Firstly, something that became clear to me is that using the same distance_x when the the vector changes slightly is wrong. Imagine we have a slope of 1, and we've travelled 0.8 along the x axis. Well if we use basic vector math, travelling 0.8 along the x axis with a slope of 1 is the same as travelling 1.13 along that vector. Now imagine if that was our state:
+
+start_x: 0
+start_y: 0
+magnitude_x: 1
+magnitude_y: 1
+distance_x: 0.8
+distance_y: 0.8
+
+With our current "round distance changes towards 0" logic, this results in a position of (0, 0). But what if we changed the slope from 1 to 0? Suddenly our state would be:
+
+start_x: 0
+start_y: 0
+magnitude_x: 1
+magnitude_y: 0
+distance_x: 0.8
+distance_y: 0.8
+
+This would yield the same position of (0, 0), but that's not correct! It should be:
+
+start_x: 0
+start_y: 0
+magnitude_x: 1
+magnitude_y: 0
+distance_x: 0.131
+distance_y: 
+
+Which would yield a position of (1, 0). I believe we should hold a rule in our logic that changing vectors maintains the distance travelled along the vector. This does break physics but let's go with it for now and see what we come up with first. The only time we'll clear distance travelled is when the magnitude of the new vector is 0.
+
+In fact I'm very tempted to go back to our old system of maintaining the actual magnitude and angle of the vector in our state instead of the x/y magnitudes. Actually I'm not even sure we need to keep track of "magnitude". We could just keep track of distance travelled at that angle since we can reset our start_x/y positions once both have crossed the integer threshold. Our new state could literally be:
+
+start_x
+start_y
+angle
+distance
+
+We could infer slope from the angle, and use the logic we have now for determining if we're inferring y from x or x from y. Let's try this.

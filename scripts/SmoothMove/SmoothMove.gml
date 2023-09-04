@@ -83,6 +83,40 @@ function SmoothMove(_x, _y) constructor {
 	get_vector_magnitude = function() {
 		return round_to_thousandths(sqrt(sqr(magnitude_x) + sqr(magnitude_y)));
 	}
+	
+	/**
+	 * recalculates the start and distance values for x and y. 
+	 */
+	recalculate_start_and_distance = function() {
+		var _x = smooth_move_get_x(self);
+		var _y = smooth_move_get_y(self);
+		
+		// with slope of 0, for either axis, just remove integer changes
+		if (slope() == 0) {
+			start_x = _x;
+			start_y = _y;
+			distance_x = round_to_thousandths(distance_x - round_to_zero(distance_x));
+			distance_y = round_to_thousandths(distance_y - round_to_zero(distance_y));
+			return;
+		}
+		
+		// end if there's not enough progress along off axis
+		if (start_x == _x || start_y == _y) return;
+		
+		var _delta = infer_y_from_x() ? _y - start_y : _x - start_x;
+		if (infer_y_from_x()) {
+			var _num_of_y_changes = _y - start_y;
+			var _x_change = _num_of_y_changes / slope();
+			distance_x -= _x_change;
+		} else {
+			var _num_of_x_changes = _x - start_x;
+			var _y_change = _num_of_x_changes / slope();
+			distance_y -= _y_change;
+		}
+		
+		start_x = _x;
+		start_y = _y;
+	}
 }
 
 /**
@@ -138,13 +172,7 @@ function smooth_move_advance(_smooth_move) {
 	with (_smooth_move) {
 		distance_x = round_to_thousandths(distance_x + magnitude_x);
 		distance_y = round_to_thousandths(distance_y + magnitude_y);
-		var _x = smooth_move_get_x(self);
-		var _y = smooth_move_get_y(self);
-		if (start_x == _x || start_y == _y) return;
-		start_x = _x;
-		distance_x = round_to_thousandths(distance_x - round_to_zero(distance_x));
-		start_y = _y;
-		distance_y = round_to_thousandths(distance_y - round_to_zero(distance_y));
+		recalculate_start_and_distance();
 	}
 }
 
@@ -161,6 +189,15 @@ function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y)
 		_magnitude_y = round_to_thousandths(_magnitude_y);
 		if (_magnitude_x == magnitude_x && _magnitude_y == magnitude_y) return;
 		
+		magnitude_x = _magnitude_x;
+		magnitude_y = _magnitude_y;
+		
+		if (magnitude_x == 0 && magnitude_y == 0) {
+			distance_x = 0;
+			distance_y = 0;
+		}
+		
+		/*
 		var _x = smooth_move_get_x(self);
 		var _y = smooth_move_get_y(self);
 		
@@ -191,6 +228,7 @@ function smooth_move_set_xy_magnitudes(_smooth_move, _magnitude_x, _magnitude_y)
 			if (_infer_y_from_x &&!_changed_y) start_y += _int_dist_y;
 			if (!_infer_y_from_x && !_changed_x) start_x += _int_dist_x;
 		}
+		*/
 	}
 }
 
