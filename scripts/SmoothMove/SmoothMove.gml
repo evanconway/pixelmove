@@ -138,6 +138,13 @@ function smooth_move_advance(_smooth_move) {
 	with (_smooth_move) {
 		distance_x = round_to_thousandths(distance_x + magnitude_x);
 		distance_y = round_to_thousandths(distance_y + magnitude_y);
+		var _x = smooth_move_get_x(self);
+		var _y = smooth_move_get_y(self);
+		if (start_x == _x || start_y == _y) return;
+		start_x = _x;
+		distance_x = round_to_thousandths(distance_x - round_to_zero(distance_x));
+		start_y = _y;
+		distance_y = round_to_thousandths(distance_y - round_to_zero(distance_y));
 	}
 }
 
