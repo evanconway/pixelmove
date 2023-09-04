@@ -27,13 +27,16 @@ if (stick_mag > 0) {
 prev_x = smooth_move_get_x(smooth_move);
 prev_y = smooth_move_get_y(smooth_move);
 
-if (x == 89 && y == 61) {
+if (keyboard_check(vk_space) && _vel == 0) {
 	show_debug_message("debug");
 }
 
-//smooth_move_by_vector(smooth_move, _angle, _vel);
-smooth_move_by_vector(smooth_move, angle, 1);
-angle += 0.033;
+var _pre_move_x = smooth_move_get_x(smooth_move);
+var _pre_move_y = smooth_move_get_y(smooth_move);
+
+smooth_move_by_vector(smooth_move, _angle, _vel);
+//smooth_move_by_vector(smooth_move, angle, 1);
+//angle += 0.033;
 
 //smooth_move_by_magnitudes(smooth_move, 0.3, 1);
 //smooth_move_by_magnitudes(smooth_move, 1, 0.3);
@@ -57,13 +60,12 @@ angle += 0.033;
 //smooth_move_by_magnitudes(smooth_move, 1, toggle_y);
 //toggle_y = toggle_y == 0 ? 0.3 : 0;
 
+//smooth_move_by_magnitudes(smooth_move, 0.3, 0.2);
+
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
 
 var _delta = smooth_move.delta;
-var _total_delta_x = smooth_move.total_delta_x;
-var _total_delta_y = smooth_move.total_delta_y;
-var _off_axis_delta = smooth_move.off_axis_delta;
 
 x = _x;
 y = _y;

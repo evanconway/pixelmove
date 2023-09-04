@@ -253,3 +253,14 @@ A logic point that I'm having trouble understanding is if this change along the 
 Oh wait. I just had the dumbest idea in the world. What if we allowed SmoothMove to keep track of non-integer start_x/y positions? And we simply calculate the resultant x/y from our vector as we've been doing? We'd only reset the start_x/y to their integer values when tried to advance with a magnitude of 0. Let's see where this gets us first.
 
 This new strat may have been the correct choice all along. However there are still some weird bugs. It's 5:00am and I should've gone to bed so many hours ago. Tomorrow (later today) we'll solve this.
+
+
+September 4th, 2023
+
+Ok I slept like crap, but our brain is at least slightly fresher. We uncovered the issue from last night. We weren't capping our angle between 0 and 2pi, so our angle was actually greater than 2pi at certain points. Since our logic doesn't account for that, we were using the wrong slope calculation and dividing by 0.
+
+This new system is looking promising, but there's still a few things to work out. Next we need to be sure that it will never create stair steps. Next let's try and force stair steps, and then uncover what's causing them.
+
+So basically we weren't actually inferring x or y from the other, and only using integer values. We were just display a real rounded somehow, which is no different from just tracking the x/y and displaying it rounded. We have another bug, this time when travelling at certain diagonals the final x/y position after travelling with a magnitude of 0 changes from what it should be. It looks like this is because we change the start_x/y on angle change (which also happens when we set vel to 0). But since we need the old start_x/y to generate the correct integer x/y position, we can't. The data has changed once we change start_x/y to the new one. Instead let's try only updating the start_x/y when changing delta with a different angle. We'll have to track the previous angle for this to work.
+
+Nope. Our fix did not work. I'm still confused and I'm ready to give up on this project.

@@ -11,10 +11,8 @@ function SmoothMove(_x, _y) constructor {
 	angle = 0;
 	delta = 0;
 	
-	off_axis_delta = 0;
-	
-	total_delta_x = 0;
-	total_delta_y = 0;
+	last_delta_change_x = start_x;
+	last_delta_change_y = start_y;
 	
 	/**
 	 * Rounds given value to 0 if it's already close. This is mostly to deal
@@ -65,7 +63,9 @@ function SmoothMove(_x, _y) constructor {
 	 * Given real _a and real _b, returns _a rounded in the direction of floor(_b). 
 	 */
 	function round_towards(_a, _b) {
-		return (_a - floor(_b) >= 0) ? floor(_a) : ceil(_a);
+		var _floored_b = floor(_b);
+		var _result = (_a - _floored_b) >= 0 ? floor(_a) : ceil(_a);
+		return _result;
 	}
 	
 	/**
@@ -92,6 +92,7 @@ function SmoothMove(_x, _y) constructor {
 	 * whether the x or y magnitude of the 2D vector is greater.
 	 */
 	slope = function() {
+		if (delta == 0) return 0;
 		var _magnitude_x = get_magnitude_x();
 		var _magnitude_y = get_magnitude_y();
 		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
@@ -149,21 +150,15 @@ function smooth_move_get_true_y(_smooth_move) {
  */
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
-		return round_towards(smooth_move_get_true_x(self), start_x);
-		/*
-		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
-			var _change = round_to_zero(get_magnitude_x());
-			var _result = start_x + _change;
-			return _result;
+			return round_towards(smooth_move_get_true_x(self), start_x);
 		}
 		
 		// derive x position from linear line function of y
 		var _slope = slope();
-		var _y_diff = smooth_move_get_y(self) - start_y;
-		var _x = round_to_zero(_slope * _y_diff) + start_x;
-		return _x;
-		*/
+		var _y_diff = smooth_move_get_y(self) - floor(start_y);
+		var _x = round_to_thousandths(_slope * _y_diff + start_x);
+		return round_towards(_x, start_x);
 	}
 }
 
@@ -174,21 +169,15 @@ function smooth_move_get_x(_smooth_move) {
  */
 function smooth_move_get_y(_smooth_move) {
 	with(_smooth_move) {
-		return round_towards(smooth_move_get_true_y(self), start_y);
-		/*
-		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
-			var _change = round_to_zero(get_magnitude_y());
-			var _result = start_y + _change;
-			return _result;
+			return round_towards(smooth_move_get_true_y(self), start_y);
 		}
 		
 		// derive y position from linear line function of x
 		var _slope = slope();
-		var _x_diff = smooth_move_get_x(self) - start_x;
-		var _y = round_to_zero(_slope * _x_diff) + start_y;
-		return _y;
-		*/
+		var _x_diff = smooth_move_get_x(self) - floor(start_x);
+		var _y = round_to_thousandths(_slope * _x_diff + start_y);
+		return round_towards(_y, start_y);
 	}
 }
 
@@ -199,7 +188,14 @@ function smooth_move_get_y(_smooth_move) {
  */
 function smooth_move_advance(_smooth_move, _magnitude) {
 	with (_smooth_move) {
-		delta = _magnitude == 0 ? 0 : delta + _magnitude;
+		if (_magnitude == 0) {
+			start_x = last_delta_change_x;
+			start_y = last_delta_change_y;
+			delta = 0;
+		}
+		delta += _magnitude;
+		last_delta_change_x = smooth_move_get_x(self);
+		last_delta_change_y = smooth_move_get_y(self);
 	}
 }
 
@@ -212,6 +208,9 @@ function smooth_move_advance(_smooth_move, _magnitude) {
 function smooth_move_set_angle(_smooth_move, _angle) {
 	with (_smooth_move) {
 		while (_angle < 0) _angle += (2 * pi);
+		while (_angle >= 2 * pi) _angle -= (2 * pi);
+		if (_angle == angle) return;
+		
 		var _x = smooth_move_get_true_x(self);
 		var _y = smooth_move_get_true_y(self);
 		
