@@ -168,6 +168,26 @@ function __test_smoothmove(){
 		}
 	}
 	
+	// stairsteps
+	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
+	var _stair = new SmoothMove(0, 0);
+	var _stair_positions = ds_map_create();
+	var _stair_x = smooth_move_get_x(_stair);
+	var _stair_y = smooth_move_get_y(_stair);
+	ds_map_set(_stair_positions, _stair_x, _stair_y);
+	smooth_move_by_magnitudes(_stair, 0.2, 0);
+	for (var _i = 0; _i < 100; _i++) {
+		smooth_move_by_magnitudes(_stair, 0.2, 0.2);
+			_stair_x = smooth_move_get_x(_stair);
+			_stair_y = smooth_move_get_y(_stair);
+			if (ds_map_exists(_stair_positions, _stair_x) && ds_map_find_value(_stair_positions, _stair_x) != _stair_y) {
+				show_error($"Smooth move stair step test fail! Y of {ds_map_find_value(_stair_positions, _stair_x)} and {_stair_y} for x: {_stair_x}", true);
+			}
+			ds_map_set(_stair_positions, _stair_x, _stair_y);
+	}
+	
+	
+	
 	// set position
 	var _set_pos = new SmoothMove(0, 0);
 	for (var _i = 0; _i < 1000; _i++) {
@@ -212,4 +232,4 @@ function __test_smoothmove(){
 	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 }
 
-if (false) __test_smoothmove();
+if (true) __test_smoothmove();
