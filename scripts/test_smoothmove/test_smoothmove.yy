@@ -5,7 +5,7 @@
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "gamemaker-smoothmove",
-    "path": "gamemaker-smoothmove.yyp",
+    "name": "tests",
+    "path": "folders/SmoothMove/tests.yy",
   },
 }

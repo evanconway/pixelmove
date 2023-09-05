@@ -12,6 +12,7 @@
   "defaultScriptType": 1,
   "Folders": [
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"SmoothMove","folderPath":"folders/SmoothMove.yy",},
+    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"tests","folderPath":"folders/SmoothMove/tests.yy",},
   ],
   "IncludedFiles": [],
   "isEcma": false,
@@ -23,7 +24,7 @@
     {"id":{"name":"fnt_tiny","path":"fonts/fnt_tiny/fnt_tiny.yy",},},
     {"id":{"name":"spr_demo_smooth_move_wall","path":"sprites/spr_demo_smooth_move_wall/spr_demo_smooth_move_wall.yy",},},
     {"id":{"name":"o_demo_smooth_move","path":"objects/o_demo_smooth_move/o_demo_smooth_move.yy",},},
-    {"id":{"name":"o_test_control_stick","path":"objects/o_test_control_stick/o_test_control_stick.yy",},},
+    {"id":{"name":"obj_test_auto_complete","path":"objects/obj_test_auto_complete/obj_test_auto_complete.yy",},},
     {"id":{"name":"spr_demo_smooth_move_background","path":"sprites/spr_demo_smooth_move_background/spr_demo_smooth_move_background.yy",},},
     {"id":{"name":"spr_demo_smooth_move_player","path":"sprites/spr_demo_smooth_move_player/spr_demo_smooth_move_player.yy",},},
     {"id":{"name":"SmoothMove","path":"scripts/SmoothMove/SmoothMove.yy",},},

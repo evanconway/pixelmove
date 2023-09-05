@@ -6,9 +6,13 @@
  * @param {Real} _y starting y position
  */
 function SmoothMove(_x, _y) constructor {
+	// @ignore
 	start_x = _x;
+	// @ignore
 	start_y = _y;
+	// @ignore
 	angle = 0;
+	// @ignore
 	delta = 0;
 	
 	/*
@@ -16,6 +20,7 @@ function SmoothMove(_x, _y) constructor {
 	linear line algorithm, and what the position would have been if position was
 	calculated normally.
 	*/
+	// @ignore
 	error_correction = {
 		start_x: start_x,
 		start_y: start_y,
@@ -30,6 +35,7 @@ function SmoothMove(_x, _y) constructor {
 	 * 
 	 * @param {real} _a angle a in radians
 	 * @param {real} _b angle b in radians
+	 * @ignore
 	 */
 	function get_angle_diff(_a, _b) {
 		var _diff1 = abs(_a - _b);
@@ -42,6 +48,7 @@ function SmoothMove(_x, _y) constructor {
 	 * with sin and cos not returning a perfect 0 on certain values.
 	 *
 	 * @param {real} _value
+	 * @ignore
 	 */
 	function snap_to_zero(_value) {
 		return abs(_value) < 0.001 ? 0 : _value;
@@ -51,6 +58,7 @@ function SmoothMove(_x, _y) constructor {
 	 * Wrapper function around sin that snaps the result to 0 if it's within 0.001 of 0.
 	 *
 	 * @param {real} _angle angle in radians
+	 * @ignore
 	 */
 	function snap_sin(_angle) {
 		return snap_to_zero(sin(_angle));
@@ -60,6 +68,7 @@ function SmoothMove(_x, _y) constructor {
 	 * Wrapper function around cos that snaps the result to 0 if it's within 0.001 of 0.
 	 *
 	 * @param {real} _angle angle in radians
+	 * @ignore
 	 */
 	function snap_cos(_angle) {
 		return snap_to_zero(cos(_angle));
@@ -70,6 +79,7 @@ function SmoothMove(_x, _y) constructor {
 	 * and their intermediates.
 	 *
 	 * @param {real} _angle
+	 * @ignore
 	 */
 	function snap_to_cardinals(_angle) {
 		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
@@ -83,7 +93,10 @@ function SmoothMove(_x, _y) constructor {
 		return _angle;
 	}
 	
-	// @param {real} _value
+	/**
+	 * @param {real} _value
+	 * @ignore
+	 */
 	function round_to_thousandths(_value) {
 		var _result = floor(_value * 1000 + 0.5) / 1000;
 		return _result;
@@ -93,6 +106,8 @@ function SmoothMove(_x, _y) constructor {
 	 * Given real _a and real _b, returns _a rounded in the direction of _b. It is possible for 
 	 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole
 	 * number value.
+	 *
+	 * @ignore
 	 */
 	function round_towards(_a, _b) {
 		var _result = (_a - _b) >= 0 ? floor(_a) : ceil(_a);
@@ -105,6 +120,7 @@ function SmoothMove(_x, _y) constructor {
 	 * magnitude, indicating that the y position should be inferred from the x position.
 	 * Returns false if the reverse is true.
 	 *
+	 * @ignore
 	 */
 	infer_y_from_x = function() {
 		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
@@ -112,6 +128,8 @@ function SmoothMove(_x, _y) constructor {
 	
 	/**
 	 * Get the x magnitude given the given angle and delta.
+	 *
+	 * @ignore
 	 */
 	get_magnitude_x = function() {
 		return snap_cos(angle) * delta;
@@ -119,6 +137,8 @@ function SmoothMove(_x, _y) constructor {
 	
 	/**
 	 * Get the y magnitude given the current angle and delta.
+	 *
+	 * @ignore
 	 */
 	get_magnitude_y = function() {
 		return snap_sin(angle) * delta;
@@ -129,6 +149,7 @@ function SmoothMove(_x, _y) constructor {
 	 *
 	 * @param {real} _angle
 	 * @param {real} _delta
+	 * @ignore
 	 */
 	function get_x_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
@@ -140,6 +161,7 @@ function SmoothMove(_x, _y) constructor {
 	 *
 	 * @param {real} _angle
 	 * @param {real} _delta
+	 * @ignore
 	 */
 	function get_y_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
@@ -150,16 +172,18 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
 	 * whether the x or y magnitude of the 2D vector is greater.
+	 *
+	 * @ignore
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		var _magnitude_x = get_magnitude_x();
-		var _magnitude_y = get_magnitude_y();
 		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
 	}
 	
 	/**
 	 * Reset the start and delta values of this instance.
+	 *
+	 * @ignore
 	 */
 	reset = function() {
 		var _x = smooth_move_get_x(self);

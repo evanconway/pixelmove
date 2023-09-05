@@ -87,8 +87,10 @@ if (_x != positions[positions_index][0] || _y != positions[positions_index][1]) 
 	positions[positions_index] = [_x, _y];
 }
 
+/*
 draw_set_color(c_lime);
 for (var _i = 0; _i < array_length(positions); _i++) {
 	draw_point(positions[_i][0], positions[_i][1]);
 }
+*/
 

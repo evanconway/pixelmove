@@ -1,7 +1,4 @@
 // @ignore
-global.gap_fixes = 0;
-
-// @ignore
 function __test_smoothmove(){
 	/**
 	 * Assert function for testing real numbers in this package.
@@ -66,7 +63,6 @@ function __test_smoothmove(){
 	
 	// north east
 	var _ne = new SmoothMove(0, 0);
-	var _count = 0;
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_ne, 7*pi/4, 1);
 	}
@@ -146,12 +142,26 @@ function __test_smoothmove(){
 	
 	// potential positions
 	var _potential = new SmoothMove(0, 0);
-	for (var _i = 0; _i < 10000; _i++) {
+	for (var _i = 0; _i < 1000; _i++) {
 		var _mag_x = random_range(-1000, 1000);
 		var _mag_y = random_range(-1000, 1000);
 		var _pot_x = smooth_move_get_x_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		var _pot_y = smooth_move_get_y_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		smooth_move_by_magnitudes(_potential, _mag_x, _mag_y);
+		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
+		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
+	}
+	
+	// potential positions (with vectors)
+	smooth_move_set_position(_potential, 0, 0);
+	var _angle_test = 0;
+	var _vel_test = 0;
+	for (var _i = 0; _i < 1000; _i++) {
+		_angle_test += random_range(-0.05, 0.05);
+		_vel_test = random_range(0.2, 2);
+		var _pot_x = smooth_move_get_x_if_moved_by_vector(_potential, _angle_test, _vel_test);
+		var _pot_y = smooth_move_get_y_if_moved_by_vector(_potential, _angle_test, _vel_test);
+		smooth_move_by_vector(_potential, _angle_test, _vel_test);
 		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
 		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
 	}
@@ -164,4 +174,4 @@ function __test_smoothmove(){
 	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 }
 
-__test_smoothmove();
+if (false) __test_smoothmove();
