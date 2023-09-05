@@ -324,3 +324,7 @@ Got some insight into what's causing the stair stepping. Firstly, we're definite
 
 If the angle changed, we fit the line equation to the error.
 If the angle did not change, we fit the error to the line equation.
+
+We've made a new error correction system that passes our basic stair step test. And also appears to be "correct" but still doesn't feel right. And from my study here's why: When there is an error, we changed the error to correct towards the line if the angle had not changed. This fixes stair stepping, but introduces the same problem we've seen before of resetting the accumulated error to 0. If we move a few frames at an angle close to zero, then increase it slightly and move a few more frames, increase slightly again and move a few more, each time we change the angle the calculated position and error position will be the same, but we erase whatever accumulated, unaccounted for error there was. So we need to not "set" the error to the line, but adjust it by the difference.
+
+Man I just thought. Maybe I'm waaaay over complicated this by having a vector for error correction. What if we just kept track of a simple real x/y position, modified by the exact x/y magnitudes of all changes. We could be lazy and just floor it to get the integer value. And whenever the error between this error and our calculated position is too great, we simply adjust our line towards this error? Let's make a new branch and try that.

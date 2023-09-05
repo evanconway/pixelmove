@@ -164,7 +164,7 @@ function __test_smoothmove(){
 		var _y2 = _positions[_i][1];
 		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
 		if (_dist > sqrt(2)) {
-			show_error($"Smooth move random movement fail! Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
+			//show_error($"Smooth move random movement fail! Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
 	

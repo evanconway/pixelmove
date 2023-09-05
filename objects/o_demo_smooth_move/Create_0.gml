@@ -14,5 +14,4 @@ stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 
 angle = 0;
-
-smooth_move_by_magnitudes(smooth_move, 0, 0.2);
+toggle = false;

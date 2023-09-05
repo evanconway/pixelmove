@@ -332,33 +332,35 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		
 		// error correction
-		
-		// if angle changed, fit smooth move line to error, otherwise fit error to line
-		// if there is gap, always fix line towards correction.
 		/*
+		The general rule here is that if the angle has changed, we match the calculated
+		line to the error. But if the angle stayed the same, we match the error to
+		the calculated line.
+		*/
+		
+		// if error is so great there's a gap, we move calculated line halfway towards to error
 		if (_error > sqrt(2)) {
 			start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
 			start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
 			delta = 0;
 		} else if (_error >= 1 && _angle_changed) {
+			error_correction.component_x -= (_error_x - error_correction.start_x);
+			error_correction.component_y -= (_error_y - error_correction.start_y);
 			error_correction.start_x = _error_x;
 			error_correction.start_y = _error_y;
-			error_correction.component_x = 0;
-			error_correction.component_y = 0;
 			start_x = _error_x;
 			start_y = _error_y;
 			delta = 0;
 		} else if (_error >= 1 && !_angle_changed) {
-			error_correction.start_x = _calculated_x;
-			error_correction.start_y = _calculated_y;
 			error_correction.component_x = 0;
 			error_correction.component_y = 0;
+			
+			error_correction.start_x = _calculated_x;
+			error_correction.start_y = _calculated_y;
 		}
-		*/
 		
 		
-		// old
-		
+		/*
 		var _error_slope = 0;
 		with (error_correction) if (component_x != 0 || component_y != 0) {
 			_error_slope = component_x > component_y ? component_y / component_x : component_x / component_y;
@@ -366,26 +368,28 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		var _same_equation = (slope() == _error_slope) && (start_x == error_correction.start_x) && (start_y == error_correction.start_y);
 		
-		if ((_error >= 1) && (_angle_changed || !_same_equation)) {
-			// If the error distance is greater than sqrt(2) (adjacent pixels), we'll set the smooth move position
-			// to a pixel in between it's calculated position and the error position.
-			if (_error > sqrt(2)) {
-				start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
-				start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
-			} else if (_error_x != _calculated_x && _error_y != _calculated_y) {
-				error_correction.start_x = _error_x;
-				error_correction.start_y = _error_y;
-				error_correction.component_x = 0;
-				error_correction.component_y = 0;
-				start_x = _error_x;
-				start_y = _error_y;
-			} else {
-				start_x = _error_x;
-				start_y = _error_y;
-			}
+		var _ok_check_error = _angle_changed || !_same_equation;
+		
+		// If the error distance is greater than sqrt(2) (adjacent pixels), we'll set the smooth move position
+		// to a pixel in between it's calculated position and the error position.
+		if (_error > sqrt(2) && _ok_check_error) {
+			start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
+			start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
+			delta = 0;
+		} else if (_error_x != _calculated_x && _error_y != _calculated_y && _ok_check_error) {
+			error_correction.start_x = _error_x;
+			error_correction.start_y = _error_y;
+			error_correction.component_x = 0;
+			error_correction.component_y = 0;
+			start_x = _error_x;
+			start_y = _error_y;
+			delta = 0;
+		} else if (_error >= 1 && _ok_check_error) {
+			start_x = _error_x;
+			start_y = _error_y;
 			delta = 0;
 		}
-		
+		*/
 	}
 }
 
