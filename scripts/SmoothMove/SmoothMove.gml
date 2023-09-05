@@ -75,7 +75,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	function round_towards(_a, _b) {
 		var _result = (_a - _b) >= 0 ? floor(_a) : ceil(_a);
-		return _result;
+		return _result == 0 ? 0 : _result; // prevents -0
 	}
 	
 	/**
@@ -264,14 +264,14 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		if (_angle >= 2*pi) _angle %= 2*pi;
 		
 		// snap to cardinals and intermediates
-		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4
-		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
 		
 		if ((_delta == 0) || (abs(angle - _angle) >= pi/4)) {
 			error_correction.component_x = 0;
@@ -291,17 +291,10 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
 		
-		//var _real_calculated_x = smooth_move_get_real_x(self);
-		//var _real_calculated_y = smooth_move_get_real_y(self);
-		
 		var _error_x = round_towards(error_correction.start_x + error_correction.component_x, error_correction.start_x);
 		var _error_y = round_towards(error_correction.start_y + error_correction.component_y, error_correction.start_y);
 		
-		//var _real_error_x = error_correction.start_x + error_correction.component_x;
-		//var _real_error_y = error_correction.start_y + error_correction.component_y;
-		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
-		//var _real_error = sqrt(sqr(_real_error_x - _real_calculated_x) + sqr(_real_error_y - _real_calculated_y));
 		
 		var _error_slope = 0;
 		with (error_correction) if (component_x != 0 || component_y != 0) {
@@ -310,8 +303,7 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		
 		var _same_equation = (slope() == _error_slope) && (start_x == error_correction.start_x) && (start_y == error_correction.start_y);
 		
-		
-		if (_angle_changed || (_error >= 1) && !_same_equation) {
+		if ((_error >= 1) && (_angle_changed || !_same_equation)) {
 			if (_error_x != _calculated_x && _error_y != _calculated_y) {
 				error_correction.start_x = _error_x;
 				error_correction.start_y = _error_y;

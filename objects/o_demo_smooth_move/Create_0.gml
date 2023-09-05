@@ -21,4 +21,4 @@ prev_y = smooth_move_get_y(smooth_move);
 angle = 0;
 
 
-toggle_y = 0;
+toggle = false;

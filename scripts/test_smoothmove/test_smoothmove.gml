@@ -63,6 +63,7 @@ function __test_smoothmove(){
 	
 	// north east
 	var _ne = new SmoothMove(0, 0);
+	var _count = 0;
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_ne, 7*pi/4, 1);
 	}
@@ -106,4 +107,4 @@ function __test_smoothmove(){
 	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
 }
 
-//__test_smoothmove();
+__test_smoothmove();
