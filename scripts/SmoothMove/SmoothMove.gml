@@ -162,6 +162,18 @@ function SmoothMove(_x, _y) constructor {
 }
 
 /**
+ * Sets the slide on collide property of the given SmoothMove instance. When set to false, collisions
+ * forbid any movement once detected. When true, SmoothMove will attempt to move along the x and y
+ * axis separately.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {bool} _slide_on_collide
+ */
+function smooth_move_set_slide_on_collide(_smooth_move, _slide_on_collide) {
+	_smooth_move.slide_on_collide = _slide_on_collide;
+}
+
+/**
  * Get the current x position of the given SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
@@ -208,8 +220,30 @@ function smooth_move_get_y(_smooth_move) {
 }
 
 /**
+ * Sets the position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _x
  * @param {real} _y
+ */
+function smooth_move_set_position(_smooth_move, _x, _y) {
+	_x = floor(_x);
+	_y = floor(_y);
+	with (_smooth_move) {
+		start_x = _x;
+		start_y = _y;
+		delta = 0;
+		error_correction.start_x = _x;
+		error_correction.start_y = _y;
+		error_correction.component_x = 0;
+		error_correction.component_y = 0;
+	}
+}
+
+/**
+ * @param {real} _x
+ * @param {real} _y
+ * @ignore
  */
 function smooth_move_default_collide(_x, _y) {
 	return false;

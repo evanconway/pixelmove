@@ -311,3 +311,7 @@ Just added some code for collision checking. It's not quite right but seems to b
 5th of September, 2023
 
 We were able to fix the bug with our collision sliding fairly easily as well as catch a missed infinite loop bug. Next step is to write more and complete tests for collisions.
+
+Wait a second. I just realized we shouldn't put collisions in at all. Collisions are so game specific, our collision system might not work for the user. What we should actually do is add a "position if moved by vector" function. Since most logic for collisions I've seen online work by checking if there would be a collision at a spot, and only moving if there's not, we need to allow for the user to know where a SmoothMove would end up if a vector was applied. Same for moving by magnitudes.
+
+So, a bit dramatic, but let's rip out all this collision code we put in. And instead put in those "potential position" functions. 

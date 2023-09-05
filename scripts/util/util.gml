@@ -43,6 +43,7 @@ function gamepad_get_left_stick_data() {
 
 /**
  * @param {Struct.SmoothMove} _smooth_move
+ * @ignore
  */
 function smooth_move_tostring(_smooth_move) {
 	with (_smooth_move) {

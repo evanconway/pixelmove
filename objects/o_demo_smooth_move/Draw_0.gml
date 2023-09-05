@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 3;
+var _max_vel = 2;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -39,7 +39,7 @@ var _y = smooth_move_get_y(smooth_move);
 x = _x;
 y = _y;
 
-//draw_self();
+draw_self();
 
 if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
@@ -55,3 +55,4 @@ draw_set_color(c_lime);
 for (var _i = 0; _i < array_length(positions); _i++) {
 	draw_point(positions[_i][0], positions[_i][1]);
 }
+
