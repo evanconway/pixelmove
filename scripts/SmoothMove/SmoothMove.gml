@@ -24,6 +24,20 @@ function SmoothMove(_x, _y) constructor {
 	};
 	
 	/**
+	 * Get the difference in radians between 2 angles. Both angles must be between 0
+	 * and 2*pi radians. Favors the shortest distance. For example using 7*pi/4 and
+	 * 1*pi/4 will return a difference of 2*pi/4.
+	 * 
+	 * @param {real} _a angle a in radians
+	 * @param {real} _b angle b in radians
+	 */
+	function get_angle_diff(_a, _b) {
+		var _diff1 = abs(_a - _b);
+		var _diff2 = 2*pi - _diff1;
+		return min(_diff1, _diff2);
+	}
+	
+	/**
 	 * Round given value to 0 if it's already close. This is mostly to deal
 	 * with sin and cos not returning a perfect 0 on certain values.
 	 *
@@ -254,7 +268,7 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		if (_angle >= 2*pi) _angle %= 2*pi;
 		_angle = snap_to_cardinals(_angle);
 		
-		if ((_magnitude == 0) || (abs(angle - _angle) >= pi/4)) {
+		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/2) {
 			error_correction.component_x = 0;
 			error_correction.component_y = 0;
 			error_correction.start_x = smooth_move_get_x(self);

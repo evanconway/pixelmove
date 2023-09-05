@@ -155,6 +155,13 @@ function __test_smoothmove(){
 		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
 		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
 	}
+	
+	// angle diff
+	var _angles = new SmoothMove(0, 0);
+	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(_angles.get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 }
 
 __test_smoothmove();

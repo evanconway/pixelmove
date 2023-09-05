@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 2;
+var _max_vel = 1;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -25,13 +25,49 @@ if (stick_mag > 0) {
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
+//_angle = 7*pi/4 - 0.3;
+//_vel = 1;
 
-//smooth_move_by_vector(smooth_move, angle, 1);
-//angle += random(0.011);
-//angle += toggle ? 0.03 : 0;
-//toggle = !toggle;
+// collision checking
+var _magnitude_x = cos(_angle) * _vel;
+var _magnitude_y = sin(_angle) * _vel;
 
+var _target_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _magnitude_x, _magnitude_y);
+var _target_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _magnitude_x, _magnitude_y);
+
+var _curr_x = smooth_move_get_x(smooth_move);
+var _curr_y = smooth_move_get_y(smooth_move);
+
+var _target_diff_x = _target_x - _curr_x;
+var _target_diff_y = _target_y - _curr_y;
+
+var _mod_x = 0;
+var _mod_y = 0;
+
+var _checking = (_mod_x != _target_diff_x) || (_mod_y != _target_diff_y);
+while (_checking) {
+	var _moved = false;
+	var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x + sign(_magnitude_x), _mod_y);
+	var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x + sign(_magnitude_x), _mod_y);
+	if (_mod_x != _target_diff_x && !place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
+		_mod_x += sign(_magnitude_x);
+		_moved = true;
+	}
+	var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _mod_y + sign(_magnitude_y));
+	var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _mod_y + sign(_magnitude_y));
+	if (_mod_y != _target_diff_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
+		_mod_y += sign(_magnitude_y);
+		_moved = true;
+	}
+	_checking = _moved;
+}
+
+var _final_mag_x = _mod_x == _target_diff_x ? _magnitude_x : _mod_x;
+var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
+
+smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+
+//smooth_move_by_vector(smooth_move, _angle, _vel);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
