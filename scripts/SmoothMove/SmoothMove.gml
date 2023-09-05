@@ -250,13 +250,15 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		var _error_y = round_towards(error_correction.start_y + error_correction.component_y, error_correction.start_y);
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
 		if (_error >= 1) {
+			if (_error_x != _calculated_x && _error_y != _calculated_y) {
+				error_correction.start_x = _error_x;
+				error_correction.start_y = _error_y;
+				error_correction.component_x = 0;
+				error_correction.component_y = 0;
+			}
 			start_x = _error_x;
 			start_y = _error_y;
 			delta = 0;
-			error_correction.start_x = _error_x;
-			error_correction.start_y = _error_y;
-			error_correction.component_x = 0;
-			error_correction.component_y = 0;
 		}
 	}
 }
