@@ -105,6 +105,30 @@ function __test_smoothmove(){
 	smooth_move_by_vector(_sw, 0, 0);
 	test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 2 x fail!");
 	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
+	
+	var _random = new SmoothMove(0, 0);
+	var _angle = 0;
+	var _positions = array_create(0);
+	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
+	for (var _i = 0; _i < 1000; _i++) {
+		var _frames = random_range(1, 20);
+		_angle += random(pi/4);
+		for (var _f = 0; _f < _frames; _f++) {
+			smooth_move_by_vector(_random, _angle, 1);
+			array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
+		}
+	}
+	// fails at 18?
+	for (var _i = 1; _i < array_length(_positions); _i++) {
+		var _x1 = _positions[_i -1][0];
+		var _x2 = _positions[_i][0]
+		var _y1 = _positions[_i - 1][1];
+		var _y2 = _positions[_i][1];
+		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
+		if (_dist > sqrt(2)) {
+			show_error($"Smooth move random movement fail! Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
+		}
+	}
 }
 
 __test_smoothmove();
