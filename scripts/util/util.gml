@@ -25,6 +25,18 @@ function gamepad_get_left_stick_data() {
 			_result.axis_h = _h;
 			_result.axis_v = _v;
 		}
+		
+		// d-pad overwrites
+		_h = 0;
+		_v = 0;
+		if (gamepad_button_check(_i, gp_padl)) _h -= 1;
+		if (gamepad_button_check(_i, gp_padr)) _h += 1;
+		if (gamepad_button_check(_i, gp_padu)) _v -= 1;
+		if (gamepad_button_check(_i, gp_padd)) _v += 1;
+		if (_h != 0 || _v != 0) {
+			_result.axis_h = _h;
+			_result.axis_v = _v;
+		}
 	}
 	return _result;
 }

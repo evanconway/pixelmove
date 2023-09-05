@@ -13,21 +13,20 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _vel = (_vert != 0 || _horz != 0) ? 0.5 : 0;
+var _vel = (_vert != 0 || _horz != 0) ? 1 : 0;
 
 stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h);
 if (stick_mag > 0) {
 	_angle = stick_angle;
-	//_vel = stick_mag * 1;
-	_vel = 1
+	_vel = min(stick_mag, 1);
 }
 
 prev_x = smooth_move_get_x(smooth_move);
 prev_y = smooth_move_get_y(smooth_move);
 
-if (keyboard_check(vk_space) && _vel == 0) {
+if (keyboard_check(vk_space)) {
 	show_debug_message("debug");
 }
 
@@ -37,6 +36,8 @@ var _pre_move_y = smooth_move_get_y(smooth_move);
 smooth_move_by_vector(smooth_move, _angle, _vel);
 //smooth_move_by_vector(smooth_move, angle, 1);
 //angle += 0.033;
+
+//smooth_move_by_vector(smooth_move, 6*pi/4, 1);
 
 //smooth_move_by_magnitudes(smooth_move, 0.3, 1);
 //smooth_move_by_magnitudes(smooth_move, 1, 0.3);

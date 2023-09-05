@@ -6,8 +6,8 @@
  * @param {real} _y starting y position
  */
 function SmoothMove(_x, _y) constructor {
-	start_x = floor(_x + 0.5);
-	start_y = floor(_y + 0.5);
+	start_x = _x;
+	start_y = _y;
 	angle = 0;
 	delta = 0;
 	
@@ -60,11 +60,12 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Given real _a and real _b, returns _a rounded in the direction of floor(_b). 
+	 * Given real _a and real _b, returns _a rounded in the direction of _b. It is possible for 
+	 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole
+	 * number value.
 	 */
 	function round_towards(_a, _b) {
-		var _floored_b = floor(_b);
-		var _result = (_a - _floored_b) >= 0 ? floor(_a) : ceil(_a);
+		var _result = (_a - _b) >= 0 ? floor(_a) : ceil(_a);
 		return _result;
 	}
 	
@@ -79,13 +80,54 @@ function SmoothMove(_x, _y) constructor {
 		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
 	};
 	
+	/**
+	 * Get the x magnitude given the given angle and delta.
+	 */
 	get_magnitude_x = function() {
 		return snap_cos(angle) * delta;
 	}
 	
+	/**
+	 * Get the y magnitude given the current angle and delta.
+	 */
 	get_magnitude_y = function() {
 		return snap_sin(angle) * delta;
 	};
+	
+	/**
+	 * Get the x component of the given vector.
+	 *
+	 * @param {real} _angle
+	 * @param {real} _delta
+	 */
+	function get_x_component(_angle, _delta) {
+		if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
+		return snap_cos(_angle) * _delta;
+	}
+	
+	/**
+	 * Get the y component of the given vector.
+	 *
+	 * @param {real} _angle
+	 * @param {real} _delta
+	 */
+	function get_y_component(_angle, _delta) {
+		if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
+		return snap_sin(_angle) * _delta;
+	}
+	
+	/**
+	 * Get the angle from the x axis of the vector formed by the given x and y magnitudes.
+	 *
+	 * @param {real} _x_magnitude
+	 * @param {real} _y_magnitude
+	 */
+	function get_angle_from_magnitudes(_x_magnitude, _y_magnitude) {
+		var _angle = arctan2(_y_magnitude, _x_magnitude);
+		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
+		if (_angle >= 2*pi) _angle %= 2*pi;
+		return _angle;
+	}
 	
 	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
@@ -97,50 +139,17 @@ function SmoothMove(_x, _y) constructor {
 		var _magnitude_y = get_magnitude_y();
 		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
 	}
-}
-
-/**
- * Get the current x position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_true_x(_smooth_move) {
-	with (_smooth_move) {
-		if (delta == 0) return start_x;
-		if (infer_y_from_x()) {
-			var _change = get_magnitude_x();
-			var _result = start_x + _change;
-			return _result;
-		}
-		
-		// derive x position from linear line function of y
-		var _slope = slope();
-		var _y_diff = smooth_move_get_true_y(self) - start_y;
-		var _x = _slope * _y_diff + start_x;
-		return _x;
-	}
-}
-
-/**
- * Get the current y position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_true_y(_smooth_move) {
-	with(_smooth_move) {
-		if (delta == 0) return start_y;
-		if (!infer_y_from_x()) {
-			var _change = get_magnitude_y();
-			var _result = start_y + _change;
-			return _result;
-		}
-		
-		// derive y position from linear line function of x
-		var _slope = slope();
-		var _x_diff = smooth_move_get_true_x(self) - start_x;
-		var _y = _slope * _x_diff + start_y;
-		return _y;
-	}
+	
+	/**
+	 * Resets the start and delta values of this instance.
+	 */
+	reset = function() {
+		var _x = smooth_move_get_x(self);
+		var _y = smooth_move_get_y(self);
+		start_x = _x;
+		start_y = _y;
+		delta = 0;
+	};
 }
 
 /**
@@ -150,13 +159,17 @@ function smooth_move_get_true_y(_smooth_move) {
  */
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
+		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
-			return round_towards(smooth_move_get_true_x(self), start_x);
+			var _change = get_magnitude_x();
+			var _x = start_x + _change;
+			var _result = round_towards(_x, start_x);
+			return _result;
 		}
 		
 		// derive x position from linear line function of y
 		var _slope = slope();
-		var _y_diff = smooth_move_get_y(self) - floor(start_y);
+		var _y_diff = round_towards(get_magnitude_y(), 0);
 		var _x = round_to_thousandths(_slope * _y_diff + start_x);
 		return round_towards(_x, start_x);
 	}
@@ -168,57 +181,49 @@ function smooth_move_get_x(_smooth_move) {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_y(_smooth_move) {
-	with(_smooth_move) {
+	with (_smooth_move) {
+		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
-			return round_towards(smooth_move_get_true_y(self), start_y);
+			var _change = get_magnitude_y();
+			var _y = start_y + _change;
+			var _result = round_towards(_y, start_y);
+			return _result;
 		}
 		
 		// derive y position from linear line function of x
 		var _slope = slope();
-		var _x_diff = smooth_move_get_x(self) - floor(start_x);
+		var _x_diff = round_towards(get_magnitude_x(), 0);
 		var _y = round_to_thousandths(_slope * _x_diff + start_y);
 		return round_towards(_y, start_y);
 	}
 }
 
 /**
- * Increments the given SmoothMove instance along its current vector.
+ * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to straight along positive x axis
  *
- * @param {Struct.SmoothMove} _smooth_move 
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _angle angle of vector in radians
+ * @param {real} _delta magnitude of vector
  */
-function smooth_move_advance(_smooth_move, _magnitude) {
+function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 	with (_smooth_move) {
-		if (_magnitude == 0) {
-			start_x = last_delta_change_x;
-			start_y = last_delta_change_y;
-			delta = 0;
-		}
-		delta += _magnitude;
-		last_delta_change_x = smooth_move_get_x(self);
-		last_delta_change_y = smooth_move_get_y(self);
-	}
-}
-
-/**
- * Set the vector of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move 
- * @param {real} _angle new vector angle in radians
- */
-function smooth_move_set_angle(_smooth_move, _angle) {
-	with (_smooth_move) {
-		while (_angle < 0) _angle += (2 * pi);
-		while (_angle >= 2 * pi) _angle -= (2 * pi);
-		if (_angle == angle) return;
+		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
+		if (_angle >= 2*pi) _angle %= 2*pi;
 		
-		var _x = smooth_move_get_true_x(self);
-		var _y = smooth_move_get_true_y(self);
+		// snap to cardinals and intermediates
+		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4
+		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4
 		
-		delta -= sqrt(sqr(_x - start_x) + sqr(_y - start_y));
+		if (_delta == 0 || angle != _angle) reset();
 		
-		start_x = _x;
-		start_y = _y;
 		angle = _angle;
+		delta += _delta;
 	}
 }
 
@@ -229,25 +234,8 @@ function smooth_move_set_angle(_smooth_move, _angle) {
  */
 function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
 	with (_smooth_move) {
-		// angle of 0 corresponds to straight along positive x axis
-		
-		//if (_magnitude_x == 0) return _magnitude_y >= 0 ? pi/2 : 3*pi/2;
-	
 		var _angle = arctan2(_magnitude_y, _magnitude_x);
-	
-		smooth_move_set_angle(_smooth_move, _angle);
-		smooth_move_advance(_smooth_move, sqrt(sqr(_magnitude_x) + sqr(_magnitude_y)));
-	
+		var _delta = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+		smooth_move_by_vector(_smooth_move, _angle, _delta);
 	}
 }
-
-/**
- * @param {Struct.SmoothMove} _smooth_move
- * @param {real} _angle angle of vector in radians
- * @param {real} _magnitude magnitude of vector
- */
-function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
-	smooth_move_set_angle(_smooth_move, _angle);
-	smooth_move_advance(_smooth_move, _magnitude);
-}
-
