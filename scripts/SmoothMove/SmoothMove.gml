@@ -297,8 +297,8 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_m
 		while (_colliding) {
 			var _collision = _collide(_check_x + _mod_x, _check_y + _mod_y);
 			if (!_collision) {
-				_check_x += _mod_x;
-				_check_y += _mod_y;
+				_check_x = _check_x == _final_x ? _final_x : _check_x + _mod_x;
+				_check_y = _check_y == _final_y ? _final_y : _check_y + _mod_y;
 			}
 			if (_collision && !slide_on_collide) { 
 				_colliding = false;
@@ -325,10 +325,14 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_m
 					start_x = _check_x;
 					start_y = _check_y;
 					delta = 0;
-					error_correction.start_x = _pre_move_x;
-					error_correction.start_y = _pre_move_y;
-					error_correction.component_x = _check_x - _pre_move_x;
-					error_correction.component_y = _check_y - _pre_move_y;
+					/*
+					Error vector is only way we have of tracking how far instance should have moved.
+					Only change values if final was not reached.
+					*/
+					if (_check_x != _final_x) error_correction.start_x = _pre_move_x;
+					if (_check_y != _final_y) error_correction.start_y = _pre_move_y;
+					if (_check_x != _final_x) error_correction.component_x = _check_x - _pre_move_x;
+					if (_check_y != _final_y) error_correction.component_y = _check_y - _pre_move_y;
 				}
 			}
 			if (_check_x == _final_x && _check_y == _final_y) {

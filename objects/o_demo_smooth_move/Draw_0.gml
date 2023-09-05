@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 1;
+var _max_vel = 3;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
