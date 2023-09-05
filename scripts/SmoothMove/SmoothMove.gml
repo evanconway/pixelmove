@@ -60,15 +60,6 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Returns the give value rounded whichever direction is closest to 0.
-	 */
-	function round_to_zero(_value) {
-		if (_value == 0) return 0;
-		_value = round_to_thousandths(_value);
-		return _value > 0 ? floor(_value) : ceil(_value);
-	}
-	
-	/**
 	 * Given real _a and real _b, returns _a rounded in the direction of _b. It is possible for 
 	 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole
 	 * number value.
@@ -124,19 +115,7 @@ function SmoothMove(_x, _y) constructor {
 		if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
 		return snap_sin(_angle) * _delta;
 	}
-	
-	/**
-	 * Get the angle from the x axis of the vector formed by the given x and y magnitudes.
-	 *
-	 * @param {real} _x_magnitude
-	 * @param {real} _y_magnitude
-	 */
-	function get_angle_from_magnitudes(_x_magnitude, _y_magnitude) {
-		var _angle = arctan2(_y_magnitude, _x_magnitude);
-		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
-		if (_angle >= 2*pi) _angle %= 2*pi;
-		return _angle;
-	}
+
 	
 	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
@@ -159,50 +138,6 @@ function SmoothMove(_x, _y) constructor {
 		start_y = _y;
 		delta = 0;
 	};
-}
-
-/**
- * Get the real x position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_real_x(_smooth_move) {
-	with (_smooth_move) {
-		if (delta == 0) return start_x;
-		if (infer_y_from_x()) {
-			var _change = get_magnitude_x();
-			var _x = start_x + _change;
-			return _x;
-		}
-		
-		// derive x position from linear line function of y
-		var _slope = slope();
-		var _y_diff = smooth_move_get_real_y(self) - start_y;
-		var _x = round_to_thousandths(_slope * _y_diff + start_x);
-		return _x;
-	}
-}
-
-/**
- * Get the real y position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_real_y(_smooth_move) {
-	with (_smooth_move) {
-		if (delta == 0) return start_y;
-		if (!infer_y_from_x()) {
-			var _change = get_magnitude_y();
-			var _y = start_y + _change;
-			return _y;
-		}
-		
-		// derive y position from linear line function of x
-		var _slope = slope();
-		var _x_diff = smooth_move_get_real_x(self) - start_x;
-		var _y = round_to_thousandths(_slope * _x_diff + start_y);
-		return _y;
-	}
 }
 
 /**

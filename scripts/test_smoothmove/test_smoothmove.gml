@@ -1,4 +1,7 @@
 // @ignore
+global.gap_fixes = 0;
+
+// @ignore
 function __test_smoothmove(){
 	/**
 	 * Assert function for testing real numbers in this package.
@@ -118,7 +121,7 @@ function __test_smoothmove(){
 			array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
 		}
 	}
-	// fails at 18?
+	
 	for (var _i = 1; _i < array_length(_positions); _i++) {
 		var _x1 = _positions[_i -1][0];
 		var _x2 = _positions[_i][0]
