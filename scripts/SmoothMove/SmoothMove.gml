@@ -11,8 +11,17 @@ function SmoothMove(_x, _y) constructor {
 	angle = 0;
 	delta = 0;
 	
-	last_delta_change_x = start_x;
-	last_delta_change_y = start_y;
+	/*
+	This data allows for checking between the calculated position following the strict
+	linear line algorithm, and what the position would have been if position was
+	calculated normally.
+	*/
+	error_correction = {
+		start_x: start_x,
+		start_y: start_y,
+		component_x: 0,
+		component_y: 0,
+	};
 	
 	/**
 	 * Rounds given value to 0 if it's already close. This is mostly to deal
@@ -220,14 +229,41 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4
 		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4
 		
-		if (_delta == 0 || angle != _angle) reset();
+		if ((_delta == 0) || (abs(angle - _angle) >= pi/4)) {
+			error_correction.component_x = 0;
+			error_correction.component_y = 0;
+			error_correction.start_x = smooth_move_get_x(self);
+			error_correction.start_y = smooth_move_get_y(self);
+		}
+		if ((_delta == 0) || (angle != _angle)) reset();
 		
 		angle = _angle;
 		delta += _delta;
+		
+		error_correction.component_x += get_x_component(_angle, _delta);
+		error_correction.component_y += get_y_component(_angle, _delta);
+		
+		var _calculated_x = smooth_move_get_x(self);
+		var _calculated_y = smooth_move_get_y(self);
+		
+		var _error_x = round_towards(error_correction.start_x + error_correction.component_x, error_correction.start_x);
+		var _error_y = round_towards(error_correction.start_y + error_correction.component_y, error_correction.start_y);
+		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
+		if (_error >= 1) {
+			start_x = _error_x;
+			start_y = _error_y;
+			delta = 0;
+			error_correction.start_x = _error_x;
+			error_correction.start_y = _error_y;
+			error_correction.component_x = 0;
+			error_correction.component_y = 0;
+		}
 	}
 }
 
 /**
+	* Move the given SmoothMove instance by the vector formed by the given x and y magnitudes.
+ *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
  * @param {real} _magnitude_y

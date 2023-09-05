@@ -20,7 +20,7 @@ stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h);
 if (stick_mag > 0) {
 	_angle = stick_angle;
-	_vel = min(stick_mag, 1);
+	_vel = min(stick_mag, 0.8);
 }
 
 prev_x = smooth_move_get_x(smooth_move);
@@ -33,14 +33,14 @@ if (keyboard_check(vk_space)) {
 var _pre_move_x = smooth_move_get_x(smooth_move);
 var _pre_move_y = smooth_move_get_y(smooth_move);
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
-//smooth_move_by_vector(smooth_move, angle, 1);
-//angle += 0.033;
+//smooth_move_by_vector(smooth_move, _angle, _vel);
+smooth_move_by_vector(smooth_move, angle, 1);
+angle += 0.033;
 
 //smooth_move_by_vector(smooth_move, 6*pi/4, 1);
 
 //smooth_move_by_magnitudes(smooth_move, 0.3, 1);
-//smooth_move_by_magnitudes(smooth_move, 1, 0.3);
+//   smooth_move_by_magnitudes(smooth_move, 1, 0.3);
 //smooth_move_by_magnitudes(smooth_move, 1, -0.3);
 //smooth_move_by_magnitudes(smooth_move, 0.3, -1);
 //smooth_move_by_magnitudes(smooth_move, -0.3, -1);
@@ -59,7 +59,7 @@ smooth_move_by_vector(smooth_move, _angle, _vel);
 //smooth_move_by_magnitudes(smooth_move, 0.5, 0.5);
 
 //smooth_move_by_magnitudes(smooth_move, 1, toggle_y);
-//toggle_y = toggle_y == 0 ? 0.3 : 0;
+toggle_y = toggle_y == 0 ? 0.3 : 0;
 
 //smooth_move_by_magnitudes(smooth_move, 0.3, 0.2);
 
