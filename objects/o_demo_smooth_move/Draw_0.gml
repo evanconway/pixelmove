@@ -35,12 +35,13 @@ if (keyboard_check(vk_space)) {
 var _pre_move_x = smooth_move_get_x(smooth_move);
 var _pre_move_y = smooth_move_get_y(smooth_move);
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
-/*
+//smooth_move_by_vector(smooth_move, _angle, _vel);
+
 smooth_move_by_vector(smooth_move, angle, 1);
-angle += toggle ? 0.03 : 0;
-toggle = !toggle;
-*/
+angle += 0.03;
+//angle += toggle ? 0.03 : 0;
+//toggle = !toggle;
+
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);

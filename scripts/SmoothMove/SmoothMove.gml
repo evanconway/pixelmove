@@ -304,14 +304,24 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		var _same_equation = (slope() == _error_slope) && (start_x == error_correction.start_x) && (start_y == error_correction.start_y);
 		
 		if ((_error >= 1) && (_angle_changed || !_same_equation)) {
-			if (_error_x != _calculated_x && _error_y != _calculated_y) {
+			/*
+			If the error distance is greater than sqrt(2) (adjacent pixels), we'll set the smooth move position
+			to a pixel in between it's calculated position and the error position.
+			*/
+			if (_error > sqrt(2)) {
+				start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
+				start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
+			} else if (_error_x != _calculated_x && _error_y != _calculated_y) {
 				error_correction.start_x = _error_x;
 				error_correction.start_y = _error_y;
 				error_correction.component_x = 0;
 				error_correction.component_y = 0;
+				start_x = _error_x;
+				start_y = _error_y;
+			} else {
+				start_x = _error_x;
+				start_y = _error_y;
 			}
-			start_x = _error_x;
-			start_y = _error_y;
 			delta = 0;
 		}
 	}
