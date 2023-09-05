@@ -162,6 +162,50 @@ function SmoothMove(_x, _y) constructor {
 }
 
 /**
+ * Get the real x position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_real_x(_smooth_move) {
+	with (_smooth_move) {
+		if (delta == 0) return start_x;
+		if (infer_y_from_x()) {
+			var _change = get_magnitude_x();
+			var _x = start_x + _change;
+			return _x;
+		}
+		
+		// derive x position from linear line function of y
+		var _slope = slope();
+		var _y_diff = smooth_move_get_real_y(self) - start_y;
+		var _x = round_to_thousandths(_slope * _y_diff + start_x);
+		return _x;
+	}
+}
+
+/**
+ * Get the real y position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_real_y(_smooth_move) {
+	with (_smooth_move) {
+		if (delta == 0) return start_y;
+		if (!infer_y_from_x()) {
+			var _change = get_magnitude_y();
+			var _y = start_y + _change;
+			return _y;
+		}
+		
+		// derive y position from linear line function of x
+		var _slope = slope();
+		var _x_diff = smooth_move_get_real_x(self) - start_x;
+		var _y = round_to_thousandths(_slope * _x_diff + start_y);
+		return _y;
+	}
+}
+
+/**
  * Get the current x position of the given SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
@@ -178,7 +222,7 @@ function smooth_move_get_x(_smooth_move) {
 		
 		// derive x position from linear line function of y
 		var _slope = slope();
-		var _y_diff = round_towards(get_magnitude_y(), 0);
+		var _y_diff = smooth_move_get_y(self) - start_y;
 		var _x = round_to_thousandths(_slope * _y_diff + start_x);
 		return round_towards(_x, start_x);
 	}
@@ -201,7 +245,7 @@ function smooth_move_get_y(_smooth_move) {
 		
 		// derive y position from linear line function of x
 		var _slope = slope();
-		var _x_diff = round_towards(get_magnitude_x(), 0);
+		var _x_diff = smooth_move_get_x(self) - start_x;
 		var _y = round_to_thousandths(_slope * _x_diff + start_y);
 		return round_towards(_y, start_y);
 	}
@@ -215,7 +259,7 @@ function smooth_move_get_y(_smooth_move) {
  * @param {real} _delta magnitude of vector
  */
 function smooth_move_by_vector(_smooth_move, _angle, _delta) {
-	with (_smooth_move) {
+	with (_smooth_move) {		
 		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 		if (_angle >= 2*pi) _angle %= 2*pi;
 		
@@ -235,7 +279,8 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 			error_correction.start_x = smooth_move_get_x(self);
 			error_correction.start_y = smooth_move_get_y(self);
 		}
-		if ((_delta == 0) || (angle != _angle)) reset();
+		var _angle_changed = angle != _angle;
+		if ((_delta == 0) || _angle_changed) reset();
 		
 		angle = _angle;
 		delta += _delta;
@@ -246,9 +291,18 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
 		
+		var _real_calculated_x = smooth_move_get_real_x(self);
+		var _real_calculated_y = smooth_move_get_real_y(self);
+		
 		var _error_x = round_towards(error_correction.start_x + error_correction.component_x, error_correction.start_x);
 		var _error_y = round_towards(error_correction.start_y + error_correction.component_y, error_correction.start_y);
+		
+		var _real_error_x = error_correction.start_x + error_correction.component_x;
+		var _real_error_y = error_correction.start_y + error_correction.component_y;
+		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
+		var _real_error = sqrt(sqr(_real_error_x - _real_calculated_x) + sqr(_real_error_y - _real_calculated_y));
+		
 		if (_error >= 1) {
 			if (_error_x != _calculated_x && _error_y != _calculated_y) {
 				error_correction.start_x = _error_x;
@@ -264,7 +318,7 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 }
 
 /**
-	* Move the given SmoothMove instance by the vector formed by the given x and y magnitudes.
+ * Move the given SmoothMove instance by the vector formed by the given x and y magnitudes.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
