@@ -291,19 +291,27 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
 		
-		var _real_calculated_x = smooth_move_get_real_x(self);
-		var _real_calculated_y = smooth_move_get_real_y(self);
+		//var _real_calculated_x = smooth_move_get_real_x(self);
+		//var _real_calculated_y = smooth_move_get_real_y(self);
 		
 		var _error_x = round_towards(error_correction.start_x + error_correction.component_x, error_correction.start_x);
 		var _error_y = round_towards(error_correction.start_y + error_correction.component_y, error_correction.start_y);
 		
-		var _real_error_x = error_correction.start_x + error_correction.component_x;
-		var _real_error_y = error_correction.start_y + error_correction.component_y;
+		//var _real_error_x = error_correction.start_x + error_correction.component_x;
+		//var _real_error_y = error_correction.start_y + error_correction.component_y;
 		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
-		var _real_error = sqrt(sqr(_real_error_x - _real_calculated_x) + sqr(_real_error_y - _real_calculated_y));
+		//var _real_error = sqrt(sqr(_real_error_x - _real_calculated_x) + sqr(_real_error_y - _real_calculated_y));
 		
-		if (_error >= 1) {
+		var _error_slope = 0;
+		with (error_correction) if (component_x != 0 || component_y != 0) {
+			_error_slope = component_x > component_y ? component_y / component_x : component_x / component_y;
+		}
+		
+		var _same_equation = (slope() == _error_slope) && (start_x == error_correction.start_x) && (start_y == error_correction.start_y);
+		
+		
+		if (_angle_changed || (_error >= 1) && !_same_equation) {
 			if (_error_x != _calculated_x && _error_y != _calculated_y) {
 				error_correction.start_x = _error_x;
 				error_correction.start_y = _error_y;

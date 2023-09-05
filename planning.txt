@@ -289,4 +289,6 @@ Small revelation. We were resetting our error correction when the error was high
 
 Well I'll be. That's the greatest success we've ever had with this. And it makes sense why it works. We're always keeping track of what the "true" value should be. And any time the calculated values are too far off we set them to the error corrected values. So it's always "correct". And we only reset this error correction value if we end up resetting both axis. The problem I see now is that the circle test slowly moves. Is this something that can be resolved? Or is this an inevitable evil with something like this?
 
-We've found a unique situation where our error correction is off from a consistent line. 
+We've found a unique situation where our error correction is off from a consistent line. It looks like this is because the magnitudes of the line are less than an integer and our error correction system really only prevents stair stepping for velocities 1 or greater. I tried a couple things to fix this but nothing worked. What I think I'll have to do is only trigger error correction if the equation of the error line is different from the equation line of the SmoothMove. We should also trigger error correction if the angle changed just in case we end up with the same equation by coincidence, but arrived from radically different vectors.
+
+Welp, that's closer still but not quite right. There are still small skips when controlling the pixel with a controller. 
