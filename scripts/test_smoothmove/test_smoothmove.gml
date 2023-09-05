@@ -140,34 +140,21 @@ function __test_smoothmove(){
 		var _x = irandom_range(-10000, 10000);
 		var _y = irandom_range(-10000, 10000);
 		smooth_move_set_position(_set_pos, _x, _y);
-		test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, $"Smooth move set position fail! X is {smooth_move_get_x(_set_pos)} but should be {_x}.");
-		test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, $"Smooth move set position fail! Y is {smooth_move_get_y(_set_pos)} but should be {_y}.");
+		test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, "Smooth move set position x fail!");
+		test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, "Smooth move set position y fail!");
 	}
 	
-	// collisions
-	
-	// regular slides
-	var _collide = new SmoothMove(0, 0);
-	smooth_move_set_position(_collide, 0, 0);
-	for (var _i = 0; _i < 10; _i++) {
-		smooth_move_by_vector(_collide, 1*pi/4, 1, function(_x, _y) {
-			return _x >= 5;
-		});
+	// potential positions
+	var _potential = new SmoothMove(0, 0);
+	for (var _i = 0; _i < 10000; _i++) {
+		var _mag_x = random_range(-1000, 1000);
+		var _mag_y = random_range(-1000, 1000);
+		var _pot_x = smooth_move_get_x_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
+		var _pot_y = smooth_move_get_y_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
+		smooth_move_by_magnitudes(_potential, _mag_x, _mag_y);
+		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
+		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_collide), 4, "Smooth move collide test x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_collide), 7, "Smooth move collide test y fail!");
-	smooth_move_set_slide_on_collide(_collide, false);
-	
-	// full stop
-	for (var _i = 0; _i < 10; _i++) {
-		smooth_move_by_vector(_collide, 1*pi/4, 1, function(_x, _y) {
-			return _x >= 5;
-		});
-	}
-	test_smooth_move_assert_real(smooth_move_get_x(_collide), 4, "Smooth move collide test x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_collide), 4, "Smooth move collide test y fail!");
-	
-	// slide into corner then move away
 }
 
 __test_smoothmove();

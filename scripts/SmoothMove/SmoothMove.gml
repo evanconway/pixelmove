@@ -1,9 +1,9 @@
 /**
- * An object that uses a linear algorithm to derive its position. This
+ * SmoothMove uses a linear algorithm to derive its position. This
  * ensures that any position changes appear smooth and consistent.
  * 
- * @param {real} _x starting x position
- * @param {real} _y starting y position
+ * @param {Real} _x starting x position
+ * @param {Real} _y starting y position
  */
 function SmoothMove(_x, _y) constructor {
 	start_x = _x;
@@ -23,11 +23,8 @@ function SmoothMove(_x, _y) constructor {
 		component_y: 0,
 	};
 	
-	// decides if collisions from callback still trigger individual x/y movement
-	slide_on_collide = true;
-	
 	/**
-	 * Rounds given value to 0 if it's already close. This is mostly to deal
+	 * Round given value to 0 if it's already close. This is mostly to deal
 	 * with sin and cos not returning a perfect 0 on certain values.
 	 *
 	 * @param {real} _value
@@ -55,7 +52,7 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Returns the given angle in radians rounded roughly towards the cardinal directions
+	 * Return the given angle in radians rounded roughly towards the cardinal directions
 	 * and their intermediates.
 	 *
 	 * @param {real} _angle
@@ -72,9 +69,7 @@ function SmoothMove(_x, _y) constructor {
 		return _angle;
 	}
 	
-	/**
-	 * @param {real} _value
-	 */
+	// @param {real} _value
 	function round_to_thousandths(_value) {
 		var _result = floor(_value * 1000 + 0.5) / 1000;
 		return _result;
@@ -150,7 +145,7 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Resets the start and delta values of this instance.
+	 * Reset the start and delta values of this instance.
 	 */
 	reset = function() {
 		var _x = smooth_move_get_x(self);
@@ -162,15 +157,21 @@ function SmoothMove(_x, _y) constructor {
 }
 
 /**
- * Sets the slide on collide property of the given SmoothMove instance. When set to false, collisions
- * forbid any movement once detected. When true, SmoothMove will attempt to move along the x and y
- * axis separately.
+ * Get a copy of the given SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
- * @param {bool} _slide_on_collide
  */
-function smooth_move_set_slide_on_collide(_smooth_move, _slide_on_collide) {
-	_smooth_move.slide_on_collide = _slide_on_collide;
+function smooth_move_get_copy(_smooth_move) {
+	var _copy = new SmoothMove(0, 0);
+	_copy.start_x = _smooth_move.start_x;
+	_copy.start_y = _smooth_move.start_y;
+	_copy.angle = _smooth_move.angle;
+	_copy.delta = _smooth_move.delta;
+	_copy.error_correction.start_x = _smooth_move.error_correction.start_x;
+	_copy.error_correction.start_y = _smooth_move.error_correction.start_y;
+	_copy.error_correction.component_x = _smooth_move.error_correction.component_x;
+	_copy.error_correction.component_y = _smooth_move.error_correction.component_y;
+	return _copy;
 }
 
 /**
@@ -220,7 +221,7 @@ function smooth_move_get_y(_smooth_move) {
 }
 
 /**
- * Sets the position of the given SmoothMove instance.
+ * Set the position of the given SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _x
@@ -241,44 +242,32 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 }
 
 /**
- * @param {real} _x
- * @param {real} _y
- * @ignore
- */
-function smooth_move_default_collide(_x, _y) {
-	return false;
-}
-
-/**
  * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to straight along positive x axis
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle of vector in radians
- * @param {real} _delta magnitude of vector
- * @param {function} _collide
+ * @param {real} _magnitude magnitude of vector
  */
-function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_move_default_collide) {
+function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	with (_smooth_move) {
-		var _pre_move_x = smooth_move_get_x(self);
-		var _pre_move_y = smooth_move_get_y(self);
 		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 		if (_angle >= 2*pi) _angle %= 2*pi;
 		_angle = snap_to_cardinals(_angle);
 		
-		if ((_delta == 0) || (abs(angle - _angle) >= pi/4)) {
+		if ((_magnitude == 0) || (abs(angle - _angle) >= pi/4)) {
 			error_correction.component_x = 0;
 			error_correction.component_y = 0;
 			error_correction.start_x = smooth_move_get_x(self);
 			error_correction.start_y = smooth_move_get_y(self);
 		}
 		var _angle_changed = angle != _angle;
-		if ((_delta == 0) || _angle_changed) reset();
+		if ((_magnitude == 0) || _angle_changed) reset();
 		
 		angle = _angle;
-		delta += _delta;
+		delta += _magnitude;
 		
-		error_correction.component_x += get_x_component(_angle, _delta);
-		error_correction.component_y += get_y_component(_angle, _delta);
+		error_correction.component_x += get_x_component(_angle, _magnitude);
+		error_correction.component_y += get_y_component(_angle, _magnitude);
 		
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
@@ -316,73 +305,11 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_m
 			}
 			delta = 0;
 		}
-		
-		var _final_x = smooth_move_get_x(self);
-		var _final_y = smooth_move_get_y(self);
-		
-		// final position has been calculated, now check for collisions
-		var _mod_x = sign(_final_x - _pre_move_x);
-		var _mod_y = sign(_final_y - _pre_move_y);
-		
-		var _check_x = _pre_move_x;
-		var _check_y = _pre_move_y;
-		var _colliding = true;
-		
-		while (_colliding) {
-			var _collision = _collide(_check_x + _mod_x, _check_y + _mod_y);
-			if (!_collision) {
-				_check_x = _check_x == _final_x ? _final_x : _check_x + _mod_x;
-				_check_y = _check_y == _final_y ? _final_y : _check_y + _mod_y;
-			}
-			if (_collision && !slide_on_collide) { 
-				_colliding = false;
-				start_x = _check_x;
-				start_y = _check_y;
-				delta = 0;
-				error_correction.start_x = _pre_move_x;
-				error_correction.start_y = _pre_move_y;
-				error_correction.component_x = _check_x - _pre_move_x;
-				error_correction.component_y = _check_y - _pre_move_y;
-			}
-			if (_collision && slide_on_collide) {
-				var _moved = false;
-				if (!_collide(_check_x + _mod_x, _check_y)) {
-					_check_x += _mod_x;
-					_moved = true;
-				}
-				if (!_collide(_check_x, _check_y + _mod_y)) {
-					_check_y += _mod_y;
-					_moved = true;
-				}
-				if (_check_x == _final_x || _check_y == _final_y || !_moved) {
-					_colliding = false;
-					start_x = _check_x;
-					start_y = _check_y;
-					delta = 0;
-					/*
-					Error vector is only way we have of tracking how far instance should have moved.
-					Only change values if final was not reached.
-					*/
-					if (_check_x != _final_x) error_correction.start_x = _pre_move_x;
-					if (_check_y != _final_y) error_correction.start_y = _pre_move_y;
-					if (_check_x != _final_x) error_correction.component_x = _check_x - _pre_move_x;
-					if (_check_y != _final_y) error_correction.component_y = _check_y - _pre_move_y;
-				}
-			}
-			if (_check_x == _final_x && _check_y == _final_y) {
-				_colliding = false;
-			}
-		}
-		
-		return {
-			change_x: _check_x - _pre_move_x,
-			change_y: _check_y - _pre_move_y,
-		};
 	}
 }
 
 /**
- * Move the given SmoothMove instance by the vector formed by the given x and y magnitudes.
+ * Move the given SmoothMove instance by the given x and y magnitudes.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
@@ -391,7 +318,63 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_m
 function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
 	with (_smooth_move) {
 		var _angle = arctan2(_magnitude_y, _magnitude_x);
-		var _delta = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-		smooth_move_by_vector(_smooth_move, _angle, _delta);
+		var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+		smooth_move_by_vector(_smooth_move, _angle, _m);
 	}
+}
+
+/**
+ * Get the x position of the given SmoothMove instance if it was moved by the given vector.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _angle angle in radians of the vector
+ * @param {real} _magnitude magnitude of the vector
+ */
+function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
+	var _copy = smooth_move_get_copy(_smooth_move);
+	smooth_move_by_vector(_copy, _angle, _magnitude);
+	return smooth_move_get_x(_copy);
+}
+
+/**
+ * Get the y position of the given SmoothMove instance if it was moved by the given vector.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _angle angle in radians of the vector
+ * @param {real} _magnitude magnitude of the vector
+ */
+function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
+	var _copy = smooth_move_get_copy(_smooth_move);
+	smooth_move_by_vector(_copy, _angle, _magnitude);
+	return smooth_move_get_y(_copy);
+}
+
+/**
+ * Get the x position of the given SmoothMove instance if it was moved by the given x and y magnitudes.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _magnitude_x
+ * @param {real} _magnitude_y
+ */
+function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
+	var _copy = smooth_move_get_copy(_smooth_move);
+	var _angle = arctan2(_magnitude_y, _magnitude_x);
+	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+	smooth_move_by_vector(_copy, _angle, _m);
+	return smooth_move_get_x(_copy);
+}
+
+/**
+ * Get the y position of the given SmoothMove instance if it was moved by the given x and y magnitudes.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _magnitude_x
+ * @param {real} _magnitude_y
+ */
+function smooth_move_get_y_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
+	var _copy = smooth_move_get_copy(_smooth_move);
+	var _angle = arctan2(_magnitude_y, _magnitude_x);
+	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+	smooth_move_by_vector(_copy, _angle, _m);
+	return smooth_move_get_y(_copy);
 }
