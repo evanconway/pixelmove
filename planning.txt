@@ -317,3 +317,10 @@ Wait a second. I just realized we shouldn't put collisions in at all. Collisions
 So, a bit dramatic, but let's rip out all this collision code we put in. And instead put in those "potential position" functions.
 
 Ripping out all the collision code turned out to not be difficult at all. And we were able to fairly easily make our own collision code using new "position if moved by vector" functions. After hammering out a few more bugs and adding some tests. I'm genuinely at a loss for what's left in this project besides tidying comments, documentation, and releasing.
+
+After doing some tidying, and more observing, there are definitely still nasty stairsteps in this thing. It might be worth releasing it as is just to have something out there. It does work perfectly fine with just the cardinals and intermediates. Ah, we were able to identify an error with perfect diagonal movement. when moveing at magnitudes 0.5 and 0.5, the smooth move should perfectly alternate between moving and not. Sometimes it doesn't move when it should.
+
+Got some insight into what's causing the stair stepping. Firstly, we're definitely experiencing stair stepping on straight lines. And it looks like it's because our logic doesn't correctly switch our state to our error data if they're close enough. Let's note that in this stairstep case the vector is unchanging, but the error correction constantly things the result of the line equation is wrong. But given what this project is, if we have consistent movement along a line, then that line is correct, not the error. I wonder if we can setup some simple rules during error correction:
+
+If the angle changed, we fit the line equation to the error.
+If the angle did not change, we fit the error to the line equation.

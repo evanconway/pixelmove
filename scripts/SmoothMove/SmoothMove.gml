@@ -6,13 +6,13 @@
  * @param {Real} _y starting y position
  */
 function SmoothMove(_x, _y) constructor {
-	// @ignore
+	
 	start_x = _x;
-	// @ignore
+	
 	start_y = _y;
-	// @ignore
+	
 	angle = 0;
-	// @ignore
+	
 	delta = 0;
 	
 	/*
@@ -20,7 +20,7 @@ function SmoothMove(_x, _y) constructor {
 	linear line algorithm, and what the position would have been if position was
 	calculated normally.
 	*/
-	// @ignore
+	
 	error_correction = {
 		start_x: start_x,
 		start_y: start_y,
@@ -75,6 +75,26 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
+	 * @param {real} _value
+	 * @ignore
+	 */
+	function round_to_thousandths(_value) {
+		var _result = floor(_value * 1000 + 0.5) / 1000;
+		return _result;
+	}
+	
+	/**
+	 * Rounding function to account for gamemaker's imperfect real tracking
+	 *
+	 * @param {real} _value
+	 * @ignore
+	 */
+	function round_to_correct(_value) {
+		var _result = floor(_value * 100000 + 0.5) / 100000;
+		return _result;
+	}
+	
+	/**
 	 * Return the given angle in radians rounded roughly towards the cardinal directions
 	 * and their intermediates.
 	 *
@@ -91,15 +111,6 @@ function SmoothMove(_x, _y) constructor {
 		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
 		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
 		return _angle;
-	}
-	
-	/**
-	 * @param {real} _value
-	 * @ignore
-	 */
-	function round_to_thousandths(_value) {
-		var _result = floor(_value * 1000 + 0.5) / 1000;
-		return _result;
 	}
 	
 	/**
@@ -153,7 +164,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	function get_x_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
-		return snap_cos(_angle) * _delta;
+		return round_to_correct(snap_cos(_angle) * _delta);
 	}
 	
 	/**
@@ -165,7 +176,7 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	function get_y_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
-		return snap_sin(_angle) * _delta;
+		return round_to_correct(snap_sin(_angle) * _delta);
 	}
 
 	
@@ -177,7 +188,8 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
+		var _result = infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
+		return _result;
 	}
 	
 	/**
@@ -222,7 +234,7 @@ function smooth_move_get_x(_smooth_move) {
 		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
 			var _change = get_magnitude_x();
-			var _x = start_x + _change;
+			var _x = round_to_correct(start_x + _change);
 			var _result = round_towards(_x, start_x);
 			return _result;
 		}
@@ -245,7 +257,7 @@ function smooth_move_get_y(_smooth_move) {
 		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
 			var _change = get_magnitude_y();
-			var _y = start_y + _change;
+			var _y = round_to_correct(start_y + _change);
 			var _result = round_towards(_y, start_y);
 			return _result;
 		}
@@ -291,21 +303,24 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 		if (_angle >= 2*pi) _angle %= 2*pi;
 		_angle = snap_to_cardinals(_angle);
+		var _angle_changed = angle != _angle;
 		
+		// reset error data on no movement or too great an angle change
 		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/2) {
 			error_correction.component_x = 0;
 			error_correction.component_y = 0;
 			error_correction.start_x = smooth_move_get_x(self);
 			error_correction.start_y = smooth_move_get_y(self);
 		}
-		var _angle_changed = angle != _angle;
+		
+		// always reset smooth move state on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
 		angle = _angle;
 		delta += _magnitude;
 		
-		error_correction.component_x += get_x_component(_angle, _magnitude);
-		error_correction.component_y += get_y_component(_angle, _magnitude);
+		error_correction.component_x = round_to_correct(get_x_component(_angle, _magnitude) + error_correction.component_x);
+		error_correction.component_y = round_to_correct(get_y_component(_angle, _magnitude) + error_correction.component_y);
 		
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
@@ -315,6 +330,35 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
 		
+		
+		// error correction
+		
+		// if angle changed, fit smooth move line to error, otherwise fit error to line
+		// if there is gap, always fix line towards correction.
+		/*
+		if (_error > sqrt(2)) {
+			start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
+			start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
+			delta = 0;
+		} else if (_error >= 1 && _angle_changed) {
+			error_correction.start_x = _error_x;
+			error_correction.start_y = _error_y;
+			error_correction.component_x = 0;
+			error_correction.component_y = 0;
+			start_x = _error_x;
+			start_y = _error_y;
+			delta = 0;
+		} else if (_error >= 1 && !_angle_changed) {
+			error_correction.start_x = _calculated_x;
+			error_correction.start_y = _calculated_y;
+			error_correction.component_x = 0;
+			error_correction.component_y = 0;
+		}
+		*/
+		
+		
+		// old
+		
 		var _error_slope = 0;
 		with (error_correction) if (component_x != 0 || component_y != 0) {
 			_error_slope = component_x > component_y ? component_y / component_x : component_x / component_y;
@@ -323,10 +367,8 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		var _same_equation = (slope() == _error_slope) && (start_x == error_correction.start_x) && (start_y == error_correction.start_y);
 		
 		if ((_error >= 1) && (_angle_changed || !_same_equation)) {
-			/*
-			If the error distance is greater than sqrt(2) (adjacent pixels), we'll set the smooth move position
-			to a pixel in between it's calculated position and the error position.
-			*/
+			// If the error distance is greater than sqrt(2) (adjacent pixels), we'll set the smooth move position
+			// to a pixel in between it's calculated position and the error position.
 			if (_error > sqrt(2)) {
 				start_x = round_towards((_error_x - _calculated_x) / 2 + _calculated_x, start_x);
 				start_y = round_towards((_error_y - _calculated_y) / 2 + _calculated_y, start_y);
@@ -343,6 +385,7 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 			}
 			delta = 0;
 		}
+		
 	}
 }
 

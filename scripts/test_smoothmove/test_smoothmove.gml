@@ -1,20 +1,20 @@
+/**
+ * Assert function for testing real numbers in this package.
+ *
+ * @param {real} _value
+ * @param {real} _expected
+ * feather ignore once all
+ */
+function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move test fail!") {
+	if (!is_real(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
+	if (!is_real(_expected)) show_error(_msg + $"\n Expected {_expected} is not a real.", true);
+	if (is_nan(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
+	if (is_nan(_expected)) show_error(_msg + $"\n Expected {_expected} is not a real.", true);
+	if (_value != _expected) show_error(_msg + $"\n Expected {_expected} got {_value}.", true);
+}
+
 // @ignore
-function __test_smoothmove(){
-	/**
-	 * Assert function for testing real numbers in this package.
-	 *
-	 * @param {real} _value
-	 * @param {real} _expected
-	 * feather ignore once all
-	 */
-	var test_smooth_move_assert_real = function(_value, _expected, _msg = "Smooth move test fail!") {
-		if (!is_real(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
-		if (!is_real(_expected)) show_error(_msg + $"\n Expected {_expected} is not a real.", true);
-		if (is_nan(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
-		if (is_nan(_expected)) show_error(_msg + $"\n Expected {_expected} is not a real.", true);
-		if (_value != _expected) show_error(_msg + $"\n Expected {_expected} got {_value}.", true);
-	}
-	
+function __test_smoothmove(){	
 	var _move_count = 1000;
 	
 	// north
@@ -104,6 +104,44 @@ function __test_smoothmove(){
 	smooth_move_by_vector(_sw, 0, 0);
 	test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 2 x fail!");
 	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
+	
+	// perfect diagonals
+	// @param {real} _mag
+	var _test_perfect_diagonals = function(_mag) {
+		var _func = function(_mag_x, _mag_y) {
+			var _sm = new SmoothMove(0, 0);
+			for (var _i = 0; _i < 1000; _i++) {
+				var _check_x = smooth_move_get_x(_sm);
+				var _check_y = smooth_move_get_y(_sm);
+				smooth_move_by_magnitudes(_sm, _mag_x, _mag_y);
+				var _x_after_move = smooth_move_get_x(_sm);
+				var _y_after_move = smooth_move_get_y(_sm);
+				var _divider = 1 / abs(_mag_x);
+				if ((_i + 1) % _divider == 0) {
+					test_smooth_move_assert_real(_x_after_move, _check_x + sign(_mag_x), $"Smooth diagonal test {_mag_x} x fail!");
+					test_smooth_move_assert_real(_y_after_move, _check_y + sign(_mag_y), $"Smooth diagonal test {_mag_y} y fail!");
+				} else {
+					test_smooth_move_assert_real(_x_after_move, _check_x, $"Smooth diagonal test {_mag_x} x fail!");
+					test_smooth_move_assert_real(_y_after_move, _check_y, $"Smooth diagonal test {_mag_y} y fail!");
+				}
+			}
+		};
+		_func(_mag, _mag);
+		_func(_mag, _mag * -1);
+		_func(_mag * -1, _mag);
+		_func(_mag * -1, _mag * -1);
+	};
+	
+	_test_perfect_diagonals(1/10);
+	_test_perfect_diagonals(1/9);
+	_test_perfect_diagonals(1/8);
+	_test_perfect_diagonals(1/7);
+	_test_perfect_diagonals(1/6);
+	_test_perfect_diagonals(1/5);
+	_test_perfect_diagonals(1/4);
+	_test_perfect_diagonals(1/3);
+	_test_perfect_diagonals(1/2);
+	_test_perfect_diagonals(1);
 	
 	// pixel gaps and error correction
 	var _random = new SmoothMove(0, 0);

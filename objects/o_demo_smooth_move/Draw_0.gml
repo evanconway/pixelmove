@@ -65,9 +65,10 @@ while (_checking) {
 var _final_mag_x = _mod_x == _target_diff_x ? _magnitude_x : _mod_x;
 var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 
-smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+//smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+//smooth_move_by_magnitudes(smooth_move, _horz * 0.2, _vert * 0.2);
 
-//smooth_move_by_vector(smooth_move, _angle, _vel);
+smooth_move_by_magnitudes(smooth_move, 0.2, 0.2);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
@@ -87,10 +88,9 @@ if (_x != positions[positions_index][0] || _y != positions[positions_index][1]) 
 	positions[positions_index] = [_x, _y];
 }
 
-/*
 draw_set_color(c_lime);
 for (var _i = 0; _i < array_length(positions); _i++) {
 	draw_point(positions[_i][0], positions[_i][1]);
 }
-*/
+
 
