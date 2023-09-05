@@ -304,3 +304,5 @@ We tried making a fix for the gaps by making setting the smooth move position to
 3. It still seems to favor diagonals, and I have no idea why. Worth investigating, understanding, and hopefully fixing.
 
 I was thinking of exploring fixing stair stepping, but I'm not longer convinced it's a problem with error correction. I'm starting to think it's only happening when changing directions to a 90 degree angle quickly enough that stairstepping is actually the most mathematically correct representation. I think I'll stop worry about stair stepping for now, and focus on collision detection instead. I also wonder if the circles appearing to favor diagonals and straights is actually just what circles look like at low res. These are all things I should make sure I understand, but right now the package is working well enough to use. And I think setting up for collisions is the next most important thing.
+
+Just added some code for collision checking. It's not quite right but seems to be close. Today was a big success. Maybe tomorrow we can really finish this thing.

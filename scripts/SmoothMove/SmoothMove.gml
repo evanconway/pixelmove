@@ -23,6 +23,9 @@ function SmoothMove(_x, _y) constructor {
 		component_y: 0,
 	};
 	
+	// decides if collisions from callback still trigger individual x/y movement
+	slide_on_collide = true;
+	
 	/**
 	 * Rounds given value to 0 if it's already close. This is mostly to deal
 	 * with sin and cos not returning a perfect 0 on certain values.
@@ -49,6 +52,24 @@ function SmoothMove(_x, _y) constructor {
 	 */
 	function snap_cos(_angle) {
 		return snap_to_zero(cos(_angle));
+	}
+	
+	/**
+	 * Returns the given angle in radians rounded roughly towards the cardinal directions
+	 * and their intermediates.
+	 *
+	 * @param {real} _angle
+	 */
+	function snap_to_cardinals(_angle) {
+		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
+		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
+		return _angle;
 	}
 	
 	/**
@@ -187,26 +208,28 @@ function smooth_move_get_y(_smooth_move) {
 }
 
 /**
+ * @param {real} _x
+ * @param {real} _y
+ */
+function smooth_move_default_collide(_x, _y) {
+	return false;
+}
+
+/**
  * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to straight along positive x axis
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle of vector in radians
  * @param {real} _delta magnitude of vector
+ * @param {function} _collide
  */
-function smooth_move_by_vector(_smooth_move, _angle, _delta) {
-	with (_smooth_move) {		
+function smooth_move_by_vector(_smooth_move, _angle, _delta, _collide = smooth_move_default_collide) {
+	with (_smooth_move) {
+		var _pre_move_x = smooth_move_get_x(self);
+		var _pre_move_y = smooth_move_get_y(self);
 		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 		if (_angle >= 2*pi) _angle %= 2*pi;
-		
-		// snap to cardinals and intermediates
-		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
-		if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
+		_angle = snap_to_cardinals(_angle);
 		
 		if ((_delta == 0) || (abs(angle - _angle) >= pi/4)) {
 			error_correction.component_x = 0;
@@ -259,6 +282,64 @@ function smooth_move_by_vector(_smooth_move, _angle, _delta) {
 			}
 			delta = 0;
 		}
+		
+		var _final_x = smooth_move_get_x(self);
+		var _final_y = smooth_move_get_y(self);
+		
+		// final position has been calculated, now check for collisions
+		var _mod_x = sign(_final_x - _pre_move_x);
+		var _mod_y = sign(_final_y - _pre_move_y);
+		
+		var _check_x = _pre_move_x;
+		var _check_y = _pre_move_y;
+		var _colliding = true;
+		
+		while (_colliding) {
+			var _collision = _collide(_check_x + _mod_x, _check_y + _mod_y);
+			if (!_collision) {
+				_check_x += _mod_x;
+				_check_y += _mod_y;
+			}
+			if (_collision && !slide_on_collide) { 
+				_colliding = false;
+				start_x = _check_x;
+				start_y = _check_y;
+				delta = 0;
+				error_correction.start_x = _pre_move_x;
+				error_correction.start_y = _pre_move_y;
+				error_correction.component_x = _check_x - _pre_move_x;
+				error_correction.component_y = _check_y - _pre_move_y;
+			}
+			if (_collision && slide_on_collide) {
+				var _moved = false;
+				if (!_collide(_check_x + _mod_x, _check_y)) {
+					_check_x += _mod_x;
+					_moved = true;
+				}
+				if (!_collide(_check_x, _check_y + _mod_y)) {
+					_check_y += _mod_y;
+					_moved = true;
+				}
+				if (_check_x == _final_x || _check_y == _final_y || !_moved) {
+					_colliding = false;
+					start_x = _check_x;
+					start_y = _check_y;
+					delta = 0;
+					error_correction.start_x = _pre_move_x;
+					error_correction.start_y = _pre_move_y;
+					error_correction.component_x = _check_x - _pre_move_x;
+					error_correction.component_y = _check_y - _pre_move_y;
+				}
+			}
+			if (_check_x == _final_x && _check_y == _final_y) {
+				_colliding = false;
+			}
+		}
+		
+		return {
+			change_x: _check_x - _pre_move_x,
+			change_y: _check_y - _pre_move_y,
+		};
 	}
 }
 

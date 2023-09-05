@@ -132,6 +132,17 @@ function __test_smoothmove(){
 			show_error($"Smooth move random movement fail! Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
+	
+	// collisions
+	var _collide = new SmoothMove(0, 0);
+	for (var _i = 0; _i < 10; _i++) {
+		smooth_move_by_vector(_collide, 1*pi/4, 1, function(_x, _y) {
+			return _x >= 5;
+		});
+	}
+	// it looks like we're cutting the y movement short on collision because we're not letting the error move by non-integer
+	test_smooth_move_assert_real(smooth_move_get_x(_collide), 4, "Smooth move collide test x fail!");
+	test_smooth_move_assert_real(smooth_move_get_y(_collide), 7, "Smooth move collide test x fail!");
 }
 
 __test_smoothmove();
