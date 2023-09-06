@@ -340,3 +340,36 @@ Actually wait. We want the error to be a sort of guide post. It's only when trav
 Not really having luck. It's possible we need to move the error closer to the "real" value of x/y. 
 
 Small aside. Just realized that you can disable feather for an entire file. I should definitely do this on my packages so my particular coding styles don't throw errors for anyone who uses it.
+
+After some observing, I'm very confident about adjusting the error towards the real calculated position. I've just witnessed a situation where the real calculated position is further away from start_x/y than the error_x/y is. 
+
+I was wrong. Adjusting the error towards the real position doesn't fix stair stepping at all. And it breaks gaps. I'm frustrated because this means my mental model of this code is wrong. That should have fixed it. And there is certainly no reason that moving the error closer to the real would ever break gap fixing. I mean it obviously did, I just can't understand why.
+
+A thought I was just having was: What if it makes sense to adjust the delta closer to the error on correction? Consider this state:
+
+start_x:	0
+start_y:	0
+angle:		7*pi/4
+delta:		1
+error_x:	1.1
+error_y:	1.1
+
+In this scenario, our real position is (0.71, 0.71) our calculated position is 0,0. Since error rounded to start yields 1,1 we have to make a correction to both start_x and start_y. But after adding 1 to start_x/y our real position is (1.71, 1.71). That's actually futher away from our error of 1.1 than before! I have a strong suspicion that we should alter the delta so the result of our vector is as close to error as possible. 
+
+My brain might be totally fried on this project. I was just thinking to myself: Why can't I just reset the SmoothMove state to the error_x/y when the error is greater than 1? Welp I tried doing just that and it works just as well as whatever I had before:
+
+if (_error >= 1) {
+	start_x = _error_x;
+	start_y = _error_y;
+	delta = 0;
+}
+
+That's it. I have to wonder if now that I've changed this to something much simpler, my previous idea of moving the error closer to the calculated vector_x/y value as delta increases actually makes sense now. Let's try it.
+
+Still puzzling through it, but it occured to me we may want to make this change to error position before we error correct. If the smooth move suddenly moves by a massive magnitude at a slightly different delta, we're going to want to ignore the old error position at that point and let the line calculation take lead.
+
+We are much closer. Our error correction actually passes the gap test. It's still struggling on the stair stepper test though, and I'm not sure why. I'm currently staring at a situation where we're moving along a vector at an angle of 0.259 radians. We're correcting the error at 100%, and somehow our line equation still generates generates a stair step? The math beyond that shouldn't be possible.
+
+I know why it's causing a stair step! It's because we round our error_x/y to start_x/y. But our calculated vector_x/y comes from taking the real_x rounded towards start, then deriving the y using that x, and rounding that towards start. The error will always end up off like this. In fact the derived real vector x/y will be off too. That's the whole point of inferring y from x, because those correctly tracked values will trigger stair steps.
+
+This might be a huge break through in logic. Unfortuantely I can't change how I calculate my rounded error because that defeats the point of comparing our derived x/y with a "correctly tracked" x/y. As tempting as it is to try and fix this now, let's sleep and try to fix this with a fresh mind. I think we're very close though.

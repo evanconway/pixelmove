@@ -26,6 +26,12 @@ function SmoothMove(_x, _y) constructor {
 	// @notignore
 	error_y = start_y;
 	
+	/*
+	This is not for calculating x/y position. This is used to track how far this instance
+	has travelled along the same angle.
+	*/
+	delta_on_angle = 0;
+	
 	/**
 	 * Get the difference in radians between 2 angles. Both angles must be between 0
 	 * and 2*pi radians. Favors the shortest distance. For example using 7*pi/4 and
@@ -200,6 +206,7 @@ function SmoothMove(_x, _y) constructor {
 		start_x = _x;
 		start_y = _y;
 		delta = 0;
+		delta_on_angle = 0;
 	};
 	
 	/**
@@ -318,13 +325,6 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		_angle = snap_to_cardinals(_angle);
 		var _angle_changed = angle != _angle;
 		
-		/*
-		Modifying delta, angle, or start_x/y will modify the return value of smooth_move_get_x/y.
-		So we log the values before making any changes.
-		*/
-		var _pre_move_x = smooth_move_get_x(self);
-		var _pre_move_y = smooth_move_get_y(self);
-		
 		// always reset smooth move state on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
@@ -336,34 +336,70 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		angle = _angle;
 		delta += _magnitude;
+		delta_on_angle += _magnitude;
 		
-		error_x = get_x_component(_angle, _magnitude) + error_x;
-		error_y = get_y_component(_angle, _magnitude) + error_y;
+		error_x += get_x_component(_angle, _magnitude);
+		error_y += get_y_component(_angle, _magnitude);
+		
+		// correct error using delta_on_angle
+		var _error_correct_percentage = min(sqr(delta_on_angle / 4), 1);
+		var _error_diff_x = get_vector_x() - error_x;
+		var _error_diff_y = get_vector_y() - error_y;
+		var _end_diff_x = _error_correct_percentage * _error_diff_x;
+		var _end_diff_y = _error_correct_percentage * _error_diff_y;
+		
+		var _final_x = get_vector_x();
+		var _final_y = get_vector_y();
+		
+		var _fixed_error_x = error_x + _end_diff_x;
+		var _fixed_error_y = error_y + _end_diff_y;
+		error_x += _end_diff_x;
+		error_y += _end_diff_y;
+		
+		// comparing x/y derived from line equation to these tracked values will always result in an error eventually, need to change
+		// perhaps only check errors if _error_correct_percentage is less than 100%?
+		var _error_x = round_towards(round_to_correct(error_x), start_x);
+		var _error_y = round_towards(round_to_correct(error_y), start_y);
 		
 		var _calculated_x = smooth_move_get_x(self);
 		var _calculated_y = smooth_move_get_y(self);
 		
-		var _error_x = round_towards(round_to_correct(error_x), start_x);
-		var _error_y = round_towards(round_to_correct(error_y), start_y);
-		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
 		
+		if (_error >= 1) {
+			start_x = _error_x;
+			start_y = _error_y;
+			delta = 0;
+		}
 		
+		/*
 		// error correction
 		if (_error >= 1) {
 			start_x += (_error_x - _calculated_x);
 			start_y += (_error_y - _calculated_y);
-			/*
-			var _post_fix_x = smooth_move_get_x(self);
-			var _post_fix_y = smooth_move_get_y(self);
-			// adjust error closer to fixed value (not working)
-			var _delta_adjust_perc = max((delta / 20), 1);
-			var _err_adjust_x = (error_x - _post_fix_x) * _delta_adjust_perc;
-			var _err_adjust_y = (error_y - _post_fix_y) * _delta_adjust_perc;
-			error_x -= _err_adjust_x;
-			error_y -= _err_adjust_y;
-			*/
+			
+			//Change delta so calculated x/y is as close to error as possible. New delta will
+			//be hypotenuse of triangle formed by calculated_vector_xy, error_xy, and point on
+			//vector that forms perpendicular line with error. This point is the closest possible
+			//point to error on the vector line
+			var _pre_delta_change_x = smooth_move_get_x(self);
+			var _pre_delta_change_y = smooth_move_get_y(self);
+			
+			var _error_theta = arctan2(error_y - get_vector_y(), error_x - get_vector_x());
+			var _theta = get_angle_diff(_error_theta, angle);
+			var _side_b = sqrt(sqr(error_y - get_vector_y()) + sqr(error_x - get_vector_x()));
+			var _delta_change = _side_b / cos(_theta);
+			delta += _delta_change;
+			
+			var _post_delta_change_x = smooth_move_get_x(self);
+			var _post_delta_change_y = smooth_move_get_y(self);
+			if (_pre_delta_change_x != _post_delta_change_x || _pre_delta_change_y != _post_delta_change_y) {
+				show_debug_message("delta change was too extreme");
+			} else {
+				show_debug_message("delta change was good");
+			}
 		}
+		*/
 	}
 }
 

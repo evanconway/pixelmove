@@ -13,8 +13,7 @@ function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move tes
 	if (_value != _expected) show_error(_msg + $"\n Expected {_expected} got {_value}.", true);
 }
 
-// @ignore
-function __test_smoothmove(){	
+function __test_smoothmove_cardinals() {
 	var _move_count = 1000;
 	
 	// north
@@ -104,8 +103,9 @@ function __test_smoothmove(){
 	smooth_move_by_vector(_sw, 0, 0);
 	test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 2 x fail!");
 	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
-	
-	// perfect diagonals
+}
+
+function __test_smoothmove_perfect_diagonals() {
 	// @param {real} _mag
 	var _test_perfect_diagonals = function(_mag) {
 		var _func = function(_mag_x, _mag_y) {
@@ -142,7 +142,9 @@ function __test_smoothmove(){
 	_test_perfect_diagonals(1/3);
 	_test_perfect_diagonals(1/2);
 	_test_perfect_diagonals(1);
-	
+}
+
+function __test_smoothmove_pixel_gaps() {
 	// pixel gaps and error correction
 	var _random = new SmoothMove(0, 0);
 	var _angle = 0;
@@ -167,28 +169,9 @@ function __test_smoothmove(){
 			show_error($"Smooth move random movement fail! Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
-	
-	// stairsteps
-	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
-	var _stair = new SmoothMove(0, 0);
-	var _stair_positions = ds_map_create();
-	var _stair_x = smooth_move_get_x(_stair);
-	var _stair_y = smooth_move_get_y(_stair);
-	ds_map_set(_stair_positions, _stair_x, _stair_y);
-	smooth_move_by_magnitudes(_stair, 0.2, 0);
-	_stair_x = smooth_move_get_x(_stair);
-	_stair_y = smooth_move_get_y(_stair);
-	ds_map_set(_stair_positions, _stair_x, _stair_y)
-	for (var _i = 0; _i < 100; _i++) {
-		smooth_move_by_magnitudes(_stair, 0.2, 0.2);
-		_stair_x = smooth_move_get_x(_stair);
-		_stair_y = smooth_move_get_y(_stair);
-		if (ds_map_exists(_stair_positions, _stair_x) && ds_map_find_value(_stair_positions, _stair_x) != _stair_y) {
-			show_error($"Smooth move stair step test fail! Y of {ds_map_find_value(_stair_positions, _stair_x)} and {_stair_y} for x: {_stair_x}", true);
-		}
-		ds_map_set(_stair_positions, _stair_x, _stair_y);
-	}
-	
+}
+
+function __test_smoothmove_positions() {
 	// set position
 	var _set_pos = new SmoothMove(0, 0);
 	for (var _i = 0; _i < 1000; _i++) {
@@ -224,13 +207,62 @@ function __test_smoothmove(){
 		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
 		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
 	}
+}
+
+function __test_smoothmove_stairsteps() {
+	// stairsteps
+	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
+	var _real_x = 0;
+	var _real_y = 0;
+	
+	var _sm = new SmoothMove(0, 0);
+	var _positions = ds_map_create();
+	for (var _i = 0; _i < 100; _i++) {
+		ds_map_clear(_positions);
+		smooth_move_set_position(_sm, 0, 0);
+		var _stair_x = smooth_move_get_x(_sm);
+		var _stair_y = smooth_move_get_y(_sm);
+		ds_map_set(_positions, _stair_x, _stair_y);
+		// start with random offset
+		smooth_move_by_vector(_sm, random_range(0.001, pi/4), random_range(0.001, 1));
+		_stair_x = smooth_move_get_x(_sm);
+		_stair_y = smooth_move_get_y(_sm);
+		ds_map_set(_positions, _stair_x, _stair_y);
+		// choose line and move along it
+		var _angle = random_range(0.001, pi/4);
+		var _vel = random_range(0.05, 1);
+		for (var _k = 0; _k < 100; _k++) {
+			smooth_move_by_vector(_sm, _angle, _vel);
+			_stair_x = smooth_move_get_x(_sm);
+			_stair_y = smooth_move_get_y(_sm);
+			_real_x = _sm.get_vector_x();
+			_real_y = _sm.get_vector_y();
+			if (ds_map_exists(_positions, _stair_x) && ds_map_find_value(_positions, _stair_x) != _stair_y) {
+				show_error($"Smooth move stair step test fail on line {_i}. Y of {ds_map_find_value(_positions, _stair_x)} and {_stair_y} for x: {_stair_x}.", true);
+			}
+			ds_map_set(_positions, _stair_x, _stair_y);
+		}
+	}	
+}
+
+function __test_smoothmove_misc() {
 	// angle diff
 	var _angles = new SmoothMove(0, 0);
 	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
 	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
 	test_smooth_move_assert_real(_angles.get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
 	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
+}
+
+// @ignore
+function __test_smoothmove(){
+	__test_smoothmove_cardinals();
+	__test_smoothmove_perfect_diagonals();
+	__test_smoothmove_pixel_gaps();
+	__test_smoothmove_positions();
+	__test_smoothmove_stairsteps();
+	__test_smoothmove_misc();
 }
 
 if (true) __test_smoothmove();
