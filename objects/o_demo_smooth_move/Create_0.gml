@@ -15,3 +15,50 @@ stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 
 angle = 0;
 toggle = false;
+
+// debug??
+
+var _x = 0;
+var _y = 0;
+var _vector_x = 0;
+var _vector_y = 0;
+
+smooth_move_set_position(smooth_move, 0, 0);
+_x = smooth_move_get_x(smooth_move);
+_y = smooth_move_get_y(smooth_move);
+_vector_x = smooth_move.get_vector_x();
+_vector_y = smooth_move.get_vector_y();
+array_push(positions, [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move)]);
+
+// down right
+for (var _i = 0; _i < 15; _i++) {
+	smooth_move_by_vector(smooth_move, 1*pi/4, 1);
+	_x = smooth_move_get_x(smooth_move);
+	_y = smooth_move_get_y(smooth_move);
+	_vector_x = smooth_move.get_vector_x();
+	_vector_y = smooth_move.get_vector_y();
+	array_push(positions, [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move)]);
+}
+
+// right
+for (var _i = 0; _i < 15; _i++) {
+	smooth_move_by_vector(smooth_move, 0*pi/4, 1);
+	_x = smooth_move_get_x(smooth_move);
+	_y = smooth_move_get_y(smooth_move);
+	_vector_x = smooth_move.get_vector_x();
+	_vector_y = smooth_move.get_vector_y();
+	array_push(positions, [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move)]);
+}
+
+
+// up right
+for (var _i = 0; _i < 15; _i++) {
+	smooth_move_by_vector(smooth_move, 7*pi/4, 1);
+	_x = smooth_move_get_x(smooth_move);
+	_y = smooth_move_get_y(smooth_move);
+	_vector_x = smooth_move.get_vector_x();
+	_vector_y = smooth_move.get_vector_y();
+	array_push(positions, [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move)]);
+}
+
+smooth_move_set_position(smooth_move, x, y);

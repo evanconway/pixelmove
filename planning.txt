@@ -338,3 +338,5 @@ In our example where we move by (0.2, 0), and then continually by (0.2, 0.2). Th
 Actually wait. We want the error to be a sort of guide post. It's only when travelling along the same line for a while that we want it to stop being a guide post. Maybe we should keep track of how many movements along the same angle we've made to determine if we should move the error to the calculated value. Actually, delta already does that for us in a way. There's got to be an equation to determine how much we should adjust the error to the line.
 
 Not really having luck. It's possible we need to move the error closer to the "real" value of x/y. 
+
+Small aside. Just realized that you can disable feather for an entire file. I should definitely do this on my packages so my particular coding styles don't throw errors for anyone who uses it.
