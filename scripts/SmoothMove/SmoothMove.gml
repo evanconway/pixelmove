@@ -32,6 +32,10 @@ function SmoothMove(_x, _y) constructor {
 	*/
 	delta_on_angle = 0;
 	
+	get_delta_on_angle_passed_threshold = function () {
+		return delta_on_angle >= sqrt(2);
+	};
+	
 	/**
 	 * Get the difference in radians between 2 angles. Both angles must be between 0
 	 * and 2*pi radians. Favors the shortest distance. For example using 7*pi/4 and
@@ -99,13 +103,15 @@ function SmoothMove(_x, _y) constructor {
 	}
 	
 	/**
-	 * Return the given angle in radians rounded roughly towards the cardinal directions
-	 * and their intermediates.
+	 * Return the given angle in radians transformed to the equivalent position and rounded
+	 * roughly towards the cardinal directions and their intermediates.
 	 *
 	 * @param {real} _angle
 	 * @notignore
 	 */
-	function snap_to_cardinals(_angle) {
+	function get_cleaned_angle(_angle) {
+		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
+		if (_angle >= 2*pi) _angle %= 2*pi;
 		if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
 		if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
 		if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
@@ -210,49 +216,11 @@ function SmoothMove(_x, _y) constructor {
 	};
 	
 	/**
-	 * Get the real, non-integer value of x calculated from the vector.
+	 * Get the integer x position derived from the line equation.
 	 *
 	 * @notignore
 	 */
-	get_vector_x = function() {
-		return start_x + get_magnitude_x();
-	};
-	
-	/**
-	 * Get the real, non-integer value of y calculated from the vector.
-	 *
-	 * @notignore
-	 */
-	get_vector_y = function() {
-		return start_y + get_magnitude_y();
-	};
-}
-
-/**
- * Get a copy of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_copy(_smooth_move) {
-	var _copy = new SmoothMove(0, 0);
-	_copy.start_x = _smooth_move.start_x;
-	_copy.start_y = _smooth_move.start_y;
-	_copy.angle = _smooth_move.angle;
-	_copy.delta = _smooth_move.delta;
-	_copy.erro_x = _smooth_move.error_x;
-	_copy.error_y = _smooth_move.error_y;
-	_copy.error_x = _smooth_move.error_x;
-	_copy.error_y = _smooth_move.error_y;
-	return _copy;
-}
-
-/**
- * Get the current x position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_x(_smooth_move) {
-	with (_smooth_move) {
+	get_derived_x = function() {
 		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
 			var _change = get_magnitude_x();
@@ -267,15 +235,13 @@ function smooth_move_get_x(_smooth_move) {
 		var _x = round_to_thousandths(_slope * _y_diff + start_x);
 		return round_towards(_x, start_x);
 	}
-}
-
-/**
- * Get the current y position of the given SmoothMove instance.
- *
- * @param {Struct.SmoothMove} _smooth_move
- */
-function smooth_move_get_y(_smooth_move) {
-	with (_smooth_move) {
+	
+	/**
+	 * Get the integer y position derived from the line equation.
+	 *
+	 * @notignore
+	 */
+	get_derived_y = function() {
 		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
 			var _change = get_magnitude_y();
@@ -289,6 +255,63 @@ function smooth_move_get_y(_smooth_move) {
 		var _x_diff = smooth_move_get_x(self) - start_x;
 		var _y = round_to_thousandths(_slope * _x_diff + start_y);
 		return round_towards(_y, start_y);
+	}
+	
+	/**
+	 * Get the integer x position derived from the error position.
+	 */
+	get_error_x = function() {
+		return round_towards(round_to_correct(error_x), start_x);
+	};
+	
+	/**
+	 * Get the integer y position derived from the error position.
+	 */
+	get_error_y = function() {
+		return round_towards(round_to_correct(error_y), start_y);
+	};
+}
+
+/**
+ * Get a copy of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_copy(_smooth_move) {
+	var _copy = new SmoothMove(0, 0);
+	_copy.start_x = _smooth_move.start_x;
+	_copy.start_y = _smooth_move.start_y;
+	_copy.angle = _smooth_move.angle;
+	_copy.delta = _smooth_move.delta;
+	_copy.delta_on_angle = _smooth_move.delta_on_angle;
+	_copy.erro_x = _smooth_move.error_x;
+	_copy.error_y = _smooth_move.error_y;
+	_copy.error_x = _smooth_move.error_x;
+	_copy.error_y = _smooth_move.error_y;
+	return _copy;
+}
+
+/**
+ * Get the current x position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_x(_smooth_move) {
+	with (_smooth_move) {
+		var _result = get_delta_on_angle_passed_threshold() ? get_derived_x() : get_error_x();
+		return _result;
+	}
+}
+
+/**
+ * Get the current y position of the given SmoothMove instance.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ */
+function smooth_move_get_y(_smooth_move) {
+	with (_smooth_move) {
+		var _result = get_delta_on_angle_passed_threshold() ? get_derived_y() : get_error_y();
+		return _result;
 	}
 }
 
@@ -306,6 +329,7 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 		start_x = _x;
 		start_y = _y;
 		delta = 0;
+		delta_on_angle = 0;
 		error_x = _x;
 		error_y = _y;
 	}
@@ -320,12 +344,10 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
  */
 function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	with (_smooth_move) {
-		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
-		if (_angle >= 2*pi) _angle %= 2*pi;
-		_angle = snap_to_cardinals(_angle);
+		_angle = get_cleaned_angle(_angle);
 		var _angle_changed = angle != _angle;
 		
-		// always reset smooth move state on no movement or angle change
+		// reset line data on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
 		// reset error data on no movement or too great an angle change
@@ -341,26 +363,6 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		error_x += get_x_component(_angle, _magnitude);
 		error_y += get_y_component(_angle, _magnitude);
 		
-		// correct error using delta_on_angle
-		/*
-		var _error_correct_percentage = min(sqr(delta_on_angle / 4), 1);
-		var _error_diff_x = get_vector_x() - error_x;
-		var _error_diff_y = get_vector_y() - error_y;
-		var _end_diff_x = _error_correct_percentage * _error_diff_x;
-		var _end_diff_y = _error_correct_percentage * _error_diff_y;
-		
-		var _final_x = get_vector_x();
-		var _final_y = get_vector_y();
-		
-		var _fixed_error_x = error_x + _end_diff_x;
-		var _fixed_error_y = error_y + _end_diff_y;
-		error_x += _end_diff_x;
-		error_y += _end_diff_y;
-		*/
-		
-		
-		// comparing x/y derived from line equation to these tracked values will always result in an error eventually, need to change
-		// perhaps only check errors if _error_correct_percentage is less than 100%?
 		var _error_x = round_towards(round_to_correct(error_x), start_x);
 		var _error_y = round_towards(round_to_correct(error_y), start_y);
 		
@@ -369,40 +371,16 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
 		
-		if (_error >= 1) {
+		if (get_delta_on_angle_passed_threshold()) {
+			error_x = smooth_move_get_x(self);
+			error_y = smooth_move_get_y(self);
+		}
+		
+		if (!get_delta_on_angle_passed_threshold() && _error >= 1) {
 			start_x = _error_x;
 			start_y = _error_y;
 			delta = 0;
 		}
-		
-		/*
-		// error correction
-		if (_error >= 1) {
-			start_x += (_error_x - _calculated_x);
-			start_y += (_error_y - _calculated_y);
-			
-			//Change delta so calculated x/y is as close to error as possible. New delta will
-			//be hypotenuse of triangle formed by calculated_vector_xy, error_xy, and point on
-			//vector that forms perpendicular line with error. This point is the closest possible
-			//point to error on the vector line
-			var _pre_delta_change_x = smooth_move_get_x(self);
-			var _pre_delta_change_y = smooth_move_get_y(self);
-			
-			var _error_theta = arctan2(error_y - get_vector_y(), error_x - get_vector_x());
-			var _theta = get_angle_diff(_error_theta, angle);
-			var _side_b = sqrt(sqr(error_y - get_vector_y()) + sqr(error_x - get_vector_x()));
-			var _delta_change = _side_b / cos(_theta);
-			delta += _delta_change;
-			
-			var _post_delta_change_x = smooth_move_get_x(self);
-			var _post_delta_change_y = smooth_move_get_y(self);
-			if (_pre_delta_change_x != _post_delta_change_x || _pre_delta_change_y != _post_delta_change_y) {
-				show_debug_message("delta change was too extreme");
-			} else {
-				show_debug_message("delta change was good");
-			}
-		}
-		*/
 	}
 }
 

@@ -29,6 +29,7 @@ if (stick_mag > 0) {
 //_vel = 1;
 
 // collision checking
+/*
 var _magnitude_x = cos(_angle) * _vel;
 var _magnitude_y = sin(_angle) * _vel;
 
@@ -65,8 +66,13 @@ while (_checking) {
 var _final_mag_x = _mod_x == _target_diff_x ? _magnitude_x : _mod_x;
 var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 
-smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
-//smooth_move_by_magnitudes(smooth_move, _horz * 0.2, _vert * 0.2);
+//smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+*/
+
+//_vel = 1
+//_angle = 6*pi/4;
+
+smooth_move_by_vector(smooth_move, _angle, _vel);
 
 //smooth_move_by_vector(smooth_move, angle, 1);
 angle += toggle ? 0 : 0.001
@@ -84,15 +90,17 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
-if (_x != positions[positions_index][0] || _y != positions[positions_index][1]) {
-	positions_index += 1;
-	if (positions_index >= array_length(positions)) positions_index = 0;
-	positions[positions_index] = [_x, _y];
-}
+ds_map_set(positions, $"{smooth_move_get_x(smooth_move)},{smooth_move_get_y(smooth_move)}", [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move), c_green]);
 
-draw_set_color(c_lime);
-for (var _i = 0; _i < array_length(positions); _i++) {
-	draw_point(positions[_i][0], positions[_i][1]);
-}
+array_foreach(ds_map_values_to_array(positions), function(_v) {
+	draw_set_color(_v[2]);
+	draw_point(_v[0], _v[1]);
+});
 
+with (smooth_move) {
+	draw_set_color(c_fuchsia);
+	draw_point(get_error_x(), get_error_y());
+	draw_set_color(c_red);
+	draw_point(start_x, start_y);
+}
 

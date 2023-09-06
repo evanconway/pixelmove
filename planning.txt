@@ -373,3 +373,14 @@ We are much closer. Our error correction actually passes the gap test. It's stil
 I know why it's causing a stair step! It's because we round our error_x/y to start_x/y. But our calculated vector_x/y comes from taking the real_x rounded towards start, then deriving the y using that x, and rounding that towards start. The error will always end up off like this. In fact the derived real vector x/y will be off too. That's the whole point of inferring y from x, because those correctly tracked values will trigger stair steps.
 
 This might be a huge break through in logic. Unfortuantely I can't change how I calculate my rounded error because that defeats the point of comparing our derived x/y with a "correctly tracked" x/y. As tempting as it is to try and fix this now, let's sleep and try to fix this with a fresh mind. I think we're very close though.
+
+
+6th of September, 2023
+
+Simply throwing the plan from last night into the existing code didn't work. But that's because what we need to is return the error x/y or derived line x/y depending on delta_on_angle. What I actually just implemented corrects the line towards error when delta_on_angle is too small. That's not the same thing.
+
+Added some code that changes color of drawn positions if there is an angle change. I was worried we were having jumps in our lines even when deriving from the equation. But I was wrong, I'm just not as steady on the stick as I thought I was.
+
+By snapping the line equation to the error when less than delta on line threshold, and snapping error to line when passed delta threshold, we almost pass all tests. The stair stepping still gives us trouble, however if we check the number of stair steps, it's never more than 2. Which means we have crappy logic when changing angles still, but we correctly draw pixels by the line equation when moving along a true line.
+
+So how on earth do I fix this last piece of the stair stepping puzzle?
