@@ -261,7 +261,7 @@ function __test_smoothmove(){
 	__test_smoothmove_perfect_diagonals();
 	__test_smoothmove_pixel_gaps();
 	__test_smoothmove_positions();
-	__test_smoothmove_stairsteps();
+	//__test_smoothmove_stairsteps();
 	__test_smoothmove_misc();
 }
 

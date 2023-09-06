@@ -342,6 +342,7 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		error_y += get_y_component(_angle, _magnitude);
 		
 		// correct error using delta_on_angle
+		/*
 		var _error_correct_percentage = min(sqr(delta_on_angle / 4), 1);
 		var _error_diff_x = get_vector_x() - error_x;
 		var _error_diff_y = get_vector_y() - error_y;
@@ -355,6 +356,8 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		var _fixed_error_y = error_y + _end_diff_y;
 		error_x += _end_diff_x;
 		error_y += _end_diff_y;
+		*/
+		
 		
 		// comparing x/y derived from line equation to these tracked values will always result in an error eventually, need to change
 		// perhaps only check errors if _error_correct_percentage is less than 100%?
