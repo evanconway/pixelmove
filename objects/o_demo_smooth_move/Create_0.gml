@@ -19,6 +19,7 @@ stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 
 // debug jumping
+/*
 smooth_move_set_position(smooth_move, 0, 0);
 position_add();
 
@@ -42,3 +43,4 @@ for (var _i = 0; _i < 1000; _i++) {
 	var _check_y = smooth_move_get_y(smooth_move);
 	position_add();
 }
+*/

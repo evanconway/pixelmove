@@ -397,3 +397,10 @@ I was also left wondering if my error rounding is imperfect. But I think the way
 
 There is another small error. I'm noticing strange jumps backwards when moving with the stick sometimes. I have a suspicion what's happening is the position of error is notably different from the line derived position. But on the frame where delta_on_angle moves passed it's threshold, we don't error correct. But on this frame it's very possible the value derived from the line could be different enough from error that it should have been corrected. If I'm right, fixing that logic shouldn't be too tricky. But I need to create a reproducable case first.
 
+Reproduceable case made. And error observed. I'm pretty sure error correcting the same frame we also switch over to inferring from line equation will fix it. I was worried this would create a bigger offset, but that shouldn't happen because when we error correct, we reset the line. So the derived value will be identical to whatever the rounded error was when we set it.
+
+Ah, our logic wasn't quite right. The position after increasing the delta_on_angle is different once it crosses the threshold. 
+
+I think we may have just got it. It passes all my tests. The visuals look correct. I think it's finally actually doing what I wanted it to do. This is very exciting. It's possible I could just release this as-is, but I can't help but wonder if we can't fix those last few ugly stairsteps that occur when making frequent but very gentle changes to the angle? Like slowly turning an analog stick.
+
+Let's steal from the idea of rollback. If the user is inputting an angle at any moment, it's a very likely guess that the thing they'll be inputting that same angle, or one very similar, the next moment. 

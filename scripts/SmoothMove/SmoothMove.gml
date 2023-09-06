@@ -349,7 +349,7 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 }
 
 /**
- * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to straight along positive x axis
+ * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to positive x axis
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle of vector in radians
@@ -371,32 +371,30 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		angle = _angle;
 		delta += _magnitude;
-		delta_on_angle += _magnitude;
 		
+		// error correct based on true value
 		error_x += get_x_component(_angle, _magnitude);
 		error_y += get_y_component(_angle, _magnitude);
+		var _error = sqrt(sqr(get_error_x() - smooth_move_get_x(self)) + sqr(get_error_y() - smooth_move_get_y(self)));
 		
-		var _error_x = round_towards(round_to_correct(error_x), start_x);
-		var _error_y = round_towards(round_to_correct(error_y), start_y);
+		// determine if this movement crossed the delta_on_angle threshold, and new error
+		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
+		delta_on_angle += _magnitude;
+		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
+		var _post_delta_change_error = sqrt(sqr(get_error_x() - smooth_move_get_x(self)) + sqr(get_error_y() - smooth_move_get_y(self)));
 		
-		var _calculated_x = smooth_move_get_x(self);
-		var _calculated_y = smooth_move_get_y(self);
+		// correct line towards error
+		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
+			start_x = get_error_x();
+			start_y = get_error_y();
+			delta = 0;
+		}
 		
-		var _error = sqrt(sqr(_error_x - _calculated_x) + sqr(_error_y - _calculated_y));
-		
+		// correct error towards line once passed threshold
 		if (get_delta_on_angle_passed_threshold()) {
 			error_x = smooth_move_get_x(self);
 			error_y = smooth_move_get_y(self);
 		}
-		
-		if (!get_delta_on_angle_passed_threshold() && _error >= 1) {
-			start_x = _error_x;
-			start_y = _error_y;
-			delta = 0;
-		}
-		
-		var _final_x = smooth_move_get_x(self);
-		var _final_y = smooth_move_get_y(self);
 	}
 }
 
