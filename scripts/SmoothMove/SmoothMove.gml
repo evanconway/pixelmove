@@ -394,6 +394,9 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 			start_y = _error_y;
 			delta = 0;
 		}
+		
+		var _final_x = smooth_move_get_x(self);
+		var _final_y = smooth_move_get_y(self);
 	}
 }
 

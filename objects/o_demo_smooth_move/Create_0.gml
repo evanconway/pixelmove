@@ -38,6 +38,7 @@ for (var _i = 0; _i < 60; _i++) {
 
 for (var _i = 0; _i < 1000; _i++) {
 	smooth_move_by_vector(smooth_move, _angle, _vel);
+	var _check_x = smooth_move_get_x(smooth_move);
+	var _check_y = smooth_move_get_y(smooth_move);
 	position_add();
 }
-

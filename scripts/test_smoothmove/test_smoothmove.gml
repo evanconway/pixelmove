@@ -249,6 +249,50 @@ function __test_smoothmove_misc() {
 	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 }
 
+/**
+ * Ensures that when moving by vectors that should only result in one direction changes along an axis,
+ * the calculated value on that axis never jumps back.
+ */
+function __test_smoothmove_always_increase() {
+	var _sm = new SmoothMove(0, 0);
+	var _x = smooth_move_get_x(_sm);
+	var _y = smooth_move_get_y(_sm);
+
+	// test x axis increase
+	var _vel = 0.13;
+
+	/**
+	 * @param {real} _old
+	 * @param {real} _new
+	 */
+	var _assert_only_increased = function(_old, _new) {
+		if (_new < _old) show_error($"Smooth move test only increase x fail. X when from {_old} to {_new}.", true);
+	}
+
+	for (var _i = 0; _i < 20; _i++) {
+		smooth_move_by_vector(_sm, 0, _vel);
+		_assert_only_increased(_x, smooth_move_get_x(_sm));
+		_x = smooth_move_get_x(_sm);
+		_y = smooth_move_get_y(_sm);
+	}
+
+	var _angle = 0;
+	for (var _i = 0; _i < 60; _i++) {
+		smooth_move_by_vector(_sm, _angle, _vel);
+		_assert_only_increased(_x, smooth_move_get_x(_sm));
+		_x = smooth_move_get_x(_sm);
+		_y = smooth_move_get_y(_sm);
+		_angle += 0.02
+	}
+
+	for (var _i = 0; _i < 1000; _i++) {
+		smooth_move_by_vector(_sm, _angle, _vel);
+		_assert_only_increased(_x, smooth_move_get_x(_sm));
+		_x = smooth_move_get_x(_sm);
+		_y = smooth_move_get_y(_sm);
+	}
+}
+
 // @ignore
 function __test_smoothmove(){
 	__test_smoothmove_cardinals();
@@ -257,6 +301,7 @@ function __test_smoothmove(){
 	__test_smoothmove_positions();
 	__test_smoothmove_stairsteps();
 	__test_smoothmove_misc();
+	__test_smoothmove_always_increase();
 }
 
 if (true) __test_smoothmove();
