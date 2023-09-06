@@ -394,3 +394,6 @@ Let's explore some math around tracking multiple vectors, and forming the best g
 Actually after looking at it for a bit. I don't think it's possible. You need to know the future points in order to infer the points of an elegant line.
 
 I was also left wondering if my error rounding is imperfect. But I think the way we do it now, of rounding towards the last recorded start_x/y makes perfect sense. Because we're trying to pull the resulting x/y back towards the start of the vector. That works perfectly when deriving a line. But when just displaying raw points, if we haven't crossed our delta threshold yet. I think that's the best we can do :(
+
+There is another small error. I'm noticing strange jumps backwards when moving with the stick sometimes. I have a suspicion what's happening is the position of error is notably different from the line derived position. But on the frame where delta_on_angle moves passed it's threshold, we don't error correct. But on this frame it's very possible the value derived from the line could be different enough from error that it should have been corrected. If I'm right, fixing that logic shouldn't be too tricky. But I need to create a reproducable case first.
+

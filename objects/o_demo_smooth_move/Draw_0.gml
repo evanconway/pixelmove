@@ -87,7 +87,7 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
-ds_map_set(positions, $"{smooth_move_get_x(smooth_move)},{smooth_move_get_y(smooth_move)}", [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move), c_green]);
+position_add();
 
 array_foreach(ds_map_values_to_array(positions), function(_v) {
 	draw_set_color(_v[2]);
