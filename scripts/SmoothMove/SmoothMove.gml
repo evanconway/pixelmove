@@ -32,8 +32,11 @@ function SmoothMove(_x, _y) constructor {
 	*/
 	delta_on_angle = 0;
 	
+	// once delta_on_angle has passed this value position will be derived from line equation instead of error
+	delta_on_angle_threshold = 7.1;
+	
 	get_delta_on_angle_passed_threshold = function () {
-		return delta_on_angle >= 7.1; // 1.414
+		return delta_on_angle >= delta_on_angle_threshold;
 	};
 	
 	/**
@@ -289,6 +292,16 @@ function smooth_move_get_copy(_smooth_move) {
 	_copy.error_x = _smooth_move.error_x;
 	_copy.error_y = _smooth_move.error_y;
 	return _copy;
+}
+
+/**
+ * 
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {real} _threshold
+ */
+function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
+	_smooth_move.delta_on_angle_threshold = _threshold;
 }
 
 /**

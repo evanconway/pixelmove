@@ -387,4 +387,10 @@ So how on earth do I fix this last piece of the stair stepping puzzle?
 
 I feel confident stating that our movement along lines is perfect. It's our movement where the angle changes frequently that's bad. And I have a strong suspicion it's because of how we round the error position. My current theory is that it should be possible to make an educated guess on how we should round the error based on past positions. For example, imagine drawing a circle. With our current system we're always rounding towards the start_x/y. But if the angle is changing every frame, and our velocity is less than 1, that's the same as just flooring it.
 
-I also just realized that increasing the delta_on_angle threshold also increases the perceived smoothness. And this makes sense to me because the more we increase the threshold, the long the instance can travel and simply display the floor of its true position. 
+I also just realized that increasing the delta_on_angle threshold also increases the perceived smoothness. And this makes sense to me because the more we increase the threshold, the longer the instance can travel and simply display the floor of its true position. And this feels smoother.
+
+Let's explore some math around tracking multiple vectors, and forming the best guess of a line from those vectors.
+
+Actually after looking at it for a bit. I don't think it's possible. You need to know the future points in order to infer the points of an elegant line.
+
+I was also left wondering if my error rounding is imperfect. But I think the way we do it now, of rounding towards the last recorded start_x/y makes perfect sense. Because we're trying to pull the resulting x/y back towards the start of the vector. That works perfectly when deriving a line. But when just displaying raw points, if we haven't crossed our delta threshold yet. I think that's the best we can do :(
