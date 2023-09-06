@@ -384,3 +384,7 @@ Added some code that changes color of drawn positions if there is an angle chang
 By snapping the line equation to the error when less than delta on line threshold, and snapping error to line when passed delta threshold, we almost pass all tests. The stair stepping still gives us trouble, however if we check the number of stair steps, it's never more than 2. Which means we have crappy logic when changing angles still, but we correctly draw pixels by the line equation when moving along a true line.
 
 So how on earth do I fix this last piece of the stair stepping puzzle?
+
+I feel confident stating that our movement along lines is perfect. It's our movement where the angle changes frequently that's bad. And I have a strong suspicion it's because of how we round the error position. My current theory is that it should be possible to make an educated guess on how we should round the error based on past positions. For example, imagine drawing a circle. With our current system we're always rounding towards the start_x/y. But if the angle is changing every frame, and our velocity is less than 1, that's the same as just flooring it.
+
+I also just realized that increasing the delta_on_angle threshold also increases the perceived smoothness. And this makes sense to me because the more we increase the threshold, the long the instance can travel and simply display the floor of its true position. 

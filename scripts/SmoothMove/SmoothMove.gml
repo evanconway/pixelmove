@@ -33,7 +33,7 @@ function SmoothMove(_x, _y) constructor {
 	delta_on_angle = 0;
 	
 	get_delta_on_angle_passed_threshold = function () {
-		return delta_on_angle >= sqrt(2);
+		return delta_on_angle >= 7.1; // 1.414
 	};
 	
 	/**
