@@ -65,10 +65,10 @@ while (_checking) {
 var _final_mag_x = _mod_x == _target_diff_x ? _magnitude_x : _mod_x;
 var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 
-//smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
 //smooth_move_by_magnitudes(smooth_move, _horz * 0.2, _vert * 0.2);
 
-smooth_move_by_vector(smooth_move, angle, 1);
+//smooth_move_by_vector(smooth_move, angle, 1);
 angle += toggle ? 0 : 0.001
 toggle = !toggle;
 
