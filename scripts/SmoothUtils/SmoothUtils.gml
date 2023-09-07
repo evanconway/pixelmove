@@ -21,14 +21,6 @@ function round_to_correct(_value) {
 }
 
 /**
-* @param {real} _value
-* @ignore
-*/
-function round_to_thousandths(_value) {
-	return floor(_value * 1000 + 0.5) / 1000;
-}
-
-/**
 * Round given value to 0 if it's already close. This is mostly to deal
 * with sin and cos not returning a perfect 0 on certain values.
 *
@@ -69,14 +61,14 @@ function snap_cos(_angle) {
 function get_cleaned_angle(_angle) {
 	if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 	if (_angle >= 2*pi) _angle %= 2*pi;
-	if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(3*pi/4)) _angle = 3*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(4*pi/4)) _angle = 4*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(5*pi/4)) _angle = 5*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
-	if (round_to_thousandths(_angle) == round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(0*pi/4)) _angle = 0*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(1*pi/4)) _angle = 1*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(2*pi/4)) _angle = 2*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(3*pi/4)) _angle = 3*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(4*pi/4)) _angle = 4*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(5*pi/4)) _angle = 5*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(6*pi/4)) _angle = 6*pi/4;
+	if (round_to_correct(_angle) == round_to_correct(7*pi/4)) _angle = 7*pi/4;
 	return _angle;
 }
 

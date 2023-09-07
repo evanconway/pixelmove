@@ -7,33 +7,7 @@
  * @param {Real} start_position_y The starting y position.
  */
 function SmoothMove(start_position_x, start_position_y) constructor {
-	// @ignore
-	start_x = floor(start_position_x);
-	// @ignore
-	start_y = floor(start_position_y);
-	line = new SmoothLine(0, 0);
-	
-	/*
-	True positions allows for checking between the calculated position following the strict
-	linear line algorithm, and what the position would have been if position was
-	calculated normally.
-	*/
-	
-	// @ignore
-	true_x = start_x;
-	// @ignore
-	true_y = start_y;
-	
-	/*
-	This is not for calculating x/y position. This is used to track how far this instance
-	has travelled along the same angle.
-	*/
-	// @ignore
-	delta_on_angle = 0;
-	
-	// once delta_on_angle has passed this value position will be derived from line equation instead of error
-	// @ignore
-	delta_on_angle_threshold = 7.1;
+	position = new SmoothPosition(start_position_x, start_position_y);
 	
 	/*
 	Previous and anticipated positions are the actual internal values smooth move did or will have. The user facing
@@ -43,66 +17,20 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	
 	// last known position following stairstep rules
 	// @ignore
-	previous_x = start_x;
+	previous_x = position.get_x();
 	// @ignore
-	previous_y = start_y;
+	previous_y = position.get_y();
 	
 	// the next position if moved along the same vector
 	// @ignore
-	anticipated_x = start_x;
+	anticipated_x = position.get_x();
 	// @ignore
-	anticipated_y = start_y;
+	anticipated_y = position.get_y();
 	
 	// if false, anticipated next vector movement will be used to determine and hide stairstep pixels
 	// @ignore
 	show_stairsteps = false;
 	
-	// @ignore
-	get_delta_on_angle_passed_threshold = function () {
-		return delta_on_angle >= delta_on_angle_threshold;
-	};
-	
-	/**
-	 * Reset the start and delta values of this instance.
-	 *
-	 * @ignore
-	 */
-	reset = function() {
-		var _x = get_x();
-		var _y = get_y();
-		start_x = _x;
-		start_y = _y;
-		line.delta = 0;
-		delta_on_angle = 0;
-	};
-	
-	/**
-	 * Get the integer x position derived from the true position.
-	 *
-	 * @ignore
-	 */
-	get_round_to_start_x = function() {
-		return round_towards(round_to_correct(true_x), start_x);
-	};
-	
-	/**
-	 * Get the integer y position derived from the true position.
-	 *
-	 * @ignore
-	 */
-	get_round_to_start_y = function() {
-		return round_towards(round_to_correct(true_y), start_y);
-	};
-	
-	// @ignore
-	get_x = function() {
-		return get_delta_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_round_to_start_x();
-	};
-	
-	// @ignore
-	get_y = function() {
-		return get_delta_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_round_to_start_y();
-	};
 	
 	/**
 	 * Return boolean indicating if current position will likely be 
@@ -112,71 +40,10 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	 */
 	get_is_stair_step = function() {
 		if (show_stairsteps) return false;
-		var _dist_to_prev = sqrt(sqr(get_x() - previous_x) + sqr(get_y() - previous_y));
-		var _dist_to_ant = sqrt(sqr(get_x() - anticipated_x) + sqr(get_y() - anticipated_y));
+		var _dist_to_prev = sqrt(sqr(position.get_x() - previous_x) + sqr(position.get_y() - previous_y));
+		var _dist_to_ant = sqrt(sqr(position.get_x() - anticipated_x) + sqr(position.get_y() - anticipated_y));
 		var _dist_prev_to_ant = sqrt(sqr(previous_x - anticipated_x) + sqr(previous_y - anticipated_y));
 		return (_dist_to_prev == 1) && (_dist_to_ant == 1) && (_dist_prev_to_ant == sqrt(2));
-	}
-	
-	/**
-	 * Move by the given vector. Angle of 0 corresponds to positive x axis
-	 *
-	 * @param {real} _angle angle of vector in radians
-	 * @param {real} _magnitude magnitude of vector
-	 * @ignore
-	 */
-	move_by_vector = function(_angle, _magnitude) {		
-		_angle = get_cleaned_angle(_angle);
-		var _angle_changed = line.angle != _angle;
-		
-		// reset line data on no movement or angle change
-		if ((_magnitude == 0) || _angle_changed) reset();
-		
-		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(line.angle, _angle) > pi/2) {
-			true_x = get_x();
-			true_y = get_y();
-		}
-		
-		line.set(_angle, line.delta + _magnitude);
-		
-		// error correct based on true value
-		true_x += get_x_component(_angle, _magnitude);
-		true_y += get_y_component(_angle, _magnitude);
-		var _error = sqrt(sqr(get_round_to_start_x() - get_x()) + sqr(get_round_to_start_y() - get_y()));
-		
-		// determine if this movement crossed the delta_on_angle threshold, and new error
-		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
-		delta_on_angle += _magnitude;
-		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - get_x()) + sqr(get_round_to_start_y() - get_y()));
-		
-		// correct line towards error
-		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
-			start_x = get_round_to_start_x();
-			start_y = get_round_to_start_y();
-			line.delta = 0;
-		}
-		
-		// correct error towards line once passed threshold
-		if (get_delta_on_angle_passed_threshold()) {
-			true_x = get_x();
-			true_y = get_y();
-		}
-	};
-	
-	// @ignore
-	get_x_if_moved_by_vector = function(_angle, _magnitude) {
-		var _copy = smooth_move_get_copy(self);
-		_copy.move_by_vector(_angle, _magnitude);
-		return _copy.get_x();
-	};
-	
-	// @ignore
-	get_y_if_moved_by_vector = function(_angle, _magnitude) {
-		var _copy = smooth_move_get_copy(self);
-		_copy.move_by_vector(_angle, _magnitude);
-		return _copy.get_y();
 	};
 }
 
@@ -188,12 +55,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 function smooth_move_get_copy(smooth_move) {
 	var _smooth_move = smooth_move
 	var _copy = new SmoothMove(0, 0);	
-	_copy.start_x = _smooth_move.start_x;
-	_copy.start_y = _smooth_move.start_y;
-	_copy.line = _smooth_move.line.copy();
-	_copy.delta_on_angle = _smooth_move.delta_on_angle;
-	_copy.true_x = _smooth_move.true_x;
-	_copy.true_y = _smooth_move.true_y;
+	_copy.position = _smooth_move.position.copy();
 	_copy.previous_x = _smooth_move.previous_x;
 	_copy.previous_y = _smooth_move.previous_y;
 	_copy.anticipated_x = _smooth_move.anticipated_x;
@@ -211,7 +73,7 @@ function smooth_move_get_copy(smooth_move) {
 function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
 	var _smooth_move = smooth_move;
 	var _threshold = threshold;
-	_smooth_move.delta_on_angle_threshold = _threshold;
+	_smooth_move.position.delta_on_angle_threshold = _threshold;
 }
 
 /**
@@ -235,7 +97,7 @@ function smooth_move_show_stairsteps(smooth_move, new_show_stairsteps) {
  */
 function smooth_move_get_x(smooth_move) {
 	with (smooth_move) {
-		return get_is_stair_step() ? previous_x : get_x();
+		return get_is_stair_step() ? previous_x : position.get_x();
 	}
 }
 
@@ -247,7 +109,7 @@ function smooth_move_get_x(smooth_move) {
  */
 function smooth_move_get_y(smooth_move) {
 	with (smooth_move) {
-		return get_is_stair_step() ? previous_y : get_y();
+		return get_is_stair_step() ? previous_y : position.get_y();
 	}
 }
 
@@ -262,12 +124,7 @@ function smooth_move_set_position(smooth_move, x, y) {
 	var _x = floor(x);
 	var _y = floor(y);
 	with (smooth_move) {
-		start_x = _x;
-		start_y = _y;
-		line.delta = 0;
-		delta_on_angle = 0;
-		true_x = _x;
-		true_y = _y;
+		position.set(_x, _y);
 		previous_x = _x;
 		previous_y = _y;
 		anticipated_x = _x;
@@ -284,11 +141,15 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {
-		previous_x = get_x();
-		previous_y = get_y();
-		move_by_vector(angle, magnitude);
-		anticipated_x = get_x_if_moved_by_vector(angle, magnitude);
-		anticipated_y = get_y_if_moved_by_vector(angle, magnitude);
+		previous_x = position.get_x();
+		previous_y = position.get_y();
+		
+		position.move_by_vector(angle, magnitude);
+		
+		var _copy = position.copy();
+		_copy.move_by_vector(angle, magnitude);
+		anticipated_x = _copy.get_x();
+		anticipated_y = _copy.get_y();
 	}
 }
 

@@ -132,4 +132,19 @@ function SmoothPosition(_start_x, _start_y) constructor {
 		_copy.delta_on_angle_threshold = delta_on_angle_threshold;
 		return _copy;
 	}
+	
+	/**
+	 * @param {real} _x
+	 * @param {real} _y
+	 */
+	set = function(_x, _y) {
+		_x = floor(_x);
+		_y = floor(_y);
+		start_x = _x;
+		start_y = _y;
+		true_x = start_x;
+		true_y = start_y;
+		line.delta = 0;
+		delta_on_angle = 0;	
+	};
 }

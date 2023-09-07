@@ -79,7 +79,7 @@ function SmoothLine(_angle, _delta) constructor {
 		
 		// derive x position from linear line function of y
 		var _y_diff = get_y(_start_x, _start_y) - _start_y;
-		var _x = round_to_thousandths(slope() * _y_diff + _start_x);
+		var _x = round_to_correct(slope() * _y_diff + _start_x);
 		return round_towards(_x, _start_x);
 	};
 	
@@ -98,7 +98,7 @@ function SmoothLine(_angle, _delta) constructor {
 		
 		// derive y position from linear line function of x
 		var _x_diff = get_x(_start_x, _start_y) - _start_x;
-		var _y = round_to_thousandths(slope() * _x_diff + _start_y);
+		var _y = round_to_correct(slope() * _x_diff + _start_y);
 		return round_towards(_y, _start_y);
 	}
 }
