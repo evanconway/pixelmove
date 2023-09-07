@@ -54,11 +54,11 @@ function SmoothLine(_angle, _delta) constructor {
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		return infer_y_from_x() ? get_x_component(angle, delta) / get_x_component(angle, delta) : get_x_component(angle, delta) / get_x_component(angle, delta);
+		return infer_y_from_x() ? get_y_component(angle, delta) / get_x_component(angle, delta) : get_x_component(angle, delta) / get_y_component(angle, delta);
 	}
 	
 	// @ignore
-	get_copy = function() {
+	copy = function() {
 		return new SmoothLine(angle, delta);
 	};
 	
@@ -86,7 +86,7 @@ function SmoothLine(_angle, _delta) constructor {
 	get_y = function(_start_x, _start_y) {
 		if (delta == 0) return _start_y;
 		if (!infer_y_from_x()) {
-			var _y = round_to_correct(_start_y + get_x_component(angle, delta));
+			var _y = round_to_correct(_start_y + get_y_component(angle, delta));
 			return round_towards(_y, _start_y);
 		}
 		

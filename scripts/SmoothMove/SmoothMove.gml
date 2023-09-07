@@ -11,10 +11,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	start_x = floor(start_position_x);
 	// @ignore
 	start_y = floor(start_position_y);
-	// @ignore
-	angle = 0;
-	// @ignore
-	delta = 0;
+	line = new SmoothLine(0, 0);
 	
 	/*
 	True positions allows for checking between the calculated position following the strict
@@ -66,47 +63,6 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	};
 	
 	/**
-	 * SmoothMove works by inferring x and y positions based off the 2D vector it's moved by.
-	 * This function returns true if the x magnitude of the vector is greater than the y
-	 * magnitude, indicating that the y position should be inferred from the x position.
-	 * Returns false if the reverse is true.
-	 *
-	 * @ignore
-	 */
-	infer_y_from_x = function() {
-		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
-	};
-	
-	/**
-	 * Get the x magnitude given the given angle and delta.
-	 *
-	 * @ignore
-	 */
-	get_magnitude_x = function() {
-		return snap_cos(angle) * delta;
-	}
-	
-	/**
-	 * Get the y magnitude given the current angle and delta.
-	 *
-	 * @ignore
-	 */
-	get_magnitude_y = function() {
-		return snap_sin(angle) * delta;
-	};
-	
-	/**
-	 * Get the slope to be used to infer an x or y position. The slope changes depending on
-	 * whether the x or y magnitude of the 2D vector is greater.
-	 *
-	 * @ignore
-	 */
-	slope = function() {
-		if (delta == 0) return 0;
-		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
-	}
-	
-	/**
 	 * Reset the start and delta values of this instance.
 	 *
 	 * @ignore
@@ -116,45 +72,9 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		var _y = get_y();
 		start_x = _x;
 		start_y = _y;
-		delta = 0;
+		line.delta = 0;
 		delta_on_angle = 0;
 	};
-	
-	/**
-	 * Get the integer x position derived from the line equation.
-	 *
-	 * @ignore
-	 */
-	get_derived_x = function() {
-		if (delta == 0) return start_x;
-		if (infer_y_from_x()) {
-			var _x = round_to_correct(start_x + get_magnitude_x());
-			return round_towards(_x, start_x);
-		}
-		
-		// derive x position from linear line function of y
-		var _y_diff = get_y() - start_y;
-		var _x = round_to_thousandths(slope() * _y_diff + start_x);
-		return round_towards(_x, start_x);
-	}
-	
-	/**
-	 * Get the integer y position derived from the line equation.
-	 *
-	 * @ignore
-	 */
-	get_derived_y = function() {
-		if (delta == 0) return start_y;
-		if (!infer_y_from_x()) {
-			var _y = round_to_correct(start_y + get_magnitude_y());
-			return round_towards(_y, start_y);
-		}
-		
-		// derive y position from linear line function of x
-		var _x_diff = get_x() - start_x;
-		var _y = round_to_thousandths(slope() * _x_diff + start_y);
-		return round_towards(_y, start_y);
-	}
 	
 	/**
 	 * Get the integer x position derived from the true position.
@@ -176,12 +96,12 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	
 	// @ignore
 	get_x = function() {
-		return get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
+		return get_delta_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_round_to_start_x();
 	};
 	
 	// @ignore
 	get_y = function() {
-		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
+		return get_delta_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_round_to_start_y();
 	};
 	
 	/**
@@ -207,19 +127,18 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	 */
 	move_by_vector = function(_angle, _magnitude) {		
 		_angle = get_cleaned_angle(_angle);
-		var _angle_changed = angle != _angle;
+		var _angle_changed = line.angle != _angle;
 		
 		// reset line data on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
 		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(angle, _angle) > pi/2) {
+		if ((_magnitude == 0) || get_angle_diff(line.angle, _angle) > pi/2) {
 			true_x = get_x();
 			true_y = get_y();
 		}
 		
-		angle = _angle;
-		delta += _magnitude;
+		line.set(_angle, line.delta + _magnitude);
 		
 		// error correct based on true value
 		true_x += get_x_component(_angle, _magnitude);
@@ -236,7 +155,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
 			start_x = get_round_to_start_x();
 			start_y = get_round_to_start_y();
-			delta = 0;
+			line.delta = 0;
 		}
 		
 		// correct error towards line once passed threshold
@@ -271,8 +190,7 @@ function smooth_move_get_copy(smooth_move) {
 	var _copy = new SmoothMove(0, 0);	
 	_copy.start_x = _smooth_move.start_x;
 	_copy.start_y = _smooth_move.start_y;
-	_copy.angle = _smooth_move.angle;
-	_copy.delta = _smooth_move.delta;
+	_copy.line = _smooth_move.line.copy();
 	_copy.delta_on_angle = _smooth_move.delta_on_angle;
 	_copy.true_x = _smooth_move.true_x;
 	_copy.true_y = _smooth_move.true_y;
@@ -346,7 +264,7 @@ function smooth_move_set_position(smooth_move, x, y) {
 	with (smooth_move) {
 		start_x = _x;
 		start_y = _y;
-		delta = 0;
+		line.delta = 0;
 		delta_on_angle = 0;
 		true_x = _x;
 		true_y = _y;
