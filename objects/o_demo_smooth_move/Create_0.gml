@@ -23,17 +23,3 @@ stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 // debug jumping
 
 angle = 0;
-
-/*
-smooth_move_set_position(smooth_move, 10, 10);
-position_add();
-
-var _vel = 1;
-
-var _angle = 0;
-for (var _i = 0; _i < 180; _i++) {
-	smooth_move_by_vector(smooth_move, _angle, _vel);
-	position_add();
-	_angle += 0.02
-}
-*/

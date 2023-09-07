@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 1.3;
+var _max_vel = 1;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -75,9 +75,13 @@ var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 //smooth_move_by_vector(smooth_move, _angle, _vel);
 
 if (keyboard_check_pressed(vk_space)) {
+	var _check_x = smooth_move.anticipated_x;
+	var _check_y = smooth_move.anticipated_y;
 	smooth_move_by_vector(smooth_move, angle, 1);
 	angle += 0.02;
-	
+	if (_check_x != smooth_move_get_x(smooth_move) || _check_y != smooth_move_get_y(smooth_move)) {
+		show_debug_message("anticipated position was incorrect");
+	}
 }
 
 var _x = smooth_move_get_x(smooth_move);
@@ -101,10 +105,12 @@ array_foreach(ds_map_values_to_array(positions), function(_v) {
 });
 
 with (smooth_move) {
+	draw_set_color(c_white);
+	draw_point(anticipated_x2, anticipated_y2);
+	draw_set_color(c_yellow);
+	draw_point(anticipated_x, anticipated_y);
+	//draw_set_color(c_red);
+	//draw_point(start_x, start_y);
 	draw_set_color(c_fuchsia);
-	draw_point(get_error_x(), get_error_y());
-	draw_set_color(c_red);
-	draw_point(start_x, start_y);
+	draw_point(smooth_move_get_x(self), smooth_move_get_y(self));
 }
-
-show_debug_message($"positions: {ds_map_size(positions)}");

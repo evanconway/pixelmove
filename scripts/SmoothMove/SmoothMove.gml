@@ -15,6 +15,12 @@ function SmoothMove(_x, _y) constructor {
 	// @notignore
 	delta = 0;
 	
+	// the next 2 positions to occur if moved along the same vector
+	anticipated_x = start_x;
+	anticipated_y = start_y;
+	anticipated_x2 = start_x;
+	anticipated_y2 = start_y;
+	
 	/*
 	This data allows for checking between the calculated position following the strict
 	linear line algorithm, and what the position would have been if position was
@@ -273,6 +279,53 @@ function SmoothMove(_x, _y) constructor {
 	get_round_to_start_y = function() {
 		return round_towards(round_to_correct(true_y), start_y);
 	};
+	
+	/**
+	 * Move by the given vector. Angle of 0 corresponds to positive x axis
+	 *
+	 * @param {real} _angle angle of vector in radians
+	 * @param {real} _magnitude magnitude of vector
+	 */
+	move_by_vector = function(_angle, _magnitude) {
+		_angle = get_cleaned_angle(_angle);
+		var _angle_changed = angle != _angle;
+		
+		// reset line data on no movement or angle change
+		if ((_magnitude == 0) || _angle_changed) reset();
+		
+		// reset error data on no movement or too great an angle change
+		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
+			true_x = smooth_move_get_x(self);
+			true_y = smooth_move_get_y(self);
+		}
+		
+		angle = _angle;
+		delta += _magnitude;
+		
+		// error correct based on true value
+		true_x += get_x_component(_angle, _magnitude);
+		true_y += get_y_component(_angle, _magnitude);
+		var _error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
+		
+		// determine if this movement crossed the delta_on_angle threshold, and new error
+		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
+		delta_on_angle += _magnitude;
+		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
+		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
+		
+		// correct line towards error
+		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
+			start_x = get_round_to_start_x();
+			start_y = get_round_to_start_y();
+			delta = 0;
+		}
+		
+		// correct error towards line once passed threshold
+		if (get_delta_on_angle_passed_threshold()) {
+			true_x = smooth_move_get_x(self);
+			true_y = smooth_move_get_y(self);
+		}
+	};
 }
 
 /**
@@ -355,44 +408,13 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
  */
 function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	with (_smooth_move) {
-		_angle = get_cleaned_angle(_angle);
-		var _angle_changed = angle != _angle;
+		move_by_vector(_angle, _magnitude);
 		
-		// reset line data on no movement or angle change
-		if ((_magnitude == 0) || _angle_changed) reset();
+		anticipated_x = smooth_move_get_x_if_moved_by_vector(self, _angle, _magnitude);
+		anticipated_y = smooth_move_get_y_if_moved_by_vector(self, _angle, _magnitude);
 		
-		// reset error data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
-			true_x = smooth_move_get_x(self);
-			true_y = smooth_move_get_y(self);
-		}
-		
-		angle = _angle;
-		delta += _magnitude;
-		
-		// error correct based on true value
-		true_x += get_x_component(_angle, _magnitude);
-		true_y += get_y_component(_angle, _magnitude);
-		var _error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
-		
-		// determine if this movement crossed the delta_on_angle threshold, and new error
-		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
-		delta_on_angle += _magnitude;
-		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
-		
-		// correct line towards error
-		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
-			start_x = get_round_to_start_x();
-			start_y = get_round_to_start_y();
-			delta = 0;
-		}
-		
-		// correct error towards line once passed threshold
-		if (get_delta_on_angle_passed_threshold()) {
-			true_x = smooth_move_get_x(self);
-			true_y = smooth_move_get_y(self);
-		}
+		anticipated_x2 = smooth_move_get_x_if_moved_by_vector(self, _angle, _magnitude * 2);
+		anticipated_y2 = smooth_move_get_y_if_moved_by_vector(self, _angle, _magnitude * 2);
 	}
 }
 
@@ -420,7 +442,7 @@ function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
  */
 function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
 	var _copy = smooth_move_get_copy(_smooth_move);
-	smooth_move_by_vector(_copy, _angle, _magnitude);
+	_copy.move_by_vector(_angle, _magnitude);
 	return smooth_move_get_x(_copy);
 }
 
@@ -433,7 +455,7 @@ function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
  */
 function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
 	var _copy = smooth_move_get_copy(_smooth_move);
-	smooth_move_by_vector(_copy, _angle, _magnitude);
+	_copy.move_by_vector(_angle, _magnitude);
 	return smooth_move_get_y(_copy);
 }
 
@@ -448,7 +470,7 @@ function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
 	var _copy = smooth_move_get_copy(_smooth_move);
 	var _angle = arctan2(_magnitude_y, _magnitude_x);
 	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-	smooth_move_by_vector(_copy, _angle, _m);
+	_copy.move_by_vector(_angle, _m);
 	return smooth_move_get_x(_copy);
 }
 
@@ -463,6 +485,6 @@ function smooth_move_get_y_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
 	var _copy = smooth_move_get_copy(_smooth_move);
 	var _angle = arctan2(_magnitude_y, _magnitude_x);
 	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-	smooth_move_by_vector(_copy, _angle, _m);
+	_copy.move_by_vector(_angle, _m);
 	return smooth_move_get_y(_copy);
 }

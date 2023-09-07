@@ -407,3 +407,9 @@ Let's steal from the idea of rollback. If the user is inputting an angle at any 
 
 This could work. Although I think we should stop calling it "error" and start calling it "anticipated". We could track "true" x/y, and have get_anticipated_xy to pair with our derived_xy functions.
 
+I think we can define an integer position in our line as a stair step if:
+the distance to the previous integer position is 1
+the distance to the next integer position is 1
+the distance between the previous and next integer positions is exactly sqrt(2)
+
+What I'm currently wondering is if we can simply track the internal state of the positions. Determine if the current location is a stair step. And if it is, simply return the previous position? Let's try tracking the previous position, and adding separate get_x/y functions that return the previous position if the internal state detects that the current position is a stair step.
