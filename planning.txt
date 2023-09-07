@@ -413,3 +413,9 @@ the distance to the next integer position is 1
 the distance between the previous and next integer positions is exactly sqrt(2)
 
 What I'm currently wondering is if we can simply track the internal state of the positions. Determine if the current location is a stair step. And if it is, simply return the previous position? Let's try tracking the previous position, and adding separate get_x/y functions that return the previous position if the internal state detects that the current position is a stair step.
+
+It's possible this will work. But since we have functions to anticipate moving by a vector, we have to differentiate between the functions we use internally, which don't account for stair stepping and reference the true calculated values, and the user facing functions which do. For example the user facing smooth_move_get_x_if_moved_by_vector should account for x changes (or lack of changes) due to stair stepping. But we also need a get_if_moved_by_vector that doesn't account for stair stepping.
+
+I did some puzzling in my mind, and I've realized this may get rid of stair steps, but will introduce gaps in certain situations. Let's keep trying to add this sytem. It's possible we'll prefer gaps over stair steps depending on the context.
+
+We after implementation, I think it's working. I do still see some stair steps sometimes, but it's rare, and only when changing directions pretty aggressively. It makes sense that sometimes they'd appear, but I want to confirm the reason they're appearing is the reason I think they should appear. 

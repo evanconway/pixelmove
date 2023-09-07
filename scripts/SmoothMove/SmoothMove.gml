@@ -15,11 +15,13 @@ function SmoothMove(_x, _y) constructor {
 	// @notignore
 	delta = 0;
 	
-	// the next 2 positions to occur if moved along the same vector
+	// last known position
+	previous_x = start_x;
+	previous_y = start_y;
+	
+	// the next position if moved along the same vector
 	anticipated_x = start_x;
 	anticipated_y = start_y;
-	anticipated_x2 = start_x;
-	anticipated_y2 = start_y;
 	
 	/*
 	This data allows for checking between the calculated position following the strict
@@ -216,12 +218,16 @@ function SmoothMove(_x, _y) constructor {
 	 * @notignore
 	 */
 	reset = function() {
-		var _x = smooth_move_get_x(self);
-		var _y = smooth_move_get_y(self);
+		var _x = get_x();
+		var _y = get_y();
 		start_x = _x;
 		start_y = _y;
 		delta = 0;
 		delta_on_angle = 0;
+		previous_x = _x;
+		previous_y = _y;
+		anticipated_x = _x;
+		anticipated_y = _y;
 	};
 	
 	/**
@@ -240,7 +246,7 @@ function SmoothMove(_x, _y) constructor {
 		
 		// derive x position from linear line function of y
 		var _slope = slope();
-		var _y_diff = smooth_move_get_y(self) - start_y;
+		var _y_diff = get_y() - start_y;
 		var _x = round_to_thousandths(_slope * _y_diff + start_x);
 		return round_towards(_x, start_x);
 	}
@@ -261,24 +267,36 @@ function SmoothMove(_x, _y) constructor {
 		
 		// derive y position from linear line function of x
 		var _slope = slope();
-		var _x_diff = smooth_move_get_x(self) - start_x;
+		var _x_diff = get_x() - start_x;
 		var _y = round_to_thousandths(_slope * _x_diff + start_y);
 		return round_towards(_y, start_y);
 	}
 	
 	/**
-	 * Get the integer x position derived from the error position.
+	 * Get the integer x position derived from the true position.
 	 */
 	get_round_to_start_x = function() {
 		return round_towards(round_to_correct(true_x), start_x);
 	};
 	
 	/**
-	 * Get the integer y position derived from the error position.
+	 * Get the integer y position derived from the true position.
 	 */
 	get_round_to_start_y = function() {
 		return round_towards(round_to_correct(true_y), start_y);
 	};
+	
+	/**
+	 * Return boolean indicating if current position will likely be 
+	 * a stair step based on anticipated position.
+	 */
+	get_is_stair_step = function() {
+		//return false;
+		var _dist_to_prev = sqrt(sqr(get_x() - previous_x) + sqr(get_y() - previous_y));
+		var _dist_to_ant = sqrt(sqr(get_x() - anticipated_x) + sqr(get_y() - anticipated_y));
+		var _dist_prev_to_ant = sqrt(sqr(previous_x - anticipated_x) + sqr(previous_y - anticipated_y));
+		return (_dist_to_prev == 1) && (_dist_to_ant == 1) && (_dist_prev_to_ant == sqrt(2));
+	}
 	
 	/**
 	 * Move by the given vector. Angle of 0 corresponds to positive x axis
@@ -287,16 +305,23 @@ function SmoothMove(_x, _y) constructor {
 	 * @param {real} _magnitude magnitude of vector
 	 */
 	move_by_vector = function(_angle, _magnitude) {
+		if (!get_is_stair_step()) {
+			previous_x = get_x();
+			previous_y = get_y();
+		}
+		
 		_angle = get_cleaned_angle(_angle);
 		var _angle_changed = angle != _angle;
 		
 		// reset line data on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
-		// reset error data on no movement or too great an angle change
+		// reset true data on no movement or too great an angle change
 		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
-			true_x = smooth_move_get_x(self);
-			true_y = smooth_move_get_y(self);
+			true_x = get_x();
+			true_y = get_y();
+			previous_x = get_x();
+			previous_y = get_y();
 		}
 		
 		angle = _angle;
@@ -305,13 +330,13 @@ function SmoothMove(_x, _y) constructor {
 		// error correct based on true value
 		true_x += get_x_component(_angle, _magnitude);
 		true_y += get_y_component(_angle, _magnitude);
-		var _error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
+		var _error = sqrt(sqr(get_round_to_start_x() - get_x()) + sqr(get_round_to_start_y() - get_y()));
 		
 		// determine if this movement crossed the delta_on_angle threshold, and new error
 		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
 		delta_on_angle += _magnitude;
 		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
+		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - get_x()) + sqr(get_round_to_start_y() - get_y()));
 		
 		// correct line towards error
 		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
@@ -322,9 +347,38 @@ function SmoothMove(_x, _y) constructor {
 		
 		// correct error towards line once passed threshold
 		if (get_delta_on_angle_passed_threshold()) {
-			true_x = smooth_move_get_x(self);
-			true_y = smooth_move_get_y(self);
+			true_x = get_x();
+			true_y = get_y();
 		}
+		
+		anticipated_x = get_x();
+		anticipated_y = get_y();
+	};
+	
+	/**
+	 * Get the current x position.
+	 */
+	get_x = function() {
+		return get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
+	};
+	
+	/**
+	 * Get the current y position.
+	 */
+	get_y = function() {
+		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
+	};
+	
+	get_x_if_moved_by_vector = function(_angle, _magnitude) {
+		var _copy = smooth_move_get_copy(self);
+		_copy.move_by_vector(_angle, _magnitude);
+		return _copy.get_x();
+	};
+	
+	get_y_if_moved_by_vector = function(_angle, _magnitude) {
+		var _copy = smooth_move_get_copy(self);
+		_copy.move_by_vector(_angle, _magnitude);
+		return _copy.get_y();
 	};
 }
 
@@ -342,6 +396,10 @@ function smooth_move_get_copy(_smooth_move) {
 	_copy.delta_on_angle = _smooth_move.delta_on_angle;
 	_copy.true_x = _smooth_move.true_x;
 	_copy.true_y = _smooth_move.true_y;
+	_copy.previous_x = _smooth_move.previous_x;
+	_copy.previous_y = _smooth_move.previous_y;
+	_copy.anticipated_x = _smooth_move.anticipated_x;
+	_copy.anticipated_y = _smooth_move.anticipated_y;
 	return _copy;
 }
 
@@ -362,8 +420,7 @@ function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
  */
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
-		var _result = get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
-		return _result;
+		return get_is_stair_step() ? previous_x : get_x();
 	}
 }
 
@@ -374,8 +431,7 @@ function smooth_move_get_x(_smooth_move) {
  */
 function smooth_move_get_y(_smooth_move) {
 	with (_smooth_move) {
-		var _result = get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
-		return _result;
+		return get_is_stair_step() ? previous_y : get_y();
 	}
 }
 
@@ -396,6 +452,10 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 		delta_on_angle = 0;
 		true_x = _x;
 		true_y = _y;
+		previous_x = _x;
+		previous_y = _y;
+		anticipated_x = _x;
+		anticipated_y = _y;
 	}
 }
 
@@ -410,11 +470,8 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	with (_smooth_move) {
 		move_by_vector(_angle, _magnitude);
 		
-		anticipated_x = smooth_move_get_x_if_moved_by_vector(self, _angle, _magnitude);
-		anticipated_y = smooth_move_get_y_if_moved_by_vector(self, _angle, _magnitude);
-		
-		anticipated_x2 = smooth_move_get_x_if_moved_by_vector(self, _angle, _magnitude * 2);
-		anticipated_y2 = smooth_move_get_y_if_moved_by_vector(self, _angle, _magnitude * 2);
+		anticipated_x = get_x_if_moved_by_vector(_angle, _magnitude);
+		anticipated_y = get_y_if_moved_by_vector(_angle, _magnitude);
 	}
 }
 
@@ -442,7 +499,7 @@ function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
  */
 function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
 	var _copy = smooth_move_get_copy(_smooth_move);
-	_copy.move_by_vector(_angle, _magnitude);
+	smooth_move_by_vector(_copy, _angle, _magnitude);
 	return smooth_move_get_x(_copy);
 }
 
@@ -455,7 +512,7 @@ function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
  */
 function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
 	var _copy = smooth_move_get_copy(_smooth_move);
-	_copy.move_by_vector(_angle, _magnitude);
+	smooth_move_by_vector(_copy, _angle, _magnitude);
 	return smooth_move_get_y(_copy);
 }
 
@@ -470,8 +527,7 @@ function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
 	var _copy = smooth_move_get_copy(_smooth_move);
 	var _angle = arctan2(_magnitude_y, _magnitude_x);
 	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-	_copy.move_by_vector(_angle, _m);
-	return smooth_move_get_x(_copy);
+	return smooth_move_get_x_if_moved_by_vector(_copy, _angle, _m);
 }
 
 /**
@@ -485,6 +541,5 @@ function smooth_move_get_y_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
 	var _copy = smooth_move_get_copy(_smooth_move);
 	var _angle = arctan2(_magnitude_y, _magnitude_x);
 	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-	_copy.move_by_vector(_angle, _m);
-	return smooth_move_get_y(_copy);
+	return smooth_move_get_y_if_moved_by_vector(_copy, _angle, _m);
 }

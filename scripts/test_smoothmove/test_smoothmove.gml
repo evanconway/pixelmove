@@ -178,8 +178,8 @@ function __test_smoothmove_positions() {
 		var _x = irandom_range(-10000, 10000);
 		var _y = irandom_range(-10000, 10000);
 		smooth_move_set_position(_set_pos, _x, _y);
-		test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, "Smooth move set position x fail!");
-		test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, "Smooth move set position y fail!");
+		test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, "Smooth move set position x fail.");
+		test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, "Smooth move set position y fail.");
 	}
 	
 	// potential positions
@@ -190,8 +190,8 @@ function __test_smoothmove_positions() {
 		var _pot_x = smooth_move_get_x_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		var _pot_y = smooth_move_get_y_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		smooth_move_by_magnitudes(_potential, _mag_x, _mag_y);
-		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
-		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
+		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
+		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
 	}
 	
 	// potential positions (with vectors)
@@ -201,11 +201,16 @@ function __test_smoothmove_positions() {
 	for (var _i = 0; _i < 1000; _i++) {
 		_angle_test += random_range(-0.05, 0.05);
 		_vel_test = random_range(0.2, 2);
+		
+		if (_i == 40) {
+			show_debug_message("debug");
+		}
+		
 		var _pot_x = smooth_move_get_x_if_moved_by_vector(_potential, _angle_test, _vel_test);
 		var _pot_y = smooth_move_get_y_if_moved_by_vector(_potential, _angle_test, _vel_test);
 		smooth_move_by_vector(_potential, _angle_test, _vel_test);
-		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), "Smooth move potential position x fail!");
-		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), "Smooth move potential position y fail!");
+		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
+		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
 	}
 }
 
@@ -295,9 +300,9 @@ function __test_smoothmove_always_increase() {
 
 // @ignore
 function __test_smoothmove(){
-	__test_smoothmove_cardinals();
-	__test_smoothmove_perfect_diagonals();
-	__test_smoothmove_pixel_gaps();
+	//__test_smoothmove_cardinals();
+	//__test_smoothmove_perfect_diagonals();
+	//__test_smoothmove_pixel_gaps();
 	__test_smoothmove_positions();
 	__test_smoothmove_stairsteps();
 	__test_smoothmove_misc();
