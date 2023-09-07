@@ -1,48 +1,58 @@
 /**
- * SmoothMove uses a linear algorithm to derive its position. This
- * ensures that any position changes appear smooth and consistent.
+ * Position tracker that smoothes out changes.
  * 
  * @param {Real} _x starting x position
  * @param {Real} _y starting y position
  */
 function SmoothMove(_x, _y) constructor {
-	// @notignore
+	// @ignore
 	start_x = _x;
-	// @notignore
+	// @ignore
 	start_y = _y;
-	// @notignore
+	// @ignore
 	angle = 0;
-	// @notignore
+	// @ignore
 	delta = 0;
 	
-	// last known position
-	previous_x = start_x;
-	previous_y = start_y;
-	
-	// the next position if moved along the same vector
-	anticipated_x = start_x;
-	anticipated_y = start_y;
-	
 	/*
-	This data allows for checking between the calculated position following the strict
+	True positions allows for checking between the calculated position following the strict
 	linear line algorithm, and what the position would have been if position was
 	calculated normally.
 	*/
 	
-	// @notignore
+	// @ignore
 	true_x = start_x;
-	// @notignore
+	// @ignore
 	true_y = start_y;
 	
 	/*
 	This is not for calculating x/y position. This is used to track how far this instance
 	has travelled along the same angle.
 	*/
+	// @ignore
 	delta_on_angle = 0;
 	
 	// once delta_on_angle has passed this value position will be derived from line equation instead of error
+	// @ignore
 	delta_on_angle_threshold = 7.1;
 	
+	// last known position following stairstep rules
+	// @ignore
+	previous_x = start_x;
+	// @ignore
+	previous_y = start_y;
+	
+	// the next position if moved along the same vector
+	// @ignore
+	anticipated_x = start_x;
+	// @ignore
+	anticipated_y = start_y;
+	
+	// if false, anticipated next vector movement will be used to determine and hide stairstep pixels
+	// @ignore
+	show_stairsteps = false;
+	
+	// @ignore
 	get_delta_on_angle_passed_threshold = function () {
 		return delta_on_angle >= delta_on_angle_threshold;
 	};
@@ -54,7 +64,7 @@ function SmoothMove(_x, _y) constructor {
 	 * 
 	 * @param {real} _a angle a in radians
 	 * @param {real} _b angle b in radians
-	 * @notignore
+	 * @ignore
 	 */
 	function get_angle_diff(_a, _b) {
 		var _diff1 = abs(_a - _b);
@@ -67,7 +77,7 @@ function SmoothMove(_x, _y) constructor {
 	 * with sin and cos not returning a perfect 0 on certain values.
 	 *
 	 * @param {real} _value
-	 * @notignore
+	 * @ignore
 	 */
 	function snap_to_zero(_value) {
 		return abs(_value) < 0.001 ? 0 : _value;
@@ -77,7 +87,7 @@ function SmoothMove(_x, _y) constructor {
 	 * Wrapper function around sin that snaps the result to 0 if it's within 0.001 of 0.
 	 *
 	 * @param {real} _angle angle in radians
-	 * @notignore
+	 * @ignore
 	 */
 	function snap_sin(_angle) {
 		return snap_to_zero(sin(_angle));
@@ -87,7 +97,7 @@ function SmoothMove(_x, _y) constructor {
 	 * Wrapper function around cos that snaps the result to 0 if it's within 0.001 of 0.
 	 *
 	 * @param {real} _angle angle in radians
-	 * @notignore
+	 * @ignore
 	 */
 	function snap_cos(_angle) {
 		return snap_to_zero(cos(_angle));
@@ -95,22 +105,20 @@ function SmoothMove(_x, _y) constructor {
 	
 	/**
 	 * @param {real} _value
-	 * @notignore
+	 * @ignore
 	 */
 	function round_to_thousandths(_value) {
-		var _result = floor(_value * 1000 + 0.5) / 1000;
-		return _result;
+		return floor(_value * 1000 + 0.5) / 1000;
 	}
 	
 	/**
 	 * Rounding function to account for gamemaker's imperfect real tracking
 	 *
 	 * @param {real} _value
-	 * @notignore
+	 * @ignore
 	 */
 	function round_to_correct(_value) {
-		var _result = floor(_value * 100000 + 0.5) / 100000;
-		return _result;
+		return floor(_value * 100000 + 0.5) / 100000;
 	}
 	
 	/**
@@ -118,7 +126,7 @@ function SmoothMove(_x, _y) constructor {
 	 * roughly towards the cardinal directions and their intermediates.
 	 *
 	 * @param {real} _angle
-	 * @notignore
+	 * @ignore
 	 */
 	function get_cleaned_angle(_angle) {
 		if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
@@ -139,7 +147,7 @@ function SmoothMove(_x, _y) constructor {
 	 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole
 	 * number value.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	function round_towards(_a, _b) {
 		var _result = (_a - _b) >= 0 ? floor(_a) : ceil(_a);
@@ -152,7 +160,7 @@ function SmoothMove(_x, _y) constructor {
 	 * magnitude, indicating that the y position should be inferred from the x position.
 	 * Returns false if the reverse is true.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	infer_y_from_x = function() {
 		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
@@ -161,7 +169,7 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Get the x magnitude given the given angle and delta.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	get_magnitude_x = function() {
 		return snap_cos(angle) * delta;
@@ -170,7 +178,7 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Get the y magnitude given the current angle and delta.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	get_magnitude_y = function() {
 		return snap_sin(angle) * delta;
@@ -181,7 +189,7 @@ function SmoothMove(_x, _y) constructor {
 	 *
 	 * @param {real} _angle
 	 * @param {real} _delta
-	 * @notignore
+	 * @ignore
 	 */
 	function get_x_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
@@ -193,7 +201,7 @@ function SmoothMove(_x, _y) constructor {
 	 *
 	 * @param {real} _angle
 	 * @param {real} _delta
-	 * @notignore
+	 * @ignore
 	 */
 	function get_y_component(_angle, _delta) {
 		if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
@@ -204,18 +212,17 @@ function SmoothMove(_x, _y) constructor {
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
 	 * whether the x or y magnitude of the 2D vector is greater.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		var _result = infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
-		return _result;
+		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
 	}
 	
 	/**
 	 * Reset the start and delta values of this instance.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	reset = function() {
 		var _x = get_x();
@@ -233,47 +240,43 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Get the integer x position derived from the line equation.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	get_derived_x = function() {
 		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
-			var _change = get_magnitude_x();
-			var _x = round_to_correct(start_x + _change);
-			var _result = round_towards(_x, start_x);
-			return _result;
+			var _x = round_to_correct(start_x + get_magnitude_x());
+			return round_towards(_x, start_x);
 		}
 		
 		// derive x position from linear line function of y
-		var _slope = slope();
 		var _y_diff = get_y() - start_y;
-		var _x = round_to_thousandths(_slope * _y_diff + start_x);
+		var _x = round_to_thousandths(slope() * _y_diff + start_x);
 		return round_towards(_x, start_x);
 	}
 	
 	/**
 	 * Get the integer y position derived from the line equation.
 	 *
-	 * @notignore
+	 * @ignore
 	 */
 	get_derived_y = function() {
 		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
-			var _change = get_magnitude_y();
-			var _y = round_to_correct(start_y + _change);
-			var _result = round_towards(_y, start_y);
-			return _result;
+			var _y = round_to_correct(start_y + get_magnitude_y());
+			return round_towards(_y, start_y);
 		}
 		
 		// derive y position from linear line function of x
-		var _slope = slope();
 		var _x_diff = get_x() - start_x;
-		var _y = round_to_thousandths(_slope * _x_diff + start_y);
+		var _y = round_to_thousandths(slope() * _x_diff + start_y);
 		return round_towards(_y, start_y);
 	}
 	
 	/**
 	 * Get the integer x position derived from the true position.
+	 *
+	 * @ignore
 	 */
 	get_round_to_start_x = function() {
 		return round_towards(round_to_correct(true_x), start_x);
@@ -281,6 +284,8 @@ function SmoothMove(_x, _y) constructor {
 	
 	/**
 	 * Get the integer y position derived from the true position.
+	 *
+	 * @ignore
 	 */
 	get_round_to_start_y = function() {
 		return round_towards(round_to_correct(true_y), start_y);
@@ -289,9 +294,11 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Return boolean indicating if current position will likely be 
 	 * a stair step based on anticipated position.
+	 *
+	 * @ignore
 	 */
 	get_is_stair_step = function() {
-		//return false;
+		if (show_stairsteps) return false;
 		var _dist_to_prev = sqrt(sqr(get_x() - previous_x) + sqr(get_y() - previous_y));
 		var _dist_to_ant = sqrt(sqr(get_x() - anticipated_x) + sqr(get_y() - anticipated_y));
 		var _dist_prev_to_ant = sqrt(sqr(previous_x - anticipated_x) + sqr(previous_y - anticipated_y));
@@ -303,13 +310,9 @@ function SmoothMove(_x, _y) constructor {
 	 *
 	 * @param {real} _angle angle of vector in radians
 	 * @param {real} _magnitude magnitude of vector
+	 * @ignore
 	 */
-	move_by_vector = function(_angle, _magnitude) {
-		if (!get_is_stair_step()) {
-			previous_x = get_x();
-			previous_y = get_y();
-		}
-		
+	move_by_vector = function(_angle, _magnitude) {		
 		_angle = get_cleaned_angle(_angle);
 		var _angle_changed = angle != _angle;
 		
@@ -320,6 +323,11 @@ function SmoothMove(_x, _y) constructor {
 		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
 			true_x = get_x();
 			true_y = get_y();
+			previous_x = get_x();
+			previous_y = get_y();
+		}
+		
+		if (!get_is_stair_step()) {
 			previous_x = get_x();
 			previous_y = get_y();
 		}
@@ -355,26 +363,24 @@ function SmoothMove(_x, _y) constructor {
 		anticipated_y = get_y();
 	};
 	
-	/**
-	 * Get the current x position.
-	 */
+	// @ignore
 	get_x = function() {
 		return get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
 	};
 	
-	/**
-	 * Get the current y position.
-	 */
+	// @ignore
 	get_y = function() {
 		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
 	};
 	
+	// @ignore
 	get_x_if_moved_by_vector = function(_angle, _magnitude) {
 		var _copy = smooth_move_get_copy(self);
 		_copy.move_by_vector(_angle, _magnitude);
 		return _copy.get_x();
 	};
 	
+	// @ignore
 	get_y_if_moved_by_vector = function(_angle, _magnitude) {
 		var _copy = smooth_move_get_copy(self);
 		_copy.move_by_vector(_angle, _magnitude);
@@ -388,7 +394,7 @@ function SmoothMove(_x, _y) constructor {
  * @param {Struct.SmoothMove} _smooth_move
  */
 function smooth_move_get_copy(_smooth_move) {
-	var _copy = new SmoothMove(0, 0);
+	var _copy = new SmoothMove(0, 0);	
 	_copy.start_x = _smooth_move.start_x;
 	_copy.start_y = _smooth_move.start_y;
 	_copy.angle = _smooth_move.angle;
@@ -400,11 +406,12 @@ function smooth_move_get_copy(_smooth_move) {
 	_copy.previous_y = _smooth_move.previous_y;
 	_copy.anticipated_x = _smooth_move.anticipated_x;
 	_copy.anticipated_y = _smooth_move.anticipated_y;
+	_copy.show_stairsteps = _smooth_move.show_stairsteps;
 	return _copy;
 }
 
 /**
- * 
+ * Set the threshold for distance travelled before line equation is used to derive position.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _threshold
@@ -414,7 +421,18 @@ function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
 }
 
 /**
- * Get the current x position of the given SmoothMove instance.
+ * Sets whether or not to hide stairstep movement based on
+ * anticipated changes. Default is false.
+ *
+ * @param {Struct.SmoothMove} _smooth_move
+ * @param {bool} _bool true to show stairsteps, false to hide
+ */
+function smooth_move_show_stairsteps(_smooth_move, _bool) {
+	_smooth_move.show_stairsteps = _bool;
+}
+
+/**
+ * Get the current x position..
  *
  * @param {Struct.SmoothMove} _smooth_move
  */
@@ -425,7 +443,7 @@ function smooth_move_get_x(_smooth_move) {
 }
 
 /**
- * Get the current y position of the given SmoothMove instance.
+ * Get the current y position.
  *
  * @param {Struct.SmoothMove} _smooth_move
  */
@@ -436,7 +454,7 @@ function smooth_move_get_y(_smooth_move) {
 }
 
 /**
- * Set the position of the given SmoothMove instance.
+ * Set the x,y position.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _x
@@ -460,7 +478,7 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 }
 
 /**
- * Move the given SmoothMove instance by the given vector. Angle of 0 corresponds to positive x axis
+ * Move by the given vector. Angle of 0 corresponds to positive x axis.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle of vector in radians
@@ -469,14 +487,13 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 	with (_smooth_move) {
 		move_by_vector(_angle, _magnitude);
-		
 		anticipated_x = get_x_if_moved_by_vector(_angle, _magnitude);
 		anticipated_y = get_y_if_moved_by_vector(_angle, _magnitude);
 	}
 }
 
 /**
- * Move the given SmoothMove instance by the given x and y magnitudes.
+ * Move by the given x and y magnitudes.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
@@ -491,7 +508,8 @@ function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
 }
 
 /**
- * Get the x position of the given SmoothMove instance if it was moved by the given vector.
+ * Get the x position after movement by the given vector. Does not mutate the given
+ * SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle in radians of the vector
@@ -504,7 +522,8 @@ function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
 }
 
 /**
- * Get the y position of the given SmoothMove instance if it was moved by the given vector.
+ * Get the y position after movement by the given vector. Does not mutate the given
+ * SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _angle angle in radians of the vector
@@ -517,7 +536,8 @@ function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
 }
 
 /**
- * Get the x position of the given SmoothMove instance if it was moved by the given x and y magnitudes.
+ * Get the x position after movement by the given x and y magnitudes. Does not mutate the given
+ * SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
@@ -531,7 +551,8 @@ function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
 }
 
 /**
- * Get the y position of the given SmoothMove instance if it was moved by the given x and y magnitudes.
+ * Get the y position after movement by the given x and y magnitudes. Does not mutate the given
+ * SmoothMove instance.
  *
  * @param {Struct.SmoothMove} _smooth_move
  * @param {real} _magnitude_x
