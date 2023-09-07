@@ -5,7 +5,7 @@
  */
 function SmoothLine(_angle, _delta) constructor {
 	// @ignore
-	angle = _angle;
+	angle = get_cleaned_angle(_angle);
 	// @ignore
 	delta = _delta;
 	
@@ -54,7 +54,7 @@ function SmoothLine(_angle, _delta) constructor {
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		return infer_y_from_x() ? get_magnitude_y() / get_magnitude_x() : get_magnitude_x() / get_magnitude_y();
+		return infer_y_from_x() ? get_x_component(angle, delta) / get_x_component(angle, delta) : get_x_component(angle, delta) / get_x_component(angle, delta);
 	}
 	
 	// @ignore
@@ -69,13 +69,30 @@ function SmoothLine(_angle, _delta) constructor {
 	get_x = function(_start_x, _start_y) {
 		if (delta == 0) return _start_x;
 		if (infer_y_from_x()) {
-			var _x = round_to_correct(_start_x + get_magnitude_x());
+			var _x = round_to_correct(_start_x + get_x_component(angle, delta));
 			return round_towards(_x, _start_x);
 		}
 		
 		// derive x position from linear line function of y
-		var _y_diff = get_y() - _start_y;
+		var _y_diff = get_y(_start_x, _start_y) - _start_y;
 		var _x = round_to_thousandths(slope() * _y_diff + _start_x);
 		return round_towards(_x, _start_x);
 	};
+	
+	/**
+	 * @param {real} _start_x
+	 * @param {real} _start_y
+	 */
+	get_y = function(_start_x, _start_y) {
+		if (delta == 0) return _start_y;
+		if (!infer_y_from_x()) {
+			var _y = round_to_correct(_start_y + get_x_component(angle, delta));
+			return round_towards(_y, _start_y);
+		}
+		
+		// derive y position from linear line function of x
+		var _x_diff = get_x(_start_x, _start_y) - _start_x;
+		var _y = round_to_thousandths(slope() * _x_diff + _start_y);
+		return round_towards(_y, _start_y);
+	}
 }
