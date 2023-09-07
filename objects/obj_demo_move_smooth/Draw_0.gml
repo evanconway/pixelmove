@@ -1,5 +1,3 @@
-draw_self();
-
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
 
@@ -18,13 +16,14 @@ if (mouse_check_button(mb_any)) {
 
 var _angle = arctan2(_vrt, _hor);
 
-var _vel = (_hor == 0 && _vrt == 0) ? 0 : 1;
+var _vel = (_hor == 0 && _vrt == 0) ? 0 : 0.707;
 
 smooth_move_by_vector(smooth_move, _angle, _vel);
 
 x = smooth_move_get_x(smooth_move);
 y = smooth_move_get_y(smooth_move);
 
+draw_self();
 
 trail.add(x, y);
 trail.draw();

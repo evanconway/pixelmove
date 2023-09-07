@@ -418,7 +418,6 @@ function smooth_move_get_copy(smooth_move) {
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to set the threshold for.
  * @param {real} threshold The new delta threshold.
- * @return {void}
  */
 function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
 	var _smooth_move = smooth_move;
@@ -443,6 +442,7 @@ function smooth_move_show_stairsteps(smooth_move, new_show_stairsteps) {
  * Get the current x position.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the x position of.
+ * @return {real}
  */
 function smooth_move_get_x(smooth_move) {
 	with (smooth_move) {
@@ -454,6 +454,7 @@ function smooth_move_get_x(smooth_move) {
  * Get the current y position.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the y position of.
+ * @return {real}
  */
 function smooth_move_get_y(smooth_move) {
 	with (smooth_move) {

@@ -1,7 +1,7 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "obj_circle",
+  "name": "obj_demo_move_smooth",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
@@ -9,8 +9,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Circle",
-    "path": "folders/Demos/Circle.yy",
+    "name": "Move Smooth",
+    "path": "folders/Demos/Move Smooth.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -28,7 +28,10 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": null,
+  "spriteId": {
+    "name": "spr_demo_smooth_move_player",
+    "path": "sprites/spr_demo_smooth_move_player/spr_demo_smooth_move_player.yy",
+  },
   "spriteMaskId": null,
   "visible": true,
 }
