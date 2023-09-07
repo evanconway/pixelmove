@@ -52,6 +52,7 @@
     {"id":{"name":"rm_demo","path":"rooms/rm_demo/rm_demo.yy",},},
     {"id":{"name":"obj_demo_move_real","path":"objects/obj_demo_move_real/obj_demo_move_real.yy",},},
     {"id":{"name":"util","path":"scripts/util/util.yy",},},
+    {"id":{"name":"SmoothPosition","path":"scripts/SmoothPosition/SmoothPosition.yy",},},
     {"id":{"name":"rm_demo_circle_smooth","path":"rooms/rm_demo_circle_smooth/rm_demo_circle_smooth.yy",},},
     {"id":{"name":"rm_test_smooth_move_walls","path":"rooms/rm_test_smooth_move_walls/rm_test_smooth_move_walls.yy",},},
   ],

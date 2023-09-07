@@ -1,5 +1,7 @@
 /**
- * A line equation that infers y from x, or x from y depending on the angle.
+ * A line equation that infers y from x, or x from y depending on the angle, and only returns
+ * integer values.
+ *
  * @param {real} _angle
  * @param {real} _delta
  */
@@ -67,6 +69,8 @@ function SmoothLine(_angle, _delta) constructor {
 	 * @param {real} _start_y
 	 */
 	get_x = function(_start_x, _start_y) {
+		_start_x = floor(_start_x);
+		_start_y = floor(_start_y);
 		if (delta == 0) return _start_x;
 		if (infer_y_from_x()) {
 			var _x = round_to_correct(_start_x + get_x_component(angle, delta));
@@ -84,6 +88,8 @@ function SmoothLine(_angle, _delta) constructor {
 	 * @param {real} _start_y
 	 */
 	get_y = function(_start_x, _start_y) {
+		_start_x = floor(_start_x);
+		_start_y = floor(_start_y);
 		if (delta == 0) return _start_y;
 		if (!infer_y_from_x()) {
 			var _y = round_to_correct(_start_y + get_y_component(angle, delta));
