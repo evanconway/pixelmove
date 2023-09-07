@@ -322,7 +322,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		if ((_magnitude == 0) || _angle_changed) reset();
 		
 		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
+		if ((_magnitude == 0) || get_angle_diff(angle, _angle) > pi/2) {
 			true_x = get_x();
 			true_y = get_y();
 			previous_x = get_x();
