@@ -18,6 +18,7 @@
     {"name":"obj_demo_diagonals_smooth","order":1,"path":"objects/obj_demo_diagonals_smooth/obj_demo_diagonals_smooth.yy",},
     {"name":"obj_demo_move_smooth","order":1,"path":"objects/obj_demo_move_smooth/obj_demo_move_smooth.yy",},
     {"name":"obj_test_smooth_move","order":3,"path":"objects/obj_test_smooth_move/obj_test_smooth_move.yy",},
+    {"name":"SmoothUtils","order":3,"path":"scripts/SmoothUtils/SmoothUtils.yy",},
     {"name":"obj_test_auto_complete","order":13,"path":"objects/obj_test_auto_complete/obj_test_auto_complete.yy",},
     {"name":"spr_background","order":5,"path":"sprites/spr_background/spr_background.yy",},
     {"name":"rm_demo_move_real","order":1,"path":"rooms/rm_demo_move_real/rm_demo_move_real.yy",},

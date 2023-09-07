@@ -38,6 +38,7 @@
     {"id":{"name":"obj_demo_diagonals_smooth","path":"objects/obj_demo_diagonals_smooth/obj_demo_diagonals_smooth.yy",},},
     {"id":{"name":"obj_demo_move_smooth","path":"objects/obj_demo_move_smooth/obj_demo_move_smooth.yy",},},
     {"id":{"name":"obj_test_smooth_move","path":"objects/obj_test_smooth_move/obj_test_smooth_move.yy",},},
+    {"id":{"name":"SmoothUtils","path":"scripts/SmoothUtils/SmoothUtils.yy",},},
     {"id":{"name":"rm_demo_diagonals_smooth","path":"rooms/rm_demo_diagonals_smooth/rm_demo_diagonals_smooth.yy",},},
     {"id":{"name":"obj_test_auto_complete","path":"objects/obj_test_auto_complete/obj_test_auto_complete.yy",},},
     {"id":{"name":"spr_background","path":"sprites/spr_background/spr_background.yy",},},

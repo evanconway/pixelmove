@@ -284,10 +284,10 @@ function __test_smoothmove_misc() {
 	show_debug_message("Miscellaneous");
 	// angle diff
 	var _angles = new SmoothMove(0, 0);
-	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(_angles.get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(_angles.get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(_angles.get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
+	test_smooth_move_assert_real(get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 	show_debug_message("test complete");
 }
 
