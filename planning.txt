@@ -403,4 +403,7 @@ Ah, our logic wasn't quite right. The position after increasing the delta_on_ang
 
 I think we may have just got it. It passes all my tests. The visuals look correct. I think it's finally actually doing what I wanted it to do. This is very exciting. It's possible I could just release this as-is, but I can't help but wonder if we can't fix those last few ugly stairsteps that occur when making frequent but very gentle changes to the angle? Like slowly turning an analog stick.
 
-Let's steal from the idea of rollback. If the user is inputting an angle at any moment, it's a very likely guess that the thing they'll be inputting that same angle, or one very similar, the next moment. 
+Let's steal from the idea of rollback. If the user is inputting an angle at any moment, it's a very likely guess that the thing they'll be inputting that same angle, or one very similar, the next moment. What if we anticipated the next movement, and position of the current movement and the anticipated movement would create a stairstep, we simply return the previous value for rounded error?
+
+This could work. Although I think we should stop calling it "error" and start calling it "anticipated". We could track "true" x/y, and have get_anticipated_xy to pair with our derived_xy functions.
+

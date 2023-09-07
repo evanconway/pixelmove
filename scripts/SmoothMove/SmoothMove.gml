@@ -22,9 +22,9 @@ function SmoothMove(_x, _y) constructor {
 	*/
 	
 	// @notignore
-	error_x = start_x;
+	true_x = start_x;
 	// @notignore
-	error_y = start_y;
+	true_y = start_y;
 	
 	/*
 	This is not for calculating x/y position. This is used to track how far this instance
@@ -263,15 +263,15 @@ function SmoothMove(_x, _y) constructor {
 	/**
 	 * Get the integer x position derived from the error position.
 	 */
-	get_error_x = function() {
-		return round_towards(round_to_correct(error_x), start_x);
+	get_round_to_start_x = function() {
+		return round_towards(round_to_correct(true_x), start_x);
 	};
 	
 	/**
 	 * Get the integer y position derived from the error position.
 	 */
-	get_error_y = function() {
-		return round_towards(round_to_correct(error_y), start_y);
+	get_round_to_start_y = function() {
+		return round_towards(round_to_correct(true_y), start_y);
 	};
 }
 
@@ -287,10 +287,8 @@ function smooth_move_get_copy(_smooth_move) {
 	_copy.angle = _smooth_move.angle;
 	_copy.delta = _smooth_move.delta;
 	_copy.delta_on_angle = _smooth_move.delta_on_angle;
-	_copy.erro_x = _smooth_move.error_x;
-	_copy.error_y = _smooth_move.error_y;
-	_copy.error_x = _smooth_move.error_x;
-	_copy.error_y = _smooth_move.error_y;
+	_copy.true_x = _smooth_move.true_x;
+	_copy.true_y = _smooth_move.true_y;
 	return _copy;
 }
 
@@ -311,7 +309,7 @@ function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
  */
 function smooth_move_get_x(_smooth_move) {
 	with (_smooth_move) {
-		var _result = get_delta_on_angle_passed_threshold() ? get_derived_x() : get_error_x();
+		var _result = get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
 		return _result;
 	}
 }
@@ -323,7 +321,7 @@ function smooth_move_get_x(_smooth_move) {
  */
 function smooth_move_get_y(_smooth_move) {
 	with (_smooth_move) {
-		var _result = get_delta_on_angle_passed_threshold() ? get_derived_y() : get_error_y();
+		var _result = get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
 		return _result;
 	}
 }
@@ -343,8 +341,8 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 		start_y = _y;
 		delta = 0;
 		delta_on_angle = 0;
-		error_x = _x;
-		error_y = _y;
+		true_x = _x;
+		true_y = _y;
 	}
 }
 
@@ -365,35 +363,35 @@ function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
 		
 		// reset error data on no movement or too great an angle change
 		if ((_magnitude == 0) || get_angle_diff(angle, _angle) >= pi/4) {
-			error_x = smooth_move_get_x(self);
-			error_y = smooth_move_get_y(self);
+			true_x = smooth_move_get_x(self);
+			true_y = smooth_move_get_y(self);
 		}
 		
 		angle = _angle;
 		delta += _magnitude;
 		
 		// error correct based on true value
-		error_x += get_x_component(_angle, _magnitude);
-		error_y += get_y_component(_angle, _magnitude);
-		var _error = sqrt(sqr(get_error_x() - smooth_move_get_x(self)) + sqr(get_error_y() - smooth_move_get_y(self)));
+		true_x += get_x_component(_angle, _magnitude);
+		true_y += get_y_component(_angle, _magnitude);
+		var _error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
 		
 		// determine if this movement crossed the delta_on_angle threshold, and new error
 		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
 		delta_on_angle += _magnitude;
 		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_error_x() - smooth_move_get_x(self)) + sqr(get_error_y() - smooth_move_get_y(self)));
+		var _post_delta_change_error = sqrt(sqr(get_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_round_to_start_y() - smooth_move_get_y(self)));
 		
 		// correct line towards error
 		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
-			start_x = get_error_x();
-			start_y = get_error_y();
+			start_x = get_round_to_start_x();
+			start_y = get_round_to_start_y();
 			delta = 0;
 		}
 		
 		// correct error towards line once passed threshold
 		if (get_delta_on_angle_passed_threshold()) {
-			error_x = smooth_move_get_x(self);
-			error_y = smooth_move_get_y(self);
+			true_x = smooth_move_get_x(self);
+			true_y = smooth_move_get_y(self);
 		}
 	}
 }

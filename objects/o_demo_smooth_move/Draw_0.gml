@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 1;
+var _max_vel = 1.3;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -72,7 +72,13 @@ var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 //_vel = 1
 //_angle = 6*pi/4;
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
+//smooth_move_by_vector(smooth_move, _angle, _vel);
+
+if (keyboard_check_pressed(vk_space)) {
+	smooth_move_by_vector(smooth_move, angle, 1);
+	angle += 0.02;
+	
+}
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
@@ -100,3 +106,5 @@ with (smooth_move) {
 	draw_set_color(c_red);
 	draw_point(start_x, start_y);
 }
+
+show_debug_message($"positions: {ds_map_size(positions)}");
