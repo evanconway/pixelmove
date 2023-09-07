@@ -1,7 +1,7 @@
 // feather disable all
 
 /**
- * Position tracker that smoothes out changes.
+ * Create a new SmoothMove instance.
  * 
  * @param {Real} start_position_x The starting x position.
  * @param {Real} start_position_y The starting y position.
@@ -414,10 +414,11 @@ function smooth_move_get_copy(smooth_move) {
 }
 
 /**
- * Set the threshold for distance travelled before line equation is used to derive position.
+ * Set the threshold for distance travelled before position is derived from line equation.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to set the threshold for.
  * @param {real} threshold The new delta threshold.
+ * @return {void}
  */
 function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
 	var _smooth_move = smooth_move;
