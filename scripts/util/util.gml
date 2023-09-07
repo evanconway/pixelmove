@@ -10,6 +10,7 @@ function camera_init_basic(_width, _height, _window_multiplier = 1) {
 	window_set_size(_width * _window_multiplier, _height * _window_multiplier);
 	surface_resize(application_surface, _width, _height);
 	window_center();
+	display_set_gui_size(_width, _height);
 }
 
 function gamepad_get_left_stick_data() {
@@ -49,4 +50,50 @@ function smooth_move_tostring(_smooth_move) {
 	with (_smooth_move) {
 		return $"start_x: {start_x}\n start_y: {start_y}\n angle: {angle}\n  delta: {delta}\n x: {smooth_move_get_x(self)}\n y: {smooth_move_get_y(self)}";
 	}
+}
+
+/**
+ * @param {real} _trail_size
+ * @param {real} _decay_rate
+ */
+function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
+	alpha_decay = _decay_rate;
+	position_color = c_lime;
+	arr = array_create(_trail_size);
+	
+	last_added_x = 0;
+	last_added_y = 0;
+	
+	for (var _i = 0; _i < array_length(arr); _i++) {
+		arr[_i] = {
+			pos_x: 0,
+			pos_y: 0,
+			alpha: 0,
+		}
+	}
+	index = 0;
+	
+	/**
+	 * @param {real} _x
+	 * @param {real} _y
+	 */
+	add = function(_x, _y) {
+		if (last_added_x == _x && last_added_y == _y) return;
+		last_added_x = _x;
+		last_added_y = _y;
+		arr[index].pos_x = _x;
+		arr[index].pos_y = _y;
+		arr[index].alpha = 1;
+		index += 1;
+		if (index >= array_length(arr)) index = 0;
+	};
+	
+	draw = function() {
+		draw_set_color(position_color);
+		for (var _i = array_length(arr) -1; _i >= 0; _i--) {
+			draw_set_alpha(arr[_i].alpha);
+			draw_point(arr[_i].pos_x, arr[_i].pos_y);
+			arr[_i].alpha -= alpha_decay;
+		}
+	};
 }

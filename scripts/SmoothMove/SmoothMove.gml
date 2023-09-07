@@ -427,8 +427,8 @@ function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
 }
 
 /**
- * Set whether or not to hide stairstep movement based on
- * anticipated changes. Default is false.
+ * Set whether to show or hide stairstep movement based on anticipated changes. Default value
+ * for show_stairsteps is false.
  *
  * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set show stairsteps for.
  * @param {bool} new_show_stairsteps True to show stairsteps, false to hide.
@@ -465,8 +465,8 @@ function smooth_move_get_y(smooth_move) {
  * Set the x,y position.
  *
  * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set the x and y position of.
- * @param {real} x x position
- * @param {real} y y position
+ * @param {real} x The new x position.
+ * @param {real} y The new y position.
  */
 function smooth_move_set_position(smooth_move, x, y) {
 	var _x = floor(x);
