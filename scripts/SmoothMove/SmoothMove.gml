@@ -239,10 +239,6 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		start_y = _y;
 		delta = 0;
 		delta_on_angle = 0;
-		previous_x = _x;
-		previous_y = _y;
-		anticipated_x = _x;
-		anticipated_y = _y;
 	};
 	
 	/**
@@ -380,6 +376,8 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	get_y = function() {
 		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
 	};
+	
+	//
 	
 	// @ignore
 	get_x_if_moved_by_vector = function(_angle, _magnitude) {

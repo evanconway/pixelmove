@@ -357,4 +357,4 @@ function __test_smoothmove(){
 	__test_smoothmove_misc();
 }
 
-if (false) __test_smoothmove();
+if (true) __test_smoothmove();
