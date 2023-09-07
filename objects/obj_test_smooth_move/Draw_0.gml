@@ -72,7 +72,7 @@ var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 //_vel = 1
 //_angle = 6*pi/4;
 
-//smooth_move_by_vector(smooth_move, _angle, _vel);
+smooth_move_by_vector(smooth_move, _angle, _vel);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);

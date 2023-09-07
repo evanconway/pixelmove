@@ -295,6 +295,16 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		return round_towards(round_to_correct(true_y), start_y);
 	};
 	
+	// @ignore
+	get_x = function() {
+		return get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
+	};
+	
+	// @ignore
+	get_y = function() {
+		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
+	};
+	
 	/**
 	 * Return boolean indicating if current position will likely be 
 	 * a stair step based on anticipated position.
@@ -327,13 +337,6 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 		if ((_magnitude == 0) || get_angle_diff(angle, _angle) > pi/2) {
 			true_x = get_x();
 			true_y = get_y();
-			previous_x = get_x();
-			previous_y = get_y();
-		}
-		
-		if (!get_is_stair_step()) {
-			previous_x = get_x();
-			previous_y = get_y();
 		}
 		
 		angle = _angle;
@@ -362,22 +365,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 			true_x = get_x();
 			true_y = get_y();
 		}
-		
-		anticipated_x = get_x();
-		anticipated_y = get_y();
 	};
-	
-	// @ignore
-	get_x = function() {
-		return get_delta_on_angle_passed_threshold() ? get_derived_x() : get_round_to_start_x();
-	};
-	
-	// @ignore
-	get_y = function() {
-		return get_delta_on_angle_passed_threshold() ? get_derived_y() : get_round_to_start_y();
-	};
-	
-	//
 	
 	// @ignore
 	get_x_if_moved_by_vector = function(_angle, _magnitude) {
@@ -499,6 +487,8 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {
+		previous_x = get_x();
+		previous_y = get_y();
 		move_by_vector(angle, magnitude);
 		anticipated_x = get_x_if_moved_by_vector(angle, magnitude);
 		anticipated_y = get_y_if_moved_by_vector(angle, magnitude);

@@ -466,4 +466,6 @@ What might actually make more sense down the line is to have a separate class th
 
 But for now. That's basically already what we're doing, except we're just storing the previous position manually, and using a smooth move as the future state, but ignoring all the user facing functions. It's like a class that is both the thing that needs to be used, and the thing that uses it.
 
-Ha, looking over the code I bet the line data could be its own class. It's just sthe start positions, angle and delta. It could have its own get_x/y functions. 
+Ha, looking over the code I bet the line data could be its own class. It's just sthe start positions, angle and delta. It could have its own get_x/y functions.
+
+Just finished making those changes. Tests still pass, and the lines appear to be much better now. Though it's still not perfect. I truly feel like if we're only ever moving by magnitude of 1 it should be possible to, not matter the angle chosen, always show a pixel. I believe we should be able to get this to pass our pixel gap skip test.
