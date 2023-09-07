@@ -8,9 +8,9 @@
  */
 function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
-	start_x = start_position_x;
+	start_x = floor(start_position_x);
 	// @ignore
-	start_y = start_position_y;
+	start_y = floor(start_position_y);
 	// @ignore
 	angle = 0;
 	// @ignore

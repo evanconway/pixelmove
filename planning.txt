@@ -421,3 +421,15 @@ I did some puzzling in my mind, and I've realized this may get rid of stair step
 We after implementation, I think it's working. I do still see some stair steps sometimes, but it's rare, and only when changing directions pretty aggressively. It makes sense that sometimes they'd appear, but I want to confirm the reason they're appearing is the reason I think they should appear.
 
 Oh wait I'm stupid, we already have a test for checking gaps, which this currently fails, let's just use that.
+
+We've added a lot of changes. Most of them to do with tidying up and preparing for release. I think there are still bugs in the code, but it's so close to being what I want that I'm ready to release and move on. 
+
+
+function camera_init_basic(_width, _height, _window_multiplier = 1) {
+	view_enabled = true;
+	view_visible[0] = true;
+	camera_set_view_size(view_camera[0], _width, _height);
+	window_set_size(_width * _window_multiplier, _height * _window_multiplier);
+	surface_resize(application_surface, _width, _height);
+	window_center();
+}
