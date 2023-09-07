@@ -468,4 +468,19 @@ But for now. That's basically already what we're doing, except we're just storin
 
 Ha, looking over the code I bet the line data could be its own class. It's just sthe start positions, angle and delta. It could have its own get_x/y functions.
 
-Just finished making those changes. Tests still pass, and the lines appear to be much better now. Though it's still not perfect. I truly feel like if we're only ever moving by magnitude of 1 it should be possible to, not matter the angle chosen, always show a pixel. I believe we should be able to get this to pass our pixel gap skip test.
+Just finished making those changes. Tests still pass, and the lines appear to be much better now. Though it's still not perfect. I truly feel like if we're only ever moving by magnitude of 1 it should be possible to always show a pixel. I believe we should be able to get this to pass our pixel gap skip test.
+
+I believe the path to better anticipation is more accurately guessing the next vector. For example, if moved by these angles and magnitudes:
+
+angle: 0.01, magnitude: 1
+angle: 0.02, magnitude: 1
+angle: 0.03, magnitude: 1
+angle: 0.04, magnitude: 1
+
+I think it's a pretty safe bet the next vector will be:
+
+angle: 0.05, magnitude: 1
+
+But our current system doesn't do that, it will use an angle of 0.04. Here we can see the change between angles is identical. No magnitude change and an angle change of 0.01. I bet we can calculate the average change over the last few vectors and use that average change to anticipate our next vector. I'm pretty sure there's also math that lets use decide how accurate the average is, and we could disregard the anticipation if the average is too unlikely. We'll just google stuff about statistics I'm sure we'll find it.
+
+However, before we do all that. I think it's best if we consolidate our code better by moving logic into those classes I discussed before. The Line and Position object. This will allow our previous and anticipated logic to be more clear.

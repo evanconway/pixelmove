@@ -14,6 +14,7 @@
     {"name":"obj_demo_diagonals_real","order":1,"path":"objects/obj_demo_diagonals_real/obj_demo_diagonals_real.yy",},
     {"name":"fnt_demo_tiny","order":4,"path":"fonts/fnt_demo_tiny/fnt_demo_tiny.yy",},
     {"name":"spr_wall","order":11,"path":"sprites/spr_wall/spr_wall.yy",},
+    {"name":"SmoothLine","order":2,"path":"scripts/SmoothLine/SmoothLine.yy",},
     {"name":"obj_demo_diagonals_smooth","order":1,"path":"objects/obj_demo_diagonals_smooth/obj_demo_diagonals_smooth.yy",},
     {"name":"obj_demo_move_smooth","order":1,"path":"objects/obj_demo_move_smooth/obj_demo_move_smooth.yy",},
     {"name":"obj_test_smooth_move","order":3,"path":"objects/obj_test_smooth_move/obj_test_smooth_move.yy",},
