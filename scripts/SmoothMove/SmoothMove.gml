@@ -1,14 +1,16 @@
+// feather disable all
+
 /**
  * Position tracker that smoothes out changes.
  * 
- * @param {Real} _x starting x position
- * @param {Real} _y starting y position
+ * @param {Real} start_position_x The starting x position.
+ * @param {Real} start_position_y The starting y position.
  */
-function SmoothMove(_x, _y) constructor {
+function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
-	start_x = _x;
+	start_x = start_position_x;
 	// @ignore
-	start_y = _y;
+	start_y = start_position_y;
 	// @ignore
 	angle = 0;
 	// @ignore
@@ -391,9 +393,10 @@ function SmoothMove(_x, _y) constructor {
 /**
  * Get a copy of the given SmoothMove instance.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to copy.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to copy.
  */
-function smooth_move_get_copy(_smooth_move) {
+function smooth_move_get_copy(smooth_move) {
+	var _smooth_move = smooth_move
 	var _copy = new SmoothMove(0, 0);	
 	_copy.start_x = _smooth_move.start_x;
 	_copy.start_y = _smooth_move.start_y;
@@ -413,10 +416,12 @@ function smooth_move_get_copy(_smooth_move) {
 /**
  * Set the threshold for distance travelled before line equation is used to derive position.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set the threshold for.
- * @param {real} _threshold The new delta threshold.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to set the threshold for.
+ * @param {real} threshold The new delta threshold.
  */
-function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
+function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
+	var _smooth_move = smooth_move;
+	var _threshold = threshold;
 	_smooth_move.delta_on_angle_threshold = _threshold;
 }
 
@@ -425,19 +430,21 @@ function smooth_move_set_delta_line_threshold(_smooth_move, _threshold) {
  * anticipated changes. Default is false.
  *
  * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set show stairsteps for.
- * @param {bool} _bool True to show stairsteps, false to hide.
+ * @param {bool} new_show_stairsteps True to show stairsteps, false to hide.
  */
-function smooth_move_show_stairsteps(_smooth_move, _bool) {
+function smooth_move_show_stairsteps(smooth_move, new_show_stairsteps) {
+	var _smooth_move = smooth_move;
+	var _bool = new_show_stairsteps;
 	_smooth_move.show_stairsteps = _bool;
 }
 
 /**
  * Get the current x position.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the x position of.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the x position of.
  */
-function smooth_move_get_x(_smooth_move) {
-	with (_smooth_move) {
+function smooth_move_get_x(smooth_move) {
+	with (smooth_move) {
 		return get_is_stair_step() ? previous_x : get_x();
 	}
 }
@@ -445,10 +452,10 @@ function smooth_move_get_x(_smooth_move) {
 /**
  * Get the current y position.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the y position of.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the y position of.
  */
-function smooth_move_get_y(_smooth_move) {
-	with (_smooth_move) {
+function smooth_move_get_y(smooth_move) {
+	with (smooth_move) {
 		return get_is_stair_step() ? previous_y : get_y();
 	}
 }
@@ -457,13 +464,13 @@ function smooth_move_get_y(_smooth_move) {
  * Set the x,y position.
  *
  * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set the x and y position of.
- * @param {real} _x x position
- * @param {real} _y y position
+ * @param {real} x x position
+ * @param {real} y y position
  */
-function smooth_move_set_position(_smooth_move, _x, _y) {
-	_x = floor(_x);
-	_y = floor(_y);
-	with (_smooth_move) {
+function smooth_move_set_position(smooth_move, x, y) {
+	var _x = floor(x);
+	var _y = floor(y);
+	with (smooth_move) {
 		start_x = _x;
 		start_y = _y;
 		delta = 0;
@@ -480,30 +487,30 @@ function smooth_move_set_position(_smooth_move, _x, _y) {
 /**
  * Move by the given vector. Angle of 0 corresponds to positive x axis.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to move.
- * @param {real} _angle The angle of the vector in radians.
- * @param {real} _magnitude The magnitude of the vector.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to move.
+ * @param {real} angle The angle of the vector in radians.
+ * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_by_vector(_smooth_move, _angle, _magnitude) {
-	with (_smooth_move) {
-		move_by_vector(_angle, _magnitude);
-		anticipated_x = get_x_if_moved_by_vector(_angle, _magnitude);
-		anticipated_y = get_y_if_moved_by_vector(_angle, _magnitude);
+function smooth_move_by_vector(smooth_move, angle, magnitude) {
+	with (smooth_move) {
+		move_by_vector(angle, magnitude);
+		anticipated_x = get_x_if_moved_by_vector(angle, magnitude);
+		anticipated_y = get_y_if_moved_by_vector(angle, magnitude);
 	}
 }
 
 /**
  * Move by the given x and y magnitudes.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to move.
- * @param {real} _magnitude_x The x magnitude.
- * @param {real} _magnitude_y The y magnitude.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to move.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
-	with (_smooth_move) {
-		var _angle = arctan2(_magnitude_y, _magnitude_x);
-		var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
-		smooth_move_by_vector(_smooth_move, _angle, _m);
+function smooth_move_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
+	with (smooth_move) {
+		var _angle = arctan2(magnitude_y, magnitude_x);
+		var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
+		smooth_move_by_vector(self, _angle, _m);
 	}
 }
 
@@ -511,13 +518,13 @@ function smooth_move_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
  * Get the x position after movement by the given vector. Does not mutate the given
  * SmoothMove instance.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the potential x position of.
- * @param {real} _angle The angle in radians of the vector.
- * @param {real} _magnitude The magnitude of the vector.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the potential x position of.
+ * @param {real} angle The angle in radians of the vector.
+ * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
-	var _copy = smooth_move_get_copy(_smooth_move);
-	smooth_move_by_vector(_copy, _angle, _magnitude);
+function smooth_move_get_x_if_moved_by_vector(smooth_move, angle, magnitude) {
+	var _copy = smooth_move_get_copy(smooth_move);
+	smooth_move_by_vector(_copy, angle, magnitude);
 	return smooth_move_get_x(_copy);
 }
 
@@ -525,13 +532,13 @@ function smooth_move_get_x_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
  * Get the y position after movement by the given vector. Does not mutate the given
  * SmoothMove instance.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the potential y position of.
- * @param {real} _angle The angle in radians of the vector.
- * @param {real} _magnitude The magnitude of the vector.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the potential y position of.
+ * @param {real} angle The angle in radians of the vector.
+ * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) {
-	var _copy = smooth_move_get_copy(_smooth_move);
-	smooth_move_by_vector(_copy, _angle, _magnitude);
+function smooth_move_get_y_if_moved_by_vector(smooth_move, angle, magnitude) {
+	var _copy = smooth_move_get_copy(smooth_move);
+	smooth_move_by_vector(_copy, angle, magnitude);
 	return smooth_move_get_y(_copy);
 }
 
@@ -539,14 +546,14 @@ function smooth_move_get_y_if_moved_by_vector(_smooth_move, _angle, _magnitude) 
  * Get the x position after movement by the given x and y magnitudes. Does not mutate the given
  * SmoothMove instance.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the potential x position of.
- * @param {real} _magnitude_x The x magnitude.
- * @param {real} _magnitude_y The y magnitude.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the potential x position of.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
-	var _copy = smooth_move_get_copy(_smooth_move);
-	var _angle = arctan2(_magnitude_y, _magnitude_x);
-	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+function smooth_move_get_x_if_moved_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
+	var _copy = smooth_move_get_copy(smooth_move);
+	var _angle = arctan2(magnitude_y, magnitude_x);
+	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
 	return smooth_move_get_x_if_moved_by_vector(_copy, _angle, _m);
 }
 
@@ -554,13 +561,13 @@ function smooth_move_get_x_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _m
  * Get the y position after movement by the given x and y magnitudes. Does not mutate the given
  * SmoothMove instance.
  *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to get the potential y position of.
- * @param {real} _magnitude_x The x magnitude.
- * @param {real} _magnitude_y The y magnitude.
+ * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the potential y position of.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_get_y_if_moved_by_magnitudes(_smooth_move, _magnitude_x, _magnitude_y) {
-	var _copy = smooth_move_get_copy(_smooth_move);
-	var _angle = arctan2(_magnitude_y, _magnitude_x);
-	var _m = sqrt(sqr(_magnitude_x) + sqr(_magnitude_y));
+function smooth_move_get_y_if_moved_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
+	var _copy = smooth_move_get_copy(smooth_move);
+	var _angle = arctan2(magnitude_y, magnitude_x);
+	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
 	return smooth_move_get_y_if_moved_by_vector(_copy, _angle, _m);
 }

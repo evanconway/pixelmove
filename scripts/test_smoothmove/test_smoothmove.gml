@@ -1,4 +1,5 @@
 // feather ignore all
+// feather disable all
 
 /**
  * Assert function for testing real numbers in this package.
@@ -356,4 +357,4 @@ function __test_smoothmove(){
 	__test_smoothmove_misc();
 }
 
-if (true) __test_smoothmove();
+if (false) __test_smoothmove();

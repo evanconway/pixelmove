@@ -110,5 +110,7 @@ with (smooth_move) {
 	draw_set_color(c_yellow);
 	draw_point(anticipated_x, anticipated_y);
 	draw_set_color(c_fuchsia);
-	draw_point(get_x(), get_y());
+	var _actual_x = get_x();
+	var _actual_y = get_y();
+	draw_point(_actual_x, _actual_y);
 }
