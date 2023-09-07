@@ -433,3 +433,16 @@ function camera_init_basic(_width, _height, _window_multiplier = 1) {
 	surface_resize(application_surface, _width, _height);
 	window_center();
 }
+
+
+7th of September, 2023
+
+I'm still bothered by the existing stair step issues. We were able to create a situation that has both a gap and a stairstep. Let's observe what's happening here. I have a hunch that if the anticipated vector wasn't the same as the previous, but changed the same as the previous changes, we'd have much better looking lines.
+
+Hmm, right now we reset the previous and anticipated x/y whenever the angle changes. Why do we do that? I figure we never want to reset this data unles we didn't move. Actually it specifically doesn't make sense to change that data because we need to refer back to the previous position to determine if the current position is a stair step.
+
+Let's re-hash the logic in our mind. We always move the smooth move instance by our internal line and rounding rules. There is always a "true smooth position" internally. We define a stairstep for smooth move as a position where the distance to its previous "true smooth position" is 1, the distance to its anticipated "true smooth position" is 1, and the distance between it's previous and anticipated "true smooth" positions is exactly sqrt(2). So anytime we reset the previous or anticipated position, we lose the ability to determine if a position is a stair step.
+
+And, actually, now that I think about it why do we even need to reset when the magnitude is 0? Let's pretend we're moving by 0 and our current position is not a stair step. Well... that just means our position gets set to where it is, our anticipated position becomes the same spot, and our previous position is still what it actually was. This won't trigger any false stair steps on the next move because the distance from current to anticipated will be 0 (they're the same!).
+
+I briefly wondered if we could replace our anticipated x/y with just a magnitude value, and we instead derive the anticipated value. But this requires more calculations, and is actually more code in the end. We'll just set anticipated after movement. Now that I've puzzled this out, I feel fairly confident. All we're going to change is never resetting the previous or anticipated positions. Let's commit and try it.

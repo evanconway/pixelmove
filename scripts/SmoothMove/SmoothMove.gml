@@ -38,6 +38,12 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	delta_on_angle_threshold = 7.1;
 	
+	/*
+	Previous and anticipated positions are the actual internal values smooth move did or will have. The user facing
+	functions smooth_move_get_x/y_if_moved_by... do not use these. Instead they use our stair step logic to determine
+	whether to return the previous actual position, or the current actual position.
+	*/
+	
 	// last known position following stairstep rules
 	// @ignore
 	previous_x = start_x;

@@ -26,8 +26,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_demo_smooth_move_wall",
-    "path": "sprites/spr_demo_smooth_move_wall/spr_demo_smooth_move_wall.yy",
+    "name": "spr_wall",
+    "path": "sprites/spr_wall/spr_wall.yy",
   },
   "spriteMaskId": null,
   "visible": true,

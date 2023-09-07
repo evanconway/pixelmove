@@ -20,6 +20,16 @@ stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 
-// debug jumping
+// debug stair step
+
+/*
+smooth_move_set_position(smooth_move, 0, 0);
+angle = 0;
+for (var _i = 0; _i < 200; _i++) {
+	smooth_move_by_vector(smooth_move, angle, 1);
+	position_add(smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move));
+	angle += random(0.03);
+}
+*/
 
 angle = 0;

@@ -72,20 +72,26 @@ var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
 //_vel = 1
 //_angle = 6*pi/4;
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
-
-if (keyboard_check_pressed(vk_space)) {
-	var _check_x = smooth_move.anticipated_x;
-	var _check_y = smooth_move.anticipated_y;
-	smooth_move_by_vector(smooth_move, angle, 1);
-	angle += 0.02;
-	if (_check_x != smooth_move_get_x(smooth_move) || _check_y != smooth_move_get_y(smooth_move)) {
-		show_debug_message("anticipated position was incorrect");
-	}
-}
+//smooth_move_by_vector(smooth_move, _angle, _vel);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
+
+if (keyboard_check_pressed(vk_space)) {
+	var _anticipated_x = smooth_move.anticipated_x;
+	var _anticipated_y = smooth_move.anticipated_y;
+	smooth_move_by_vector(smooth_move, angle, 1);
+	var _actual_x = smooth_move_get_x(smooth_move);
+	var _actual_y = smooth_move_get_y(smooth_move);
+	show_debug_message($"{smooth_move_get_x(smooth_move)}, {smooth_move_get_y(smooth_move)}");
+	if (_anticipated_x != smooth_move_get_x(smooth_move) || _anticipated_y != smooth_move_get_y(smooth_move)) {
+		show_debug_message("anticipated position was incorrect");
+	}
+	angle += random(0.03);
+}
+
+_x = smooth_move_get_x(smooth_move);
+_y = smooth_move_get_y(smooth_move);
 
 x = _x;
 y = _y;
