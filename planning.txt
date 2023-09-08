@@ -496,3 +496,7 @@ Just averaging the last few vectors together doesn't work. The average will alwa
 We added something using best line forumla. It's very simple. Just derive a line equation from first and last known points. Then infer new point (angle or magnitude) using that line.
 
 After toying around more I realized I can actually trigger gaps even when only moving in the cardinals and their intermediates. This is very frustrating because my tests didn't catch this. I'm ripping out this complicated anticipation system in favor of the old "just use the previous vector to anticipate" strategy.
+
+Something else I've noticed is that it's pretty easy to trigger stair steps when moving by the controller at a very slow rate. I have a theory as to why this is happening. When the movement is super slow, your previous position ends up being your current position for multiple frames. This breaks our previous position stair step logic. Let's see if we can ensure that previous position is only changed when you actually move.
+
+That seems to have helped, but not much. I have a new theory. What if we changed our delta line threshold to simply be number of updates? Movement is much cleaner when deriving from a line. When moving very slowly however, it takes much longer to hit that delta_on_angle threshold. Perhaps it should be number of movements rather than a distance. 

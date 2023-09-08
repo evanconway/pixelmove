@@ -145,8 +145,8 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {		
-		previous_x = smooth_move_get_x(self);
-		previous_y = smooth_move_get_y(self);
+		if (smooth_move_get_x(self) != previous_x) previous_x = smooth_move_get_x(self);
+		if (smooth_move_get_y(self) != previous_y) previous_y = smooth_move_get_y(self);
 		
 		position.move_by_vector(angle, magnitude);
 		
@@ -154,6 +154,11 @@ function smooth_move_by_vector(smooth_move, angle, magnitude) {
 		_copy.move_by_vector(angle, magnitude);
 		anticipated_x = _copy.get_x();
 		anticipated_y = _copy.get_y();
+		
+		if (magnitude == 0) {
+			previous_x = smooth_move_get_x(self);
+			previous_y = smooth_move_get_y(self);
+		}
 	}
 }
 
