@@ -175,9 +175,11 @@ function __test_smoothmove_pixel_gaps() {
 	test_smooth_move_show_test_message("No Pixel Gaps", true);
 	// pixel gaps and error correction
 	var _random = new SmoothMove(0, 0);
+	
+	// there should never be a gap while showing stair steps and vector magnitude is 1
 	smooth_move_show_stairsteps(_random, true);
 	var _angle = 0;
-	var _positions = array_create(0);
+	var _positions = [];
 	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _frames = random_range(1, 20);
@@ -198,6 +200,33 @@ function __test_smoothmove_pixel_gaps() {
 			show_error($"Smooth move random movement failed position {_i}. Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
+	
+	// when not showing stair steps, but only moving at cardinals, there should still never be a gap
+	smooth_move_set_position(_random, 0, 0);
+	smooth_move_show_stairsteps(_random, false);
+	_angle = 0;
+	_positions = [];
+	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
+	for (var _i = 0; _i < 1000; _i++) {
+		var _frames = random_range(1, 20);
+		_angle += (irandom_range(0, 1) == 0) ? -pi/4 : pi/4;
+		for (var _f = 0; _f < _frames; _f++) {
+			smooth_move_by_vector(_random, _angle, 1);
+			array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
+		}
+	}
+	
+	for (var _i = 1; _i < array_length(_positions); _i++) {
+		var _x1 = _positions[_i -1][0];
+		var _x2 = _positions[_i][0]
+		var _y1 = _positions[_i - 1][1];
+		var _y2 = _positions[_i][1];
+		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
+		if (_dist > sqrt(2)) {
+			show_error($"Smooth move random cardinal movement failed position {_i}. Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
+		}
+	}
+	
 	show_debug_message("test complete");
 }
 

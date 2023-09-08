@@ -31,24 +31,6 @@ function SmoothLine(_angle, _delta) constructor {
 	};
 	
 	/**
-	 * Get the x magnitude given the current angle and delta.
-	 *
-	 * @ignore
-	 */
-	get_magnitude_x = function() {
-		return snap_cos(angle) * delta;
-	};
-	
-	/**
-	 * Get the y magnitude given the current angle and delta.
-	 *
-	 * @ignore
-	 */
-	get_magnitude_y = function() {
-		return snap_sin(angle) * delta;
-	};
-	
-	/**
 	 * Get the slope to be used to infer an x or y position. The slope changes depending on
 	 * whether the x or y magnitude of the 2D vector is greater.
 	 *

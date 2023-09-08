@@ -89,7 +89,7 @@ function SmoothPosition(_start_x, _start_y) constructor {
 		if ((_magnitude == 0) || _angle_changed) reset_line_to_current();
 		
 		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(line.angle, _angle) > pi/2) {
+		if ((_magnitude == 0) || get_angle_diff(line.angle, _angle) >= pi/4) {
 			true_x = get_x();
 			true_y = get_y();
 		}
