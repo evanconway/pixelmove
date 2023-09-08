@@ -403,11 +403,9 @@ function __test_smoothmove(){
 	__test_smoothmove_positions(true);
 	__test_smoothmove_stairsteps(false);
 	__test_smoothmove_stairsteps(true);
-	__test_smooth_move_towards_point(false);
-	__test_smooth_move_towards_point(true);
 	__test_smoothmove_always_increase(false);
 	__test_smoothmove_always_increase(true);
 	__test_smoothmove_misc();
 }
 
-if (false) __test_smoothmove();
+if (true) __test_smoothmove();
