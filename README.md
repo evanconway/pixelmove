@@ -1,6 +1,6 @@
 # SmoothMove
 
-A GameMaker package to make moving in clean, pixel perfect lines easier.
+A GameMaker package to quickly setup pixel perfect movement in low resolution environments.
 
 
 # Functions
@@ -31,9 +31,9 @@ _Returns:_  `Struct.SmoothMove`
 | smooth_move | Struct.SmoothMove | The SmoothMove instance to copy. |
 ---
 
-`smooth_move_set_delta_line_threshold`
+`smooth_move_set_movements_on_angle_to_infer_from_line`
 
-Set the threshold for distance travelled before position is derived from line equation.
+Set the number of movements at same angle before position is derived from line equation.
 
 _Full function name:_  `smooth_move_set_delta_line_threshold(smooth_move, threshold)`
 

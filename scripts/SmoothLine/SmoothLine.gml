@@ -1,3 +1,5 @@
+// feather ignore all
+
 /**
  * A line equation that infers y from x, or x from y depending on the angle, and only returns
  * integer values.
@@ -8,7 +10,7 @@
  */
 function __SmoothLine(_angle, _delta) constructor {
 	// @ignore
-	angle = get_cleaned_angle(_angle);
+	angle = __smoothmove_util_get_cleaned_angle(_angle);
 	// @ignore
 	delta = _delta;
 	
@@ -18,7 +20,7 @@ function __SmoothLine(_angle, _delta) constructor {
 	 * @ignore
 	 */
 	set = function(_angle, _delta) {
-		angle = get_cleaned_angle(_angle);
+		angle = __smoothmove_util_get_cleaned_angle(_angle);
 		delta = _delta;
 	};
 	
@@ -39,7 +41,7 @@ function __SmoothLine(_angle, _delta) constructor {
 	 */
 	slope = function() {
 		if (delta == 0) return 0;
-		return infer_y_from_x() ? get_y_component(angle, delta) / get_x_component(angle, delta) : get_x_component(angle, delta) / get_y_component(angle, delta);
+		return infer_y_from_x() ? __smoothmove_util_get_y_component(angle, delta) / __smoothmove_util_get_x_component(angle, delta) : __smoothmove_util_get_x_component(angle, delta) / __smoothmove_util_get_y_component(angle, delta);
 	}
 	
 	// @ignore
@@ -57,14 +59,14 @@ function __SmoothLine(_angle, _delta) constructor {
 		_start_y = floor(_start_y);
 		if (delta == 0) return _start_x;
 		if (infer_y_from_x()) {
-			var _x = round_to_correct(_start_x + get_x_component(angle, delta));
-			return round_towards(_x, _start_x);
+			var _x = __smoothmove_util_round_to_correct(_start_x + __smoothmove_util_get_x_component(angle, delta));
+			return __smoothmove_util_round_towards(_x, _start_x);
 		}
 		
 		// derive x position from linear line function of y
 		var _y_diff = get_y(_start_x, _start_y) - _start_y;
-		var _x = round_to_correct(slope() * _y_diff + _start_x);
-		return round_towards(_x, _start_x);
+		var _x = __smoothmove_util_round_to_correct(slope() * _y_diff + _start_x);
+		return __smoothmove_util_round_towards(_x, _start_x);
 	};
 	
 	/**
@@ -77,13 +79,13 @@ function __SmoothLine(_angle, _delta) constructor {
 		_start_y = floor(_start_y);
 		if (delta == 0) return _start_y;
 		if (!infer_y_from_x()) {
-			var _y = round_to_correct(_start_y + get_y_component(angle, delta));
-			return round_towards(_y, _start_y);
+			var _y = __smoothmove_util_round_to_correct(_start_y + __smoothmove_util_get_y_component(angle, delta));
+			return __smoothmove_util_round_towards(_y, _start_y);
 		}
 		
 		// derive y position from linear line function of x
 		var _x_diff = get_x(_start_x, _start_y) - _start_x;
-		var _y = round_to_correct(slope() * _x_diff + _start_y);
-		return round_towards(_y, _start_y);
+		var _y = __smoothmove_util_round_to_correct(slope() * _x_diff + _start_y);
+		return __smoothmove_util_round_towards(_y, _start_y);
 	}
 }

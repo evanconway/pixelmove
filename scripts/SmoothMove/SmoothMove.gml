@@ -69,15 +69,15 @@ function smooth_move_get_copy(smooth_move) {
 }
 
 /**
- * Set the threshold for distance travelled before position is derived from line equation.
+ * Set the number of movements at same angle before position is derived from line equation.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to set the threshold for.
  * @param {real} threshold The new delta threshold.
  */
-function smooth_move_set_delta_line_threshold(smooth_move, threshold) {
+function smooth_move_set_movements_on_angle_to_infer_from_line(smooth_move, threshold) {
 	var _smooth_move = smooth_move;
 	var _threshold = threshold;
-	_smooth_move.position.delta_on_angle_threshold = _threshold;
+	_smooth_move.position.movements_on_angle_to_infer_from_line = _threshold;
 }
 
 /**

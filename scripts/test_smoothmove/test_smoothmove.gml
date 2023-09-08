@@ -5,7 +5,7 @@
  * @param {real} _expected
  * @ignore
  */
-function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move test fail!") {
+function __test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move test fail!") {
 	if (!is_real(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
 	if (!is_real(_expected)) show_error(_msg + $"\n Expected {_expected} is not a real.", true);
 	if (is_nan(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
@@ -18,7 +18,7 @@ function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move tes
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
+function __test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
 	show_debug_message("smooth move testing " + _test_name + "...");
 	show_debug_message($"show_stairsteps: {_show_stairsteps ? "true" : "false"}");
 }
@@ -28,7 +28,7 @@ function test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_cardinals(_show_stairsteps = false) {
-	test_smooth_move_show_test_message("Cardinal Directions", _show_stairsteps);
+	__test_smooth_move_show_test_message("Cardinal Directions", _show_stairsteps);
 	var _move_count = 1000;
 	
 	// north
@@ -37,11 +37,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_n, 6*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_n), 0, "Smooth move north test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_n), -1000, "Smooth move north test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_n), 0, "Smooth move north test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_n), -1000, "Smooth move north test 1 y fail!");
 	smooth_move_by_vector(_n, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_n), 0, "Smooth move north test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_n), -1000, "Smooth move north test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_n), 0, "Smooth move north test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_n), -1000, "Smooth move north test 2 y fail!");
 	
 	// south
 	var _s = new SmoothMove(0, 0);
@@ -49,11 +49,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_s, 2*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_s), 0, "Smooth move south test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_s), 1000, "Smooth move south test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_s), 0, "Smooth move south test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_s), 1000, "Smooth move south test 1 y fail!");
 	smooth_move_by_vector(_s, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_s), 0, "Smooth move south test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_s), 1000, "Smooth move south test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_s), 0, "Smooth move south test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_s), 1000, "Smooth move south test 2 y fail!");
 	
 	// east
 	var _e = new SmoothMove(0, 0);
@@ -61,11 +61,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_e, 0*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_e), 1000, "Smooth move east test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_e), 0, "Smooth move east test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_e), 1000, "Smooth move east test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_e), 0, "Smooth move east test 1 y fail!");
 	smooth_move_by_vector(_e, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_e), 1000, "Smooth move east test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_e), 0, "Smooth move east test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_e), 1000, "Smooth move east test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_e), 0, "Smooth move east test 2 y fail!");
 	
 	// west
 	var _w = new SmoothMove(0, 0);
@@ -73,11 +73,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_w, 4*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_w), -1000, "Smooth move west test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_w), 0, "Smooth move west test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_w), -1000, "Smooth move west test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_w), 0, "Smooth move west test 1 y fail!");
 	smooth_move_by_vector(_w, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_w), -1000, "Smooth move west test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_w), 0, "Smooth move west test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_w), -1000, "Smooth move west test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_w), 0, "Smooth move west test 2 y fail!");
 	
 	// north east
 	var _ne = new SmoothMove(0, 0);
@@ -85,11 +85,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_ne, 7*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_ne), 707, "Smooth move north east test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_ne), -707, "Smooth move north east test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_ne), 707, "Smooth move north east test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_ne), -707, "Smooth move north east test 1 y fail!");
 	smooth_move_by_vector(_ne, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_ne), 707, "Smooth move north east test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_ne), -707, "Smooth move north east test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_ne), 707, "Smooth move north east test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_ne), -707, "Smooth move north east test 2 y fail!");
 	
 	// north west
 	var _nw = new SmoothMove(0, 0);
@@ -97,11 +97,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_nw, 5*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_nw), -707, "Smooth move north west test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_nw), -707, "Smooth move north west test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_nw), -707, "Smooth move north west test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_nw), -707, "Smooth move north west test 1 y fail!");
 	smooth_move_by_vector(_nw, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_nw), -707, "Smooth move north west test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_nw), -707, "Smooth move north west test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_nw), -707, "Smooth move north west test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_nw), -707, "Smooth move north west test 2 y fail!");
 	
 	// south east
 	var _se = new SmoothMove(0, 0);
@@ -109,11 +109,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_se, 1*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_se), 707, "Smooth move south east test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_se), 707, "Smooth move south east test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_se), 707, "Smooth move south east test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_se), 707, "Smooth move south east test 1 y fail!");
 	smooth_move_by_vector(_se, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_se), 707, "Smooth move south east test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_se), 707, "Smooth move south east test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_se), 707, "Smooth move south east test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_se), 707, "Smooth move south east test 2 y fail!");
 	
 	// south west
 	var _sw = new SmoothMove(0, 0);
@@ -121,11 +121,11 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_sw, 3*pi/4, 1);
 	}
-	test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 1 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 1 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 1 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 1 y fail!");
 	smooth_move_by_vector(_sw, 0, 0);
-	test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 2 x fail!");
-	test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
+	__test_smooth_move_assert_real(smooth_move_get_x(_sw), -707, "Smooth move south west test 2 x fail!");
+	__test_smooth_move_assert_real(smooth_move_get_y(_sw), 707, "Smooth move south west test 2 y fail!");
 	
 	show_debug_message("test complete");
 }
@@ -135,7 +135,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
  * @ignore
  */
 function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
-	test_smooth_move_show_test_message("Perfect Diagonals", _show_stairsteps);
+	__test_smooth_move_show_test_message("Perfect Diagonals", _show_stairsteps);
 	
 	// @param {real} _mag
 	// @param {bool} _ss
@@ -151,11 +151,11 @@ function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
 				var _y_after_move = smooth_move_get_y(_sm);
 				var _divider = 1 / abs(_mag_x);
 				if ((_i + 1) % _divider == 0) {
-					test_smooth_move_assert_real(_x_after_move, _check_x + sign(_mag_x), $"Smooth diagonal test {_mag_x} x fail!");
-					test_smooth_move_assert_real(_y_after_move, _check_y + sign(_mag_y), $"Smooth diagonal test {_mag_y} y fail!");
+					__test_smooth_move_assert_real(_x_after_move, _check_x + sign(_mag_x), $"Smooth diagonal test {_mag_x} x fail!");
+					__test_smooth_move_assert_real(_y_after_move, _check_y + sign(_mag_y), $"Smooth diagonal test {_mag_y} y fail!");
 				} else {
-					test_smooth_move_assert_real(_x_after_move, _check_x, $"Smooth diagonal test {_mag_x} x fail!");
-					test_smooth_move_assert_real(_y_after_move, _check_y, $"Smooth diagonal test {_mag_y} y fail!");
+					__test_smooth_move_assert_real(_x_after_move, _check_x, $"Smooth diagonal test {_mag_x} x fail!");
+					__test_smooth_move_assert_real(_y_after_move, _check_y, $"Smooth diagonal test {_mag_y} y fail!");
 				}
 			}
 		};
@@ -182,7 +182,7 @@ function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_pixel_gaps() {
-	test_smooth_move_show_test_message("No Pixel Gaps", true);
+	__test_smooth_move_show_test_message("No Pixel Gaps", true);
 	// pixel gaps and error correction
 	var _random = new SmoothMove(0, 0);
 	
@@ -245,7 +245,7 @@ function __test_smoothmove_pixel_gaps() {
  * @ignore
  */
 function __test_smoothmove_positions(_show_stairsteps) {
-	test_smooth_move_show_test_message("Set and Potential Position", _show_stairsteps);
+	__test_smooth_move_show_test_message("Set and Potential Position", _show_stairsteps);
 	
 	// set position
 	var _set_pos = new SmoothMove(0, 0);
@@ -254,8 +254,8 @@ function __test_smoothmove_positions(_show_stairsteps) {
 		var _x = irandom_range(-10000, 10000);
 		var _y = irandom_range(-10000, 10000);
 		smooth_move_set_position(_set_pos, _x, _y);
-		test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, "Smooth move set position x fail.");
-		test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, "Smooth move set position y fail.");
+		__test_smooth_move_assert_real(smooth_move_get_x(_set_pos), _x, "Smooth move set position x fail.");
+		__test_smooth_move_assert_real(smooth_move_get_y(_set_pos), _y, "Smooth move set position y fail.");
 	}
 	
 	// potential positions
@@ -267,8 +267,8 @@ function __test_smoothmove_positions(_show_stairsteps) {
 		var _pot_x = smooth_move_get_x_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		var _pot_y = smooth_move_get_y_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		smooth_move_by_magnitudes(_potential, _mag_x, _mag_y);
-		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
-		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
+		__test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
+		__test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
 	}
 	
 	// potential positions (with vectors)
@@ -281,8 +281,8 @@ function __test_smoothmove_positions(_show_stairsteps) {
 		var _pot_x = smooth_move_get_x_if_moved_by_vector(_potential, _angle_test, _vel_test);
 		var _pot_y = smooth_move_get_y_if_moved_by_vector(_potential, _angle_test, _vel_test);
 		smooth_move_by_vector(_potential, _angle_test, _vel_test);
-		test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
-		test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
+		__test_smooth_move_assert_real(_pot_x, smooth_move_get_x(_potential), $"Smooth move potential position x failed attempt {_i}");
+		__test_smooth_move_assert_real(_pot_y, smooth_move_get_y(_potential), $"Smooth move potential position y failed attempt {_i}.");
 	}
 	show_debug_message("test complete");
 }
@@ -292,14 +292,14 @@ function __test_smoothmove_positions(_show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_stairsteps(_show_stairsteps) {
-	test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
+	__test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
 	
 	// stairsteps
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
 	var _sm = new SmoothMove(0, 0);
 	smooth_move_show_stairsteps(_sm, _show_stairsteps);
-	smooth_move_set_delta_line_threshold(_sm, 0);
+	smooth_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
 		
@@ -332,10 +332,10 @@ function __test_smoothmove_misc() {
 	show_debug_message("Miscellaneous");
 	
 	// angle diff
-	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
-	test_smooth_move_assert_real(get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 	show_debug_message("test complete");
 }
 
@@ -347,7 +347,7 @@ function __test_smoothmove_misc() {
  * @ignore
  */
 function __test_smoothmove_always_increase(_show_stairsteps) {
-	test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
+	__test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
 	
 	var _sm = new SmoothMove(0, 0);
 	smooth_move_show_stairsteps(_sm, _show_stairsteps);

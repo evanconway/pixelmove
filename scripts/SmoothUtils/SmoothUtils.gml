@@ -1,3 +1,5 @@
+// feather ignore all
+
 /**
 * Given real _a and real _b, returns _a rounded in the direction of _b. It is possible for 
 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole
@@ -5,7 +7,7 @@
 *
 * @ignore
 */
-function round_towards(_a, _b) {
+function __smoothmove_util_round_towards(_a, _b) {
 	var _result = (_a - _b) >= 0 ? floor(_a) : ceil(_a);
 	return _result == 0 ? 0 : _result; // prevents -0
 }
@@ -16,17 +18,10 @@ function round_towards(_a, _b) {
 * @param {real} _value
 * @ignore
 */
-function round_to_correct(_value) {
+function __smoothmove_util_round_to_correct(_value) {
 	return floor(_value * 100000 + 0.5) / 100000;
 }
 
-/**
-* @param {real} _value
-* @ignore
-*/
-function round_to_thousandths(_value) {
-	return floor(_value * 1000 + 0.5) / 1000;
-}
 
 /**
 * Round given value to 0 if it's already close. This is mostly to deal
@@ -35,7 +30,7 @@ function round_to_thousandths(_value) {
 * @param {real} _value
 * @ignore
 */
-function snap_to_zero(_value) {
+function __smoothmove_util_snap_to_zero(_value) {
 	return abs(_value) < 0.001 ? 0 : _value;
 };
 	
@@ -45,8 +40,8 @@ function snap_to_zero(_value) {
 * @param {real} _angle angle in radians
 * @ignore
 */
-function snap_sin(_angle) {
-	return snap_to_zero(sin(_angle));
+function __smoothmove_util_snap_sin(_angle) {
+	return __smoothmove_util_snap_to_zero(sin(_angle));
 }
 	
 /**
@@ -55,8 +50,8 @@ function snap_sin(_angle) {
 * @param {real} _angle angle in radians
 * @ignore
 */
-function snap_cos(_angle) {
-	return snap_to_zero(cos(_angle));
+function __smoothmove_util_snap_cos(_angle) {
+	return __smoothmove_util_snap_to_zero(cos(_angle));
 }
 
 /**
@@ -66,9 +61,13 @@ function snap_cos(_angle) {
 * @param {real} _angle
 * @ignore
 */
-function get_cleaned_angle(_angle) {
+function __smoothmove_util_get_cleaned_angle(_angle) {
 	if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
 	if (_angle >= 2*pi) _angle %= 2*pi;
+	
+	var round_to_thousandths = function(_value) {
+		return floor(_value * 1000 + 0.5) / 1000;
+	};
 	if (round_to_thousandths(_angle) == round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
 	if (round_to_thousandths(_angle) == round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
 	if (round_to_thousandths(_angle) == round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
@@ -88,9 +87,9 @@ function get_cleaned_angle(_angle) {
 * @param {real} _b angle b in radians
 * @ignore
 */
-function get_angle_diff(_a, _b) {
-	_a = get_cleaned_angle(_a);
-	_b = get_cleaned_angle(_b);
+function __smoothmove_util_get_angle_diff(_a, _b) {
+	_a = __smoothmove_util_get_cleaned_angle(_a);
+	_b = __smoothmove_util_get_cleaned_angle(_b);
 	var _diff1 = abs(_a - _b);
 	var _diff2 = 2*pi - _diff1;
 	return min(_diff1, _diff2);
@@ -103,9 +102,10 @@ function get_angle_diff(_a, _b) {
 	* @param {real} _delta
 	* @ignore
 	*/
-function get_x_component(_angle, _delta) {
+function __smoothmove_util_get_x_component(_angle, _delta) {
+	_angle = __smoothmove_util_get_cleaned_angle(_angle);
 	if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
-	return snap_cos(_angle) * _delta;
+	return __smoothmove_util_snap_cos(_angle) * _delta;
 }
 	
 /**
@@ -116,6 +116,7 @@ function get_x_component(_angle, _delta) {
 	* @ignore
 	*/
 function get_y_component(_angle, _delta) {
+	_angle = __smoothmove_util_get_cleaned_angle(_angle);
 	if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
-	return snap_sin(_angle) * _delta;
+	return __smoothmove_util_snap_sin(_angle) * _delta;
 }

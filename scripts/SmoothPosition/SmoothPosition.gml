@@ -1,4 +1,3 @@
-// feather disable all
 // feather ignore all
 
 /**
@@ -31,17 +30,17 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 	has travelled along the same angle.
 	*/
 	// @ignore
-	delta_on_angle = 0;
+	movements_on_angle = 0;
 	
-	// once delta_on_angle has passed this value position will be derived from line equation instead of true
+	// once movements_on_angle has passed this value position will be derived from line equation instead of true
 	// @ignore
-	delta_on_angle_threshold = 7.1;
+	movements_on_angle_to_infer_from_line = 5;
 	
 	/**
 	 * @ignore
 	 */
-	get_delta_on_angle_passed_threshold = function () {
-		return delta_on_angle >= delta_on_angle_threshold;
+	get_movements_on_angle_passed_threshold = function () {
+		return movements_on_angle >= movements_on_angle_to_infer_from_line;
 	};
 	
 	/**
@@ -55,7 +54,7 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		start_x = _x;
 		start_y = _y;
 		line.delta = 0;
-		delta_on_angle = 0;
+		movements_on_angle = 0;
 	};
 	
 	/**
@@ -64,7 +63,7 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 	 * @ignore
 	 */
 	get_true_round_to_start_x = function() {
-		return round_towards(round_to_correct(true_x), start_x);
+		return __smoothmove_util_round_towards(__smoothmove_util_round_to_correct(true_x), start_x);
 	};
 	
 	/**
@@ -73,21 +72,21 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 	 * @ignore
 	 */
 	get_true_round_to_start_y = function() {
-		return round_towards(round_to_correct(true_y), start_y);
+		return __smoothmove_util_round_towards(__smoothmove_util_round_to_correct(true_y), start_y);
 	};
 	
 	/**
 	 * @ignore
 	 */
 	get_x = function() {
-		return get_delta_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_true_round_to_start_x();
+		return get_movements_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_true_round_to_start_x();
 	};
 	
 	/**
 	 * @ignore
 	 */
 	get_y = function() {
-		return get_delta_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_true_round_to_start_y();
+		return get_movements_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_true_round_to_start_y();
 	};
 	
 	/**
@@ -98,14 +97,14 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 	 * @ignore
 	 */
 	move_by_vector = function(_angle, _magnitude) {		
-		_angle = get_cleaned_angle(_angle);
+		_angle = __smoothmove_util_get_cleaned_angle(_angle);
 		var _angle_changed = line.angle != _angle;
 		
 		// reset line data on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset_line_to_current();
 		
 		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || get_angle_diff(line.angle, _angle) >= pi/4) {
+		if ((_magnitude == 0) || __smoothmove_util_get_angle_diff(line.angle, _angle) >= pi/4) {
 			true_x = get_x();
 			true_y = get_y();
 		}
@@ -113,25 +112,25 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		line.set(_angle, line.delta + _magnitude);
 		
 		// error correct based on true value
-		true_x += get_x_component(_angle, _magnitude);
+		true_x += __smoothmove_util_get_x_component(_angle, _magnitude);
 		true_y += get_y_component(_angle, _magnitude);
 		var _error = sqrt(sqr(get_true_round_to_start_x() - get_x()) + sqr(get_true_round_to_start_y() - get_y()));
 		
-		// determine if this movement crossed the delta_on_angle threshold, and new error
-		var _threshold_cross_before_delta_on_angle_change = get_delta_on_angle_passed_threshold();
-		delta_on_angle += _magnitude;
-		var _crossed_delta_line_threshold = get_delta_on_angle_passed_threshold() != _threshold_cross_before_delta_on_angle_change;
+		// determine if this movement crossed the movements_on_angle threshold, and new error
+		var _threshold_cross_before_movements_on_angle_change = get_movements_on_angle_passed_threshold();
+		movements_on_angle += 1;
+		var _crossed_delta_line_threshold = get_movements_on_angle_passed_threshold() != _threshold_cross_before_movements_on_angle_change;
 		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - get_x()) + sqr(get_true_round_to_start_y() - get_y()));
 		
 		// correct line towards error
-		if ((!get_delta_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
+		if ((!get_movements_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
 			start_x = get_true_round_to_start_x();
 			start_y = get_true_round_to_start_y();
 			line.delta = 0;
 		}
 		
 		// correct error towards line once passed threshold
-		if (get_delta_on_angle_passed_threshold()) {
+		if (get_movements_on_angle_passed_threshold()) {
 			true_x = get_x();
 			true_y = get_y();
 		}
@@ -147,8 +146,8 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		_copy.line = line.copy();
 		_copy.true_x = true_x;
 		_copy.true_y = true_y;
-		_copy.delta_on_angle = delta_on_angle;
-		_copy.delta_on_angle_threshold = delta_on_angle_threshold;
+		_copy.movements_on_angle = movements_on_angle;
+		_copy.movements_on_angle_to_infer_from_line = movements_on_angle_to_infer_from_line;
 		return _copy;
 	}
 	
@@ -165,6 +164,6 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		true_x = start_x;
 		true_y = start_y;
 		line.delta = 0;
-		delta_on_angle = 0;	
+		movements_on_angle = 0;	
 	};
 }
