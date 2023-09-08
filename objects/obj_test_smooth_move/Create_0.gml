@@ -1,6 +1,5 @@
 camera_init_basic(200, 112, 10);
 smooth_move = new SmoothMove(x, y);
-//game_set_speed(240, gamespeed_fps);
 
 create_positions = function() {
 	var _result = ds_map_create();

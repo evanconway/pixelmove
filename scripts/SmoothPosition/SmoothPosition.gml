@@ -1,13 +1,19 @@
+// feather disable all
+// feather ignore all
+
 /**
  * A position tracker that only returns integer positions.
  * 
  * @param {Real} _start_x The starting x position.
  * @param {Real} _start_y The starting y position.
+ * @ignore
  */
 function SmoothPosition(_start_x, _start_y) constructor {
+	// @ignore
 	start_x = floor(_start_x);
+	// @ignore
 	start_y = floor(_start_y);
-	
+	// @ignore
 	line = new SmoothLine(0, 0);
 	
 	/*
@@ -15,19 +21,25 @@ function SmoothPosition(_start_x, _start_y) constructor {
 	linear line algorithm, and what the position would have been if position was
 	calculated normally.
 	*/
-	
+	// @ignore
 	true_x = start_x;
+	// @ignore
 	true_y = start_y;
 	
 	/*
 	This is not for calculating x/y position. This is used to track how far this instance
 	has travelled along the same angle.
 	*/
+	// @ignore
 	delta_on_angle = 0;
 	
 	// once delta_on_angle has passed this value position will be derived from line equation instead of true
+	// @ignore
 	delta_on_angle_threshold = 7.1;
 	
+	/**
+	 * @ignore
+	 */
 	get_delta_on_angle_passed_threshold = function () {
 		return delta_on_angle >= delta_on_angle_threshold;
 	};
@@ -64,12 +76,16 @@ function SmoothPosition(_start_x, _start_y) constructor {
 		return round_towards(round_to_correct(true_y), start_y);
 	};
 	
-	// @ignore
+	/**
+	 * @ignore
+	 */
 	get_x = function() {
 		return get_delta_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_true_round_to_start_x();
 	};
 	
-	// @ignore
+	/**
+	 * @ignore
+	 */
 	get_y = function() {
 		return get_delta_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_true_round_to_start_y();
 	};
@@ -121,6 +137,9 @@ function SmoothPosition(_start_x, _start_y) constructor {
 		}
 	};
 	
+	/**
+	 * @ignore
+	 */
 	copy = function() {
 		var _copy = new SmoothPosition(start_x, start_y);
 		_copy.start_x = start_x;
@@ -136,6 +155,7 @@ function SmoothPosition(_start_x, _start_y) constructor {
 	/**
 	 * @param {real} _x
 	 * @param {real} _y
+	 * @ignore
 	 */
 	set = function(_x, _y) {
 		_x = floor(_x);

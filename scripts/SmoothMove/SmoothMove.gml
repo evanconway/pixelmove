@@ -7,6 +7,7 @@
  * @param {Real} start_position_y The starting y position.
  */
 function SmoothMove(start_position_x, start_position_y) constructor {
+	// @ignore
 	position = new SmoothPosition(start_position_x, start_position_y);
 	
 	/*
@@ -16,14 +17,18 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	*/
 	
 	// last known position following stairstep rules
+	
 	// @ignore
 	previous_x = position.get_x();
+	
 	// @ignore
 	previous_y = position.get_y();
 	
 	// the next position if moved along the same vector
+	
 	// @ignore
 	anticipated_x = position.get_x();
+	
 	// @ignore
 	anticipated_y = position.get_y();
 	

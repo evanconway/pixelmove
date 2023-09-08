@@ -1,11 +1,9 @@
-// feather ignore all
-// feather disable all
-
 /**
  * Assert function for testing real numbers in this package.
  *
  * @param {real} _value
  * @param {real} _expected
+ * @ignore
  */
 function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move test fail!") {
 	if (!is_real(_value)) show_error(_msg + $"\n Value {_value} is not a real.", true);
@@ -15,14 +13,20 @@ function test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move tes
 	if (_value != _expected) show_error(_msg + $"\n Expected {_expected} got {_value}.", true);
 }
 
-// @param {string} _test_name
-// @param {bool} _show_stairsteps
+/**
+ * @param {string} _test_name
+ * @param {bool} _show_stairsteps
+ * @ignore
+ */
 function test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
 	show_debug_message("smooth move testing " + _test_name + "...");
 	show_debug_message($"show_stairsteps: {_show_stairsteps ? "true" : "false"}");
 }
 
-// @param {bool} _show_stairsteps
+/**
+ * @param {bool} _show_stairsteps
+ * @ignore
+ */
 function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	test_smooth_move_show_test_message("Cardinal Directions", _show_stairsteps);
 	var _move_count = 1000;
@@ -126,7 +130,10 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	show_debug_message("test complete");
 }
 
-// @param {bool} _show_stairsteps
+/**
+ * @param {bool} _show_stairsteps
+ * @ignore
+ */
 function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
 	test_smooth_move_show_test_message("Perfect Diagonals", _show_stairsteps);
 	
@@ -171,6 +178,9 @@ function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
 	show_debug_message("test complete");
 }
 
+/**
+ * @ignore
+ */
 function __test_smoothmove_pixel_gaps() {
 	test_smooth_move_show_test_message("No Pixel Gaps", true);
 	// pixel gaps and error correction
@@ -230,7 +240,10 @@ function __test_smoothmove_pixel_gaps() {
 	show_debug_message("test complete");
 }
 
-// @param {bool} _show_stairsteps
+/**
+ * @param {bool} _show_stairsteps
+ * @ignore
+ */
 function __test_smoothmove_positions(_show_stairsteps) {
 	test_smooth_move_show_test_message("Set and Potential Position", _show_stairsteps);
 	
@@ -274,7 +287,10 @@ function __test_smoothmove_positions(_show_stairsteps) {
 	show_debug_message("test complete");
 }
 
-// @param {bool} _show_stairsteps
+/**
+ * @param {bool} _show_stairsteps
+ * @ignore
+ */
 function __test_smoothmove_stairsteps(_show_stairsteps) {
 	test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
 	
@@ -309,6 +325,9 @@ function __test_smoothmove_stairsteps(_show_stairsteps) {
 	show_debug_message("test complete");
 }
 
+/**
+ * @ignore
+ */
 function __test_smoothmove_misc() {
 	show_debug_message("Miscellaneous");
 	// angle diff
@@ -325,6 +344,7 @@ function __test_smoothmove_misc() {
  * the calculated value on that axis never jumps back.
  *
  * @param {bool} _show_stairsteps
+ * @ignore
  */
 function __test_smoothmove_always_increase(_show_stairsteps) {
 	test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
@@ -370,7 +390,9 @@ function __test_smoothmove_always_increase(_show_stairsteps) {
 	show_debug_message("test complete");
 }
 
-// feather ignore all
+/**
+ * @ignore
+ */
 function __test_smoothmove(){
 	__test_smoothmove_cardinals(false);
 	__test_smoothmove_cardinals(true);

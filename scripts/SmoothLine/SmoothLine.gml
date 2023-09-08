@@ -4,6 +4,7 @@
  *
  * @param {real} _angle
  * @param {real} _delta
+ * @ignore
  */
 function SmoothLine(_angle, _delta) constructor {
 	// @ignore
@@ -49,6 +50,7 @@ function SmoothLine(_angle, _delta) constructor {
 	/**
 	 * @param {real} _start_x
 	 * @param {real} _start_y
+	 * @ignore
 	 */
 	get_x = function(_start_x, _start_y) {
 		_start_x = floor(_start_x);
@@ -68,6 +70,7 @@ function SmoothLine(_angle, _delta) constructor {
 	/**
 	 * @param {real} _start_x
 	 * @param {real} _start_y
+	 * @ignore
 	 */
 	get_y = function(_start_x, _start_y) {
 		_start_x = floor(_start_x);
