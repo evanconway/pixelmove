@@ -146,8 +146,8 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {
-		previous_x = position.get_x();
-		previous_y = position.get_y();
+		previous_x = smooth_move_get_x(self);
+		previous_y = smooth_move_get_y(self);
 		
 		position.move_by_vector(angle, magnitude);
 		
