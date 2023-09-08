@@ -36,6 +36,40 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	show_stairsteps = false;
 	
+	previous_vectors = [];
+	previous_vectors_cap = 3;
+	previous_vectors_index = 0;
+	
+	/**
+	 * @param {real} _angle
+	 * @param {real} _magnitude
+	 */
+	add_previous_vector = function(_angle, _magnitude) {
+		if (array_length(previous_vectors) < previous_vectors_cap) {
+			previous_vectors_index = array_length(previous_vectors);
+			array_push(previous_vectors, { angle: _angle, magnitude: _magnitude });
+			return;
+		}
+		previous_vectors_index = (previous_vectors_index + 1) % array_length(previous_vectors);
+		previous_vectors[previous_vectors_index].angle = _angle;
+		previous_vectors[previous_vectors_index].magnitude = _magnitude;
+	};
+	
+	get_anticipated_vector = function() {
+		var _len = array_length(previous_vectors);
+		if (_len == 0) return { angle: 0, magnitude: 0 };
+		if (_len == 1) return previous_vectors[0]
+		var _first_point = previous_vectors[(previous_vectors_index + 1) % _len];
+		var _last_point = previous_vectors[previous_vectors_index];
+		var _slope_for_angles = (_last_point.angle - _first_point.angle) / _len;
+		var _slope_for_magnitudes = (_last_point.magnitude - _first_point.magnitude) / _len;
+		var _best_angle = _first_point.angle + _slope_for_angles * (_len + 1);
+		var _best_magnitude = _first_point.magnitude + _slope_for_magnitudes * (_len + 1);
+		return {
+			angle: _best_angle,
+			magnitude: _best_magnitude,
+		};
+	};
 	
 	/**
 	 * Return boolean indicating if current position will likely be 
@@ -66,6 +100,18 @@ function smooth_move_get_copy(smooth_move) {
 	_copy.anticipated_x = _smooth_move.anticipated_x;
 	_copy.anticipated_y = _smooth_move.anticipated_y;
 	_copy.show_stairsteps = _smooth_move.show_stairsteps;
+	
+	_copy.previous_vectors_cap = _smooth_move.previous_vectors_cap;
+	_copy.previous_vectors_index = _smooth_move.previous_vectors_index;
+	var _sm_arr = _smooth_move.previous_vectors;
+	_copy.previous_vectors = array_create(array_length(_sm_arr));
+	for (var _i = 0; _i < array_length(_sm_arr); _i++) {
+		_copy.previous_vectors[_i] = {
+			angle: _sm_arr[_i].angle,
+			magnitude: _sm_arr[_i].magnitude,
+		};
+	}
+	
 	return _copy;
 }
 
@@ -146,13 +192,17 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {
+		if (magnitude == 0) previous_vectors = [];
+		else add_previous_vector(angle, magnitude);
+		
 		previous_x = smooth_move_get_x(self);
 		previous_y = smooth_move_get_y(self);
 		
 		position.move_by_vector(angle, magnitude);
 		
 		var _copy = position.copy();
-		_copy.move_by_vector(angle, magnitude);
+		var _anticipated_vector = get_anticipated_vector();
+		_copy.move_by_vector(_anticipated_vector.angle, _anticipated_vector.magnitude);
 		anticipated_x = _copy.get_x();
 		anticipated_y = _copy.get_y();
 	}

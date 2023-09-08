@@ -192,7 +192,7 @@ function __test_smoothmove_pixel_gaps() {
 	var _positions = [];
 	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
 	for (var _i = 0; _i < 1000; _i++) {
-		var _frames = random_range(1, 20);
+		var _frames = irandom_range(1, 20);
 		_angle += random_range(-pi/8, pi/8);
 		for (var _f = 0; _f < _frames; _f++) {
 			smooth_move_by_vector(_random, _angle, 1);

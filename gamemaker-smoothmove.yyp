@@ -57,8 +57,8 @@
     {"id":{"name":"rm_test_smooth_move_walls","path":"rooms/rm_test_smooth_move_walls/rm_test_smooth_move_walls.yy",},},
   ],
   "RoomOrderNodes": [
-    {"roomId":{"name":"rm_demo","path":"rooms/rm_demo/rm_demo.yy",},},
     {"roomId":{"name":"rm_test_smooth_move","path":"rooms/rm_test_smooth_move/rm_test_smooth_move.yy",},},
+    {"roomId":{"name":"rm_demo","path":"rooms/rm_demo/rm_demo.yy",},},
     {"roomId":{"name":"rm_demo_circle_smooth","path":"rooms/rm_demo_circle_smooth/rm_demo_circle_smooth.yy",},},
     {"roomId":{"name":"rm_demo_move_smooth","path":"rooms/rm_demo_move_smooth/rm_demo_move_smooth.yy",},},
     {"roomId":{"name":"rm_demo_move_real","path":"rooms/rm_demo_move_real/rm_demo_move_real.yy",},},
