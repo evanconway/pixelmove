@@ -546,4 +546,4 @@ gml_Object_obj_test_smooth_move_Draw_0 (line 90)
 
 Oh gosh... we already had diagonal only testing... we're really losing track of ourselves.
 
-Also something that's starting to bother me is our stairstep system might be good enough to just forgo the entire line system. It seems to achieve the exame same result. Lets fix the existing bugs then test more to be sure. 
+Also something that's starting to bother me is our stairstep system might be good enough to just forgo the entire line system. It seems to achieve the exact same result. Lets fix the existing bugs then test more to be sure.
