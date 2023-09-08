@@ -492,3 +492,7 @@ Our tests has the wrong logic, because when moving towards a point there will li
 It looks like there is still some stair steps happening when I wouldn't expect. I think I'm finally ready to try improving the anticipation system. I'm worried it won't fix all the random stairsteps and gaps I see, but hopefully it'll at least be better. As a reminder, we're going to accumulate vector changes, and average them to guess what the next vector change will be. We'll track an array of vectors. On 0 movement we'll clear it. When the angle changes (with vel > 0) we'll add that vector to the array. We'll cap it at maybe a size of 4? I dunno we'll play around with that number. Once it reaches cap then oldest vectors will be replaced with new ones. Finally the anticipation vector will be dervied by averaging the differences between all vectors in the array.
 
 Just averaging the last few vectors together doesn't work. The average will always be draw pull the vector back to where it was, not where it's probably going. We need to look up best fit line euqations.
+
+We added something using best line forumla. It's very simple. Just derive a line equation from first and last known points. Then infer new point (angle or magnitude) using that line.
+
+After toying around more I realized I can actually trigger gaps even when only moving in the cardinals and their intermediates. This is very frustrating because my tests didn't catch this. I'm ripping out this complicated anticipation system in favor of the old "just use the previous vector to anticipate" strategy.

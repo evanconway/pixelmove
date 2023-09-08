@@ -6,7 +6,7 @@
  * @param {real} _delta
  * @ignore
  */
-function SmoothLine(_angle, _delta) constructor {
+function __SmoothLine(_angle, _delta) constructor {
 	// @ignore
 	angle = get_cleaned_angle(_angle);
 	// @ignore
@@ -44,7 +44,7 @@ function SmoothLine(_angle, _delta) constructor {
 	
 	// @ignore
 	copy = function() {
-		return new SmoothLine(angle, delta);
+		return new __SmoothLine(angle, delta);
 	};
 	
 	/**

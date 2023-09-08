@@ -8,7 +8,7 @@
  */
 function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
-	position = new SmoothPosition(start_position_x, start_position_y);
+	position = new __SmoothPosition(start_position_x, start_position_y);
 	
 	/*
 	Previous and anticipated positions are the actual internal values smooth move did or will have. The user facing
@@ -37,7 +37,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	show_stairsteps = false;
 	
 	previous_vectors = [];
-	previous_vectors_cap = 3;
+	previous_vectors_cap = 1;
 	previous_vectors_index = 0;
 	
 	/**

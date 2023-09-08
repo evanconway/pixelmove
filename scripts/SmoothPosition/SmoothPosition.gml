@@ -8,13 +8,13 @@
  * @param {Real} _start_y The starting y position.
  * @ignore
  */
-function SmoothPosition(_start_x, _start_y) constructor {
+function __SmoothPosition(_start_x, _start_y) constructor {
 	// @ignore
 	start_x = floor(_start_x);
 	// @ignore
 	start_y = floor(_start_y);
 	// @ignore
-	line = new SmoothLine(0, 0);
+	line = new __SmoothLine(0, 0);
 	
 	/*
 	True positions allows for checking between the calculated position following the strict
@@ -141,7 +141,7 @@ function SmoothPosition(_start_x, _start_y) constructor {
 	 * @ignore
 	 */
 	copy = function() {
-		var _copy = new SmoothPosition(start_x, start_y);
+		var _copy = new __SmoothPosition(start_x, start_y);
 		_copy.start_x = start_x;
 		_copy.start_y = start_y;
 		_copy.line = line.copy();
