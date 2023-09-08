@@ -512,3 +512,38 @@ In any case. I feel like this thing is about as good as I can make it given my c
 Think I'm going to leave show_stairsteps as false by default, but I'm very torn on this.
 
 The next steps are to finish the collision demo, just so we have an example of that, and then to capture gifs of exact problems that this fixes. After that we'll plan out the release content.
+
+We encountered an interesting bug while working on collision code. We're colliding against a wall at slow speeds. Magnitudes are:
+
+x: -0.3
+7: 0.6
+
+We're mmostly heading south here, and running into a flat wall. Let's just assume our position when we hit the wall is 0,0. Well if you apply this vector, the internal true position of SmoothMove is -0.3, 0.6. That's fine becuase that gets rounded back to 0, 0 and no collision with wall. But when you apply that again you'll be at -0.6, 1.2 which is 0, 1. That yields a collision with the wall and so our collision code corrects us to move at a vector of -0.3, 0 instead. Except this is an angle change of 90 degrees, which triggers our true position reset back to 0, 0. On the next frame we'll attempt to move -0.3, 0.6 which yields a true position of -0.3, 0.6 and now we've looped. In order for this collision system to work the internal true position can't reset when the angle changes. The angle has to change in order to correctly account for sliding movement.
+
+So this brings me back to trying to remember why we reset the true position on angle changes. Let's try undoing that, seeing what breaks, then explaining it here.
+
+So... I completely removed resetting on angle change, and it seems to work almost perfectly fine. I have noticed a few times there were pixel skips when only moving by cardinals and intermediates. But it's very difficult to reproduce. But if I set show_stairsteps to true, there seems to be no problems with cardinals/intermediates. And control stick movement appears to behave the same.
+
+Something is not right under the hood. Unfortunately I don't think we were as close as I thought. Something that is clear, however, is we simply can't reset true position on any angle change if we're going to have collisions work (which is critical). Only on movement of 0 can we reset true position. Therefore I think I can confidently say we should commit to this delete true reset on angle change code. 
+
+It bothers me that we keep missing that pixel gaps are happening. We should make a test that moves around by cardinals and intermediates only and checks for pixel gaps. In theory this should never happen. But our current state allows them when show_stairsteps is false. Let's make a test that fails with current state before moving forward.
+
+
+We had a crash!?!? This was just moving the object around. This line is related to the code for drawing trails, which is just a debug tool. So hopefully we can ignore it since, whatever bug is there, isn't in SmoothMove itself.
+___________________________________________
+############################################################################################
+ERROR in
+action number 1
+of Draw Event
+for object obj_test_smooth_move:
+
+trying to index a variable which is not an array
+ at gml_Script_anon_gml_Object_obj_test_smooth_move_Draw_0_2491_gml_Object_obj_test_smooth_move_Draw_0 (line 91) -        draw_set_color(_v[2]);
+############################################################################################
+gml_Script_anon_gml_Object_obj_test_smooth_move_Draw_0_2491_gml_Object_obj_test_smooth_move_Draw_0 (line 91)
+gml_Object_obj_test_smooth_move_Draw_0 (line 90)
+
+
+Oh gosh... we already had diagonal only testing... we're really losing track of ourselves.
+
+Also something that's starting to bother me is our stairstep system might be good enough to just forgo the entire line system. It seems to achieve the exame same result. Lets fix the existing bugs then test more to be sure. 

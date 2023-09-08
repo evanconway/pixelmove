@@ -140,7 +140,7 @@ function smooth_move_set_position(smooth_move, x, y) {
  * Move by the given vector. Angle of 0 corresponds to positive x axis.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to move.
- * @param {real} angle The angle of the vector in radians.
+ * @param {real,undefined} angle The angle of the vector in radians.
  * @param {real} magnitude The magnitude of the vector.
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {

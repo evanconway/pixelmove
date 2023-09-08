@@ -24,77 +24,56 @@ if (stick_mag > 0) {
 	_angle = stick_angle;
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
-
-//_angle = 7*pi/4 - 0.3;
-//_vel = 1;
-
-// collision checking
 /*
+// collision checking
+_angle = 3*pi/4 - 0.3;
+_vel = 0.7;
+
 var _magnitude_x = cos(_angle) * _vel;
 var _magnitude_y = sin(_angle) * _vel;
-
-var _target_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _magnitude_x, _magnitude_y);
-var _target_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _magnitude_x, _magnitude_y);
 
 var _curr_x = smooth_move_get_x(smooth_move);
 var _curr_y = smooth_move_get_y(smooth_move);
 
-var _target_diff_x = _target_x - _curr_x;
-var _target_diff_y = _target_y - _curr_y;
-
 var _mod_x = 0;
 var _mod_y = 0;
 
-var _checking = (_mod_x != _target_diff_x) || (_mod_y != _target_diff_y);
+var _min_towards_zero = function(_a, _b) {
+	if (min(abs(_a), abs(_b)) == abs(_a)) return _a;
+	return _b;
+};
+
+if (keyboard_check_pressed(vk_space)) {
+	show_debug_message("debug");
+}
+
+var _checking = true;
 while (_checking) {
 	var _moved = false;
-	var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x + sign(_magnitude_x), _mod_y);
-	var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x + sign(_magnitude_x), _mod_y);
-	if (_mod_x != _target_diff_x && !place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
-		_mod_x += sign(_magnitude_x);
+	var _increased_mod_x = _min_towards_zero(_mod_x + sign(_magnitude_x), _magnitude_x);
+	var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
+	var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
+	if (_mod_x != _increased_mod_x && !place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
+		_mod_x =_increased_mod_x;
 		_moved = true;
 	}
-	var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _mod_y + sign(_magnitude_y));
-	var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _mod_y + sign(_magnitude_y));
-	if (_mod_y != _target_diff_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
-		_mod_y += sign(_magnitude_y);
+	var _increased_mod_y = _min_towards_zero(_mod_y + sign(_magnitude_y), _magnitude_y);
+	var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
+	var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
+	if (_mod_y != _increased_mod_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
+		_mod_y = _increased_mod_y;
 		_moved = true;
 	}
 	_checking = _moved;
 }
 
-var _final_mag_x = _mod_x == _target_diff_x ? _magnitude_x : _mod_x;
-var _final_mag_y = _mod_y == _target_diff_y ? _magnitude_y : _mod_y;
-
-//smooth_move_by_magnitudes(smooth_move, _final_mag_x, _final_mag_y);
+smooth_move_by_magnitudes(smooth_move, _mod_x, _mod_y);
 */
-
-//_vel = 1
-//_angle = 6*pi/4;
-
 
 smooth_move_by_vector(smooth_move, _angle, _vel);
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
-
-/*
-if (keyboard_check_pressed(vk_space)) {
-	var _anticipated_x = smooth_move.anticipated_x;
-	var _anticipated_y = smooth_move.anticipated_y;
-	smooth_move_by_vector(smooth_move, angle, 1);
-	var _actual_x = smooth_move_get_x(smooth_move);
-	var _actual_y = smooth_move_get_y(smooth_move);
-	show_debug_message($"{smooth_move_get_x(smooth_move)}, {smooth_move_get_y(smooth_move)}");
-	if (_anticipated_x != smooth_move_get_x(smooth_move) || _anticipated_y != smooth_move_get_y(smooth_move)) {
-		show_debug_message("anticipated position was incorrect");
-	}
-	angle += random(0.03);
-}
-
-_x = smooth_move_get_x(smooth_move);
-_y = smooth_move_get_y(smooth_move);
-*/
 
 x = _x;
 y = _y;

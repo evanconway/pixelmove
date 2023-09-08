@@ -13,6 +13,78 @@ function __test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move t
 	if (_value != _expected) show_error(_msg + $"\n Expected {_expected} got {_value}.", true);
 }
 
+function __test_position_tracker() constructor {
+	positions = ds_map_create();
+
+	/**
+	 * @param {real} _x
+	 * @param {real} _y
+	 */
+	position_add = function (_x, _y) {
+		var _key = $"{_x},{_y}";
+		ds_map_set(positions, _key, [_x, _y]);
+	};
+	
+	get_gap = function() {
+		var _arr = ds_map_keys_to_array(positions);
+		for (var _i = 0; _i < array_length(_arr) - 1; _i++) {
+			var _x = ds_map_find_value(positions, _arr[_i])[0];
+			var _y = ds_map_find_value(positions, _arr[_i])[1];			
+			var _next_x = ds_map_find_value(positions, _arr[_i + 1])[0];
+			var _next_y = ds_map_find_value(positions, _arr[_i + 1])[1];
+			if (point_distance(_x, _y, _next_x, _next_y) >= 1) return {
+				position: _i,
+				x1: _prev_x,
+				y1: _prev_y,
+				x2: _x,
+				y2: _y,
+			};
+		}
+		return {
+			position: 1,
+			x1: 0,
+			y1: 0,
+			x2: 0,
+			y2: 0,
+		};
+	};
+	
+	get_stairstep = function() {
+		var _arr = ds_map_keys_to_array(positions);
+		for (var _i = 1; _i < array_length(_arr) - 1; _i++) {
+			var _prev_x = ds_map_find_value(positions, _arr[_i - 1])[0];
+			var _prev_y = ds_map_find_value(positions, _arr[_i - 1])[1];
+			var _x = ds_map_find_value(positions, _arr[_i])[0];
+			var _y = ds_map_find_value(positions, _arr[_i])[1];
+			var _next_x = ds_map_find_value(positions, _arr[_i + 1])[0];
+			var _next_y = ds_map_find_value(positions, _arr[_i + 1])[1];
+			var _dist_prev = point_distance(_prev_x, _prev_y, _x, _y);
+			var _dist_next = point_distance(_x, _y, _next_x, _next_y);
+			var _dist_prxt = point_distance(_prev_x, _prev_y, _next_x, _next_y);
+			if (_dist_prev == 1 && _dist_next == 1 && _dist_prxt == sqrt(2)) {
+				return {
+					position: _i,
+					x_prev: _prev_x,
+					y_prev: _prev_y,
+					x: _x,
+					y: _y,
+					x_next: _next_x,
+					y_next: _next_y,
+				};
+			}
+		}
+		return {
+			position: -1,
+			x_prev: 0,
+			y_prev: 0,
+			x: 0,
+			y: 0,
+			x_next: 0,
+			y_next: 0,
+		};
+	}
+}
+
 /**
  * @param {string} _test_name
  * @param {bool} _show_stairsteps
@@ -187,6 +259,7 @@ function __test_smoothmove_pixel_gaps() {
 	var _random = new SmoothMove(0, 0);
 	
 	// there should never be a gap while showing stair steps and vector magnitude is 1
+	show_debug_message("move by random angle changes");
 	smooth_move_show_stairsteps(_random, true);
 	var _angle = 0;
 	var _positions = [];
@@ -200,6 +273,7 @@ function __test_smoothmove_pixel_gaps() {
 		}
 	}
 	
+	show_debug_message("checking for gaps");
 	for (var _i = 1; _i < array_length(_positions); _i++) {
 		var _x1 = _positions[_i -1][0];
 		var _x2 = _positions[_i][0]
@@ -211,29 +285,33 @@ function __test_smoothmove_pixel_gaps() {
 		}
 	}
 	
+	show_debug_message("move by random cardinal or intermediate");
 	// when not showing stair steps, but only moving at cardinals, there should still never be a gap
 	smooth_move_set_position(_random, 0, 0);
 	smooth_move_show_stairsteps(_random, false);
+	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
 	_positions = [];
 	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
 	for (var _i = 0; _i < 1000; _i++) {
-		var _frames = random_range(1, 20);
-		_angle += (irandom_range(0, 1) == 0) ? -pi/4 : pi/4;
+		var _frames = random_range(1, 30);
+		//_angle += (irandom_range(0, 1) == 0) ? -pi/4 : pi/4;
+		_angle = _angle_options[irandom_range(0, 7)];
 		for (var _f = 0; _f < _frames; _f++) {
 			smooth_move_by_vector(_random, _angle, 1);
 			array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
 		}
 	}
 	
+	show_debug_message("checking for gaps");
 	for (var _i = 1; _i < array_length(_positions); _i++) {
-		var _x1 = _positions[_i -1][0];
-		var _x2 = _positions[_i][0]
+		var _x1 = _positions[_i - 1][0];
 		var _y1 = _positions[_i - 1][1];
+		var _x2 = _positions[_i][0]
 		var _y2 = _positions[_i][1];
 		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
 		if (_dist > sqrt(2)) {
-			show_error($"Smooth move random cardinal movement failed position {_i}. Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
+			show_error($"Smooth move random cardinal/intermediate movement failed position {_i}. Delta greater than sqrt(2) from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
 	
@@ -398,7 +476,7 @@ function __test_smoothmove(){
 	__test_smoothmove_cardinals(true);
 	__test_smoothmove_perfect_diagonals(false);
 	__test_smoothmove_perfect_diagonals(true);
-	__test_smoothmove_pixel_gaps(); // pixel gap must have show stairsteps true
+	__test_smoothmove_pixel_gaps();
 	__test_smoothmove_positions(false);
 	__test_smoothmove_positions(true);
 	__test_smoothmove_stairsteps(false);
@@ -408,4 +486,6 @@ function __test_smoothmove(){
 	__test_smoothmove_misc();
 }
 
-if (true) __test_smoothmove();
+//if (true) __test_smoothmove();
+
+__test_smoothmove_pixel_gaps();

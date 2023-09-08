@@ -103,8 +103,10 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		// reset line data on no movement or angle change
 		if ((_magnitude == 0) || _angle_changed) reset_line_to_current();
 		
+		
 		// reset true data on no movement or too great an angle change
-		if ((_magnitude == 0) || __smoothmove_util_get_angle_diff(line.angle, _angle) >= pi/4) {
+		//if ((_magnitude == 0) || __smoothmove_util_get_angle_diff(line.angle, _angle) >= pi/4) {
+		if (_magnitude == 0) {
 			true_x = get_x();
 			true_y = get_y();
 		}
@@ -113,7 +115,7 @@ function __SmoothPosition(_start_x, _start_y) constructor {
 		
 		// error correct based on true value
 		true_x += __smoothmove_util_get_x_component(_angle, _magnitude);
-		true_y += get_y_component(_angle, _magnitude);
+		true_y += __smoothmove_util_get_y_component(_angle, _magnitude);
 		var _error = sqrt(sqr(get_true_round_to_start_x() - get_x()) + sqr(get_true_round_to_start_y() - get_y()));
 		
 		// determine if this movement crossed the movements_on_angle threshold, and new error

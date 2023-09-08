@@ -115,7 +115,7 @@ function __smoothmove_util_get_x_component(_angle, _delta) {
 	* @param {real} _delta
 	* @ignore
 	*/
-function get_y_component(_angle, _delta) {
+function __smoothmove_util_get_y_component(_angle, _delta) {
 	_angle = __smoothmove_util_get_cleaned_angle(_angle);
 	if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;
 	return __smoothmove_util_snap_sin(_angle) * _delta;
