@@ -510,3 +510,5 @@ The movement still looked really good! Diagonal and straight movement was still 
 In any case. I feel like this thing is about as good as I can make it given my current skill level. I don't have any more ideas to improve it. Let's just tidy up the code base as best we can so it's easily useable, then focus on releasing it.
 
 Think I'm going to leave show_stairsteps as false by default, but I'm very torn on this.
+
+The next steps are to finish the collision demo, just so we have an example of that, and then to capture gifs of exact problems that this fixes. After that we'll plan out the release content.
