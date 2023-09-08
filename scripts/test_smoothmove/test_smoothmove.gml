@@ -328,10 +328,38 @@ function __test_smoothmove_stairsteps(_show_stairsteps) {
 /**
  * @ignore
  */
+function __test_smooth_move_towards_point(_show_stairsteps) {
+	test_smooth_move_show_test_message("Move Towards Point", _show_stairsteps);
+	var _positions = ds_map_create();
+	var _sm = new SmoothMove(100, 24);
+	smooth_move_show_stairsteps(_sm, _show_stairsteps);
+	
+	// specific test case I know fails
+	var _goal_x = 200;
+	var _goal_y = 120;
+	
+	while (smooth_move_get_x(_sm) != _goal_x && smooth_move_get_y(_sm) != _goal_y) {
+		var _hor = _goal_x - smooth_move_get_x(_sm);
+		var _vrt = _goal_y - smooth_move_get_y(_sm);
+		var _angle = arctan2(_vrt, _hor);
+		var _vel = (_hor == 0 && _vrt == 0) ? 0 : 0.707;
+		smooth_move_by_vector(_sm, _angle, _vel);
+		var _x = smooth_move_get_x(_sm);
+		var _y = smooth_move_get_y(_sm);
+		if (ds_map_exists(_positions, _x) && ds_map_find_value(_positions, _x) != _y) {
+			show_error($"Smooth move move towards point fail. Y of {ds_map_find_value(_positions, _x)} and {_y} for x: {_x}.", true);
+		}
+		ds_map_set(_positions, _x, _y);
+	}
+}
+
+/**
+ * @ignore
+ */
 function __test_smoothmove_misc() {
 	show_debug_message("Miscellaneous");
+	
 	// angle diff
-	var _angles = new SmoothMove(0, 0);
 	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
 	test_smooth_move_assert_real(get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
 	test_smooth_move_assert_real(get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
@@ -403,9 +431,14 @@ function __test_smoothmove(){
 	__test_smoothmove_positions(true);
 	__test_smoothmove_stairsteps(false);
 	__test_smoothmove_stairsteps(true);
+	__test_smooth_move_towards_point(false);
+	__test_smooth_move_towards_point(true);
 	__test_smoothmove_always_increase(false);
 	__test_smoothmove_always_increase(true);
 	__test_smoothmove_misc();
 }
 
-if (true) __test_smoothmove();
+if (false) __test_smoothmove();
+
+
+__test_smooth_move_towards_point(false);

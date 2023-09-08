@@ -484,3 +484,6 @@ angle: 0.05, magnitude: 1
 But our current system doesn't do that, it will use an angle of 0.04. Here we can see the change between angles is identical. No magnitude change and an angle change of 0.01. I bet we can calculate the average change over the last few vectors and use that average change to anticipate our next vector. I'm pretty sure there's also math that lets use decide how accurate the average is, and we could disregard the anticipation if the average is too unlikely. We'll just google stuff about statistics I'm sure we'll find it.
 
 However, before we do all that. I think it's best if we consolidate our code better by moving logic into those classes I discussed before. The Line and Position object. This will allow our previous and anticipated logic to be more clear.
+
+We mostly transferred everything successfully. But there's a bug in one of our demos. There's some super aggressive stair stepping happening. However all our tests pass. I believe I have identified the source of the problem. When setting the previous location, we use the raw location. But I'm pretty sure the actual previous location should account for stair steps. Regardless though... I'm frustrated our tests didn't catch this. Let's focus on making a test that fails in the current state first. Then fix the bug.
+
