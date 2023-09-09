@@ -571,7 +571,7 @@ I'm not actually sure I want to fix this because the behavior is very true and c
 
 Hold up... how do we even end up with an x of 97.76955262170054? Always moving by 45 degree increments at a magnitude of 1 should only ever leave our x/y position at an integer, or an integer +0.5. Let's track our movement and see what happens. Oh noooo I'm completely wrong. My math here was ignorant. Moving by 1 at a 45 degree angle means the x/y components are always 1/sqrt(2). This will never be an integer.
 
-So if we want cardinal/intermediate changes to always be perfect, perhaps it's a better sacrifice to reset the true position on angle change. So that we are always moving by mathematically perfect lines. This does mean we'll lose some chang when changing angles, which feels a bit slower? But perhaps that's better. However this doesn't fix our original issue of resetting true on angle changes ruins our plans for collisions.
+So if we want cardinal/intermediate changes to always be perfect, perhaps it's a better sacrifice to reset the true position on angle change. So that we are always moving by mathematically perfect lines. This does mean we'll lose some distance when changing angles, which feels a bit slower? But perhaps that's better. However this doesn't fix our original issue of resetting true on angle changes ruins our plans for collisions.
 
 Oh, actually, we should confirm if removing the angle change resets true fixed collisions first.
 
@@ -586,3 +586,10 @@ I have a theory about why collision is failing. When we change angles we reset t
 Ok I think I've discovered the issue, and it's because of stair steps. While moving against the wall it's possible for the next position to be considered a stair step. If this happens the internal state of the smooth move is still advanced along the vector because the returned value of "get_x/y_if_moved_by" will be it's previous position. But since the internal state has moved forward, although our returned position might something like (0, 0), if we move by 0 then SmoothMove sets its position to that of its internal state, which is the stairstep position of (1, 0), or (0, 1) or whatever.
 
 To solve this, I think what we can do is track two position object states, one for current and one for previous. And when we move by 0, if current is a stair step, we'll set current to the previous position. I'm a bit concerned about using an entire state to track just an x/y value, but it should be fine. We have to remember that when moving we can only set the previous position to the current if they're not the same.
+
+
+Welp that fixed the entering the wall issue, but the collision still doesn't slide. And that's because since we hide stairsteps, we're constantly reverting back to the old state whenever we move enough fractions of an integer make the next position considered a stair step. Simply turning off stairsteps fixed this bug.
+
+So I'm at a real crossroads now. I can't think of an elegant way to allow collisions to still work with my current stair step system. Here's something else. I've been noticing the performance of this project getting worse and worse. And I'm confident it's because the stair step logic involves copying structs and recalculating data from them multiple times every frame.
+
+Stair stepping breaks collisions, it's slowing down the game, and I'm having a really hard time making them perfect. I think the right path forward is to just remove this feature completely. And revisit it some other time. Besides, removing stair steps only seems to really help those gentle arcs you can make frequent subtle changes, like a controller. And I think if you're making the kind of super low res game this library benefits, an input with such fine gradiant is probably not even on your radar.

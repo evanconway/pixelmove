@@ -19,6 +19,7 @@ var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
 stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
+if (stick_mag > 0.9) stick_mag = 1;
 stick_angle = arctan2(stick.axis_v, stick.axis_h);
 if (stick_mag > 0) {
 	_angle = stick_angle;
@@ -26,8 +27,8 @@ if (stick_mag > 0) {
 }
 
 // collision checking
-_angle = 3*pi/4 - 0.3;
-_vel = 0.7;
+//_angle = 3*pi/4 - 0.3;
+//_vel = 0.7;
 
 var _magnitude_x = cos(_angle) * _vel;
 var _magnitude_y = sin(_angle) * _vel;
@@ -71,9 +72,6 @@ while (_checking) {
 }
 
 smooth_move_by_magnitudes(smooth_move, _mod_x, _mod_y);
-
-
-//smooth_move_by_vector(smooth_move, _angle, _vel);
 
 _x = smooth_move_get_x(smooth_move);
 _y = smooth_move_get_y(smooth_move);

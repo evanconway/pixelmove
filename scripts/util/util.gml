@@ -42,16 +42,6 @@ function gamepad_get_left_stick_data() {
 }
 
 /**
- * @param {Struct.SmoothMove} _smooth_move
- * @ignore
- */
-function smooth_move_tostring(_smooth_move) {
-	with (_smooth_move) {
-		return $"start_x: {start_x}\n start_y: {start_y}\n angle: {line.angle}\n  delta: {line.delta}\n x: {smooth_move_get_x(self)}\n y: {smooth_move_get_y(self)}";
-	}
-}
-
-/**
  * @param {real} _trail_size
  * @param {real} _decay_rate
  */

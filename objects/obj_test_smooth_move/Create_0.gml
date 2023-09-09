@@ -1,7 +1,7 @@
 camera_init_basic(200, 112, 10);
 smooth_move = new SmoothMove(x, y);
 
-smooth_move_show_stairsteps(smooth_move, false);
+smooth_move_show_stairsteps(smooth_move, true);
 
 create_positions = function() {
 	return ds_map_create();
@@ -20,7 +20,5 @@ position_add = function (_x, _y) {
 stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
-
-
 
 angle = 0;
