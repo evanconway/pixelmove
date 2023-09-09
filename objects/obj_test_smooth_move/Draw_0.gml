@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz)
 
-var _max_vel = 0.7;
+var _max_vel = 1;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -54,19 +54,23 @@ if (keyboard_check_pressed(vk_space)) {
 var _checking = true;
 while (_checking) {
 	var _moved = false;
-	var _increased_mod_x = _min_towards_zero(_mod_x + sign(_magnitude_x), _magnitude_x);
-	var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
-	var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
-	if (_mod_x != _increased_mod_x && !place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
-		_mod_x =_increased_mod_x;
-		_moved = true;
+	if (_mod_x != _magnitude_x) {
+		var _increased_mod_x = sign(_magnitude_x);
+		var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
+		var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
+		if (!place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
+			_mod_x = _min_towards_zero(_mod_x + sign(_magnitude_x), _magnitude_x);
+			_moved = true;
+		}
 	}
-	var _increased_mod_y = _min_towards_zero(_mod_y + sign(_magnitude_y), _magnitude_y);
-	var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
-	var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
-	if (_mod_y != _increased_mod_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
-		_mod_y = _increased_mod_y;
-		_moved = true;
+	if (_mod_y != _magnitude_y) {
+		var _increased_mod_y = sign(_magnitude_y);
+		var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
+		var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
+		if (_mod_y != _increased_mod_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
+			_mod_y = _min_towards_zero(_mod_y + sign(_magnitude_y), _magnitude_y);
+			_moved = true;
+		}
 	}
 	_checking = _moved;
 }

@@ -605,4 +605,15 @@ I"m starting to reconsider if I'm designing this library in the right way. The w
 
 And the default setting for the move should be to cross the threshold immediately and start deriving from lines. Why do this? Because this library is about doing pixel perfect movement for low res games. I think the vast majority of these games are going to have simplistic movement styles, like 8 directions only, and probably binary inputs. In 99% of cases using this library we'd want to use the line right away. Perhaps what we should actually do is make two separate move functions, one that starts deriving from line immediately, and the other lets it derive from true position until SmoothMove automatically crosses the threshold.
 
-I have another grand claim. We should rename this to PixelMove, because it's not about moving smoothly, it's about moving by pixel perfection.
+I have another grand claim. We should rename this to PixelMove, because it's not about moving smoothly, it's about moving by pixel perfection. And for the move function that waits for a bit before enforcing the line, we could tack "smooth" onto the end of it:
+
+pixel_move_by_vector();
+pixel_move_by_magnitudes();
+pixel_move_by_vector_smooth();
+pixel_move_by_magnitudes_smooth();
+
+Before we commit hard to this though, let's make sure we can still do collisions when movement is forced to lines.
+
+I also had one more thought, we could keep our system of switching from drived true_x/y to line with another function called hybrid. 
+
+We were able to create functioning collisions using just derivation from line functions. I'm confident that our above description is the correct path forward. Maybe this will be the final major change up?

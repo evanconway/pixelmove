@@ -355,7 +355,7 @@ function __test_smoothmove_stairsteps(_show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_stairsteps_on_cardinalintermediates() {
-	__test_smooth_move_show_test_message("No Stairsteps On Cardinal Intermediates");
+	show_debug_message("No Stairsteps On Cardinal Intermediates");
 	
 	var _sm = new SmoothMove(0, 0);
 	// fails when stair steps are shown
@@ -390,8 +390,6 @@ function __test_smoothmove_stairsteps_on_cardinalintermediates() {
 		}
 	}
 }
-
-
 
 /**
  * @ignore

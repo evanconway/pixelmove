@@ -31,7 +31,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	
 	// if false, anticipated next vector movement will be used to determine and hide stairstep pixels
 	// @ignore
-	show_stairsteps = false;
+	show_stairsteps = true;
 	
 	/**
 	 * Return boolean indicating if current position will likely be 

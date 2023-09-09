@@ -10,6 +10,7 @@ function camera_init_basic(_width, _height, _window_multiplier = 1) {
 	window_set_size(_width * _window_multiplier, _height * _window_multiplier);
 	surface_resize(application_surface, _width, _height);
 	display_set_gui_size(_width, _height);
+	window_center();
 }
 
 function gamepad_get_left_stick_data() {
