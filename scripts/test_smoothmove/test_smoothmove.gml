@@ -347,8 +347,51 @@ function __test_smoothmove_stairsteps(_show_stairsteps) {
 			}
 		}
 	}
+	
 	show_debug_message("test complete");
 }
+
+/**
+ * @ignore
+ */
+function __test_smoothmove_stairsteps_on_cardinalintermediates() {
+	__test_smooth_move_show_test_message("No Stairsteps On Cardinal Intermediates");
+	
+	var _sm = new SmoothMove(0, 0);
+	// fails when stair steps are shown
+	smooth_move_show_stairsteps(_sm, false);
+	_sm.position.movements_on_angle_to_infer_from_line = 100;
+	var _angle_options = [1*pi/4, 3*pi/4, 5*pi/4, 7*pi/4];
+	var _angle = 0;
+	var _prev2_x = smooth_move_get_x(_sm);
+	var _prev2_y = smooth_move_get_y(_sm);
+	var _prev1_x = smooth_move_get_x(_sm);
+	var _prev1_y = smooth_move_get_y(_sm);
+	var _curr_x = smooth_move_get_x(_sm);
+	var _curr_y = smooth_move_get_y(_sm);
+	
+	for (var _i = 0; _i < 1000; _i++) {
+		var _frames = random_range(2, 15);
+		_angle = _angle_options[irandom_range(0, 3)];
+		for (var _f = 0; _f < _frames; _f++) {
+			_prev2_x = _prev1_x;
+			_prev2_y = _prev1_y;
+			_prev1_x = _curr_x;
+			_prev1_y = _curr_y;
+			smooth_move_by_vector(_sm, _angle, 1);
+			_curr_x = smooth_move_get_x(_sm);
+			_curr_y = smooth_move_get_y(_sm);
+			var _dist12 = sqrt(sqr(_prev2_x - _prev1_x) + sqr(_prev2_y - _prev1_y));
+			var _dist23 = sqrt(sqr(_prev1_x - _curr_x) + sqr(_prev1_y - _curr_y));
+			var _dist13 = sqrt(sqr(_prev2_x - _curr_x) + sqr(_prev2_y - _curr_y));
+			if (_dist12 == 1 && _dist23 == 1 && _dist13 == sqrt(2)) {
+				show_error($"Smooth move random cardinal/intermediate movement failed movement {_i}. Stair step at ({_prev2_x}, {_prev2_y})-({_prev1_x}, {_prev1_y})-({_curr_x}, {_curr_y})", true);
+			}
+		}
+	}
+}
+
+
 
 /**
  * @ignore
@@ -435,4 +478,4 @@ function __test_smoothmove(){
 
 //if (true) __test_smoothmove();
 
-//__test_smoothmove_pixel_gaps();
+//__test_smoothmove_stairsteps_on_cardinalintermediates();
