@@ -19,6 +19,8 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	// last known position following stairstep rules
 	
 	// @ignore
+	previous_position = position.copy();
+	// @ignore
 	previous_x = position.get_x();
 	
 	// @ignore
