@@ -593,3 +593,9 @@ Welp that fixed the entering the wall issue, but the collision still doesn't sli
 So I'm at a real crossroads now. I can't think of an elegant way to allow collisions to still work with my current stair step system. Here's something else. I've been noticing the performance of this project getting worse and worse. And I'm confident it's because the stair step logic involves copying structs and recalculating data from them multiple times every frame.
 
 Stair stepping breaks collisions, it's slowing down the game, and I'm having a really hard time making them perfect. I think the right path forward is to just remove this feature completely. And revisit it some other time. Besides, removing stair steps only seems to really help those gentle arcs you can make frequent subtle changes, like a controller. And I think if you're making the kind of super low res game this library benefits, an input with such fine gradiant is probably not even on your radar.
+
+Ha, without stair steps we don't need anticipation or previous. And without anticipation or previous, there's not need for the separation between a position and the SmoothMove class. I guess splitting out the classes was a waste.
+
+Well now that we don't remove stairsteps, we are getting stairsteps at 45 degree angles.
+
+I can't think of how to fix this and I'm having a really hard time puzzling this out. Stairsteps at 45 degree angles are like the main thing we're trying to avoid. In fact that was the entire reason I started this project. I had a brief thought. What if we reverted back to before removing ripping out stairstep anticipation. But we changed our collision logic so that we don't move by an axis if there is a collision 1 away, instead of by the component of the axis? This is slightly annoying because it means any collsion logic we make using this library will only work for this library, but perhaps it's worth it? 
