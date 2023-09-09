@@ -4,17 +4,17 @@ smooth_move = new SmoothMove(x, y);
 smooth_move_show_stairsteps(smooth_move, false);
 
 create_positions = function() {
-	var _result = ds_map_create();
-	ds_map_set(_result, $"{smooth_move_get_x(smooth_move)},{smooth_move_get_y(smooth_move)}", [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move), c_green]);
-	return _result;
+	return ds_map_create();
 };
 
 positions = create_positions();
 
-position_add = function () {
-	var _key = $"{smooth_move_get_x(smooth_move)},{smooth_move_get_y(smooth_move)}";
-	if (ds_map_exists(positions, _key)) return;
-	ds_map_set(positions, _key, [smooth_move_get_x(smooth_move), smooth_move_get_y(smooth_move), c_green]);
+/**
+ * @param {real} _x
+ * @param {real} _y
+ */
+position_add = function (_x, _y) {
+	ds_map_set(positions,  $"{_x},{_y}", [_x, _y]);
 };
 
 stick = gamepad_get_left_stick_data();

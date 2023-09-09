@@ -24,7 +24,7 @@ if (stick_mag > 0) {
 	_angle = stick_angle;
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
-/*
+
 // collision checking
 _angle = 3*pi/4 - 0.3;
 _vel = 0.7;
@@ -32,8 +32,11 @@ _vel = 0.7;
 var _magnitude_x = cos(_angle) * _vel;
 var _magnitude_y = sin(_angle) * _vel;
 
-var _curr_x = smooth_move_get_x(smooth_move);
-var _curr_y = smooth_move_get_y(smooth_move);
+var _true_x = smooth_move.position.true_x;
+var _true_y = smooth_move.position.true_y;
+
+var _x = smooth_move_get_x(smooth_move);
+var _y = smooth_move_get_y(smooth_move);
 
 var _mod_x = 0;
 var _mod_y = 0;
@@ -68,12 +71,12 @@ while (_checking) {
 }
 
 smooth_move_by_magnitudes(smooth_move, _mod_x, _mod_y);
-*/
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
 
-var _x = smooth_move_get_x(smooth_move);
-var _y = smooth_move_get_y(smooth_move);
+//smooth_move_by_vector(smooth_move, _angle, _vel);
+
+_x = smooth_move_get_x(smooth_move);
+_y = smooth_move_get_y(smooth_move);
 
 x = _x;
 y = _y;
@@ -85,20 +88,14 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
-position_add();
+position_add(_x, _y);
 
 array_foreach(ds_map_values_to_array(positions), function(_v) {
-	draw_set_color(_v[2]);
+	draw_set_color(c_green);
 	draw_point(_v[0], _v[1]);
 });
 
 with (smooth_move) {
-	draw_set_color(c_lime);
-	draw_point(previous_x, previous_y);
-	draw_set_color(c_yellow);
-	draw_point(anticipated_x, anticipated_y);
 	draw_set_color(c_fuchsia);
-	var _actual_x = position.get_x();
-	var _actual_y = position.get_y();
-	draw_point(_actual_x, _actual_y);
+	draw_point(_x, _y);
 }

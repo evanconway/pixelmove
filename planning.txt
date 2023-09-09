@@ -547,3 +547,38 @@ gml_Object_obj_test_smooth_move_Draw_0 (line 90)
 Oh gosh... we already had diagonal only testing... we're really losing track of ourselves.
 
 Also something that's starting to bother me is our stairstep system might be good enough to just forgo the entire line system. It seems to achieve the exact same result. Lets fix the existing bugs then test more to be sure.
+
+We were able to trigger a pixel skip moving just by cardinals. We did this by increasing the number of moves needed before inferring from line. It's clear now that our stair step fix is what triggers the gap.
+
+99.8908729652602
+-22.837049096097928
+
+99.8908729652602
+-23.837049096097928
+
+99.18376618407365
+-24.544155877284474
+
+98.4766594028871
+-25.25126265847102
+
+97.76955262170054
+-25.958369439657567
+
+This sequence of x/y positions, although only ever moving by a magnitude of 1, will trigger a stair step. The gap occurs when the current position is considered a stairstep, but the angle changes and brings the next position to a pixel that is not adjacent to the current (or technically previous since it's a stairstep) position. 
+
+I'm not actually sure I want to fix this because the behavior is very true and consistent. But at the same time it totally doesn't work when only moving by cardinals or intermediates.
+
+Hold up... how do we even end up with an x of 97.76955262170054? Always moving by 45 degree increments at a magnitude of 1 should only ever leave our x/y position at an integer, or an integer +0.5. Let's track our movement and see what happens. Oh noooo I'm completely wrong. My math here was ignorant. Moving by 1 at a 45 degree angle means the x/y components are always 1/sqrt(2). This will never be an integer.
+
+So if we want cardinal/intermediate changes to always be perfect, perhaps it's a better sacrifice to reset the true position on angle change. So that we are always moving by mathematically perfect lines. This does mean we'll lose some chang when changing angles, which feels a bit slower? But perhaps that's better. However this doesn't fix our original issue of resetting true on angle changes ruins our plans for collisions.
+
+Oh, actually, we should confirm if removing the angle change resets true fixed collisions first.
+
+Collisions did not get fixed. Not only that, but it seems like our position tracking system has been incorrect this entire time. 
+
+Wait! I was wrong about position tracking. I'm pretty sure we're doing it correctly. But what's actually happening is there's a gamemaker bug or something where the game doesn't render the same frame a "Resizing swap chain..." event happens.
+
+Well GameMaker is being an absolute garbage pile right now. It's crashing on me whenever I try to debug certain things, so I'm having a really hard time reaching the critical lines of code that show me what's wrong.
+
+I have a theory about why collision is failing. When we change angles we reset the line equation and start positions, and force the state to read from true positions instead. It looks like our rules allow the true state to get further than the line equation does. So we're able to get right up to the wall with a true position that's further than the wall. And once we try to move differently to "slide" our SmoothMove interprets our position from the perspective the now too far true position.
