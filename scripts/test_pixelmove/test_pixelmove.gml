@@ -444,6 +444,4 @@ function __test_pixelmove(){
 	__test_pixelmove_misc();
 }
 
-if (true) __test_pixelmove();
-
-//__test_pixelmove_pixel_gaps();
+//if (true) __test_pixelmove();

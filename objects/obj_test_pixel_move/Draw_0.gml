@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz);
 
-var _max_vel = 0.9;
+var _max_vel = 2.3;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -27,7 +27,7 @@ if (stick_mag > 0) {
 }
 
 // collision checking
-//_angle = 2*pi/4 - 0.1;
+//_angle = 0;
 //_vel = 2.3;
 
 _angle = __pixelmove_util_get_cleaned_angle(_angle);
@@ -71,7 +71,7 @@ if (_place_meeting_original_angle && !_place_meeting_x_angle){
 	_max_delta = abs(_magnitude_y);
 }
 
-var _checking = true;
+var _checking = !_place_meeting_x_angle || !_place_meeting_y_angle || !_place_meeting_original_angle;
 var _mod_delta = 0;
 var _increased_delta = _mod_delta;
 while (_checking) {
@@ -101,14 +101,15 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
-position_add(_x, _y);
+position_add(x, y);
 
 array_foreach(ds_map_values_to_array(positions), function(_v) {
 	draw_set_color(c_green);
 	draw_point(_v[0], _v[1]);
 });
 
-with (pixel_move) {
-	draw_set_color(c_fuchsia);
-	draw_point(_x, _y);
-}
+
+if (place_meeting(x, y, obj_wall)) draw_set_color(c_red);
+else draw_set_color(c_yellow);
+draw_point(x, y);
+
