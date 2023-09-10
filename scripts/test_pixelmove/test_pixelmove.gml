@@ -266,11 +266,10 @@ function __test_pixelmove_positions() {
 	for (var _i = 0; _i < 1000; _i++) {
 		var _mag_x = random_range(-1000, 1000);
 		var _mag_y = random_range(-1000, 1000);		
-		var _pot_x = pixel_move_get_x_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
-		var _pot_y = pixel_move_get_y_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
+		var _pot_pos = pixel_move_get_position_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
 		pixel_move_by_magnitudes(_potential, _mag_x, _mag_y);
-		__test_pixel_move_assert_real(_pot_x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
-		__test_pixel_move_assert_real(_pot_y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
+		__test_pixel_move_assert_real(_pot_pos.x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
+		__test_pixel_move_assert_real(_pot_pos.y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
 	}
 	
 	// potential positions (with vectors)
@@ -279,12 +278,11 @@ function __test_pixelmove_positions() {
 	var _vel_test = 0;
 	for (var _i = 0; _i < 1000; _i++) {
 		_angle_test += random_range(-0.05, 0.05);
-		_vel_test = random_range(0.2, 2);		
-		var _pot_x = pixel_move_get_x_if_moved_by_vector(_potential, _angle_test, _vel_test);
-		var _pot_y = pixel_move_get_y_if_moved_by_vector(_potential, _angle_test, _vel_test);
+		_vel_test = random_range(0.2, 2);	
+		var _pot_pos = pixel_move_get_position_if_moved_by_vector(_potential, _angle_test, _vel_test);
 		pixel_move_by_vector(_potential, _angle_test, _vel_test);
-		__test_pixel_move_assert_real(_pot_x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
-		__test_pixel_move_assert_real(_pot_y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
+		__test_pixel_move_assert_real(_pot_pos.x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
+		__test_pixel_move_assert_real(_pot_pos.y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
 	}
 	show_debug_message("test complete");
 }
@@ -300,7 +298,7 @@ function __test_pixelmove_stairsteps() {
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
 	var _sm = new PixelMove(0, 0);
-	pixel_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
+	pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
 		

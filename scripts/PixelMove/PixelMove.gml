@@ -32,7 +32,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	true_x = start_x;
 	// @ignore
 	true_y = start_y;
-	
+	// @ignore
 	movement_type = PIXEL_MOVE.LINE;
 	
 	/*
@@ -153,6 +153,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
 	 * @param {real} angle The angle of the vector in radians.
 	 * @param {real} magnitude The magnitude of the vector.
+	 * @ignore
 	 */
 	move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
@@ -220,12 +221,12 @@ function pixel_move_get_copy(pixel_move) {
 }
 
 /**
- * Set the number of movements at same angle before position is derived from line equation.
+ * Set the number of movements at same angle before position is derived from line equation when using hybrid type movement.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the threshold for.
  * @param {real} threshold The new delta threshold.
  */
-function pixel_move_set_movements_on_angle_to_infer_from_line(pixel_move, threshold) {
+function pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(pixel_move, threshold) {
 	pixel_move.movements_on_angle_to_infer_from_line = max(1, floor(abs(threshold)));
 }
 
@@ -239,7 +240,7 @@ function pixel_move_set_movement_type_line(pixel_move) {
 }
 
 /**
- * Set the movement type to smooth. Movement will be more responsive and fluid.
+ * Set the movement type to smooth. Movement will be responsive and fluid.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
@@ -359,28 +360,6 @@ function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude
 }
 
 /**
- * Get the x position after movement by the given vector. Does not mutate the given PixelMove instance.
- *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
- * @param {real} angle The angle in radians of the vector.
- * @param {real} magnitude The magnitude of the vector.
- */
-function pixel_move_get_x_if_moved_by_vector(pixel_move, angle, magnitude) {
-	return pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude).x;
-}
-
-/**
- * Get the y position after movement by the given vector. Does not mutate the given PixelMove instance.
- *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
- * @param {real} angle The angle in radians of the vector.
- * @param {real} magnitude The magnitude of the vector.
- */
-function pixel_move_get_y_if_moved_by_vector(pixel_move, angle, magnitude) {
-	return pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude).y;
-}
-
-/**
  * Get the position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential position of.
@@ -391,28 +370,6 @@ function pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x,
 	var _angle = arctan2(magnitude_y, magnitude_x);
 	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
 	return pixel_move_get_position_if_moved_by_vector(pixel_move, _angle, _m);
-}
-
-/**
- * Get the x position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
- *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
- * @param {real} magnitude_x The x magnitude.
- * @param {real} magnitude_y The y magnitude.
- */
-function pixel_move_get_x_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
-	return pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y).x;
-}
-
-/**
- * Get the y position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
- *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
- * @param {real} magnitude_x The x magnitude.
- * @param {real} magnitude_y The y magnitude.
- */
-function pixel_move_get_y_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
-	return pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y).y;
 }
 
 /**
@@ -435,22 +392,12 @@ function pixel_move_by_vector_against(pixel_move, angle, magnitude, against) {
 
 	var _pot_pos_if_move_by_x_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
 	var _place_meeting_x_angle = against(_pot_pos_if_move_by_x_angle.x, _pot_pos_if_move_by_x_angle.y);
-	//var _pot_x_if_moved_by_x_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
-	//var _pot_y_if_moved_by_x_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
-	//var _place_meeting_x_angle = place_meeting(_pot_x_if_moved_by_x_angle, _pot_y_if_moved_by_x_angle, obj_wall);
 
 	var _pot_pos_if_move_by_y_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
 	var _place_meeting_y_angle = against(_pot_pos_if_move_by_y_angle.x, _pot_pos_if_move_by_y_angle.y);
-	//var _pot_x_if_moved_by_y_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
-	//var _pot_y_if_moved_by_y_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
-	//var _place_meeting_y_angle = place_meeting(_pot_x_if_moved_by_y_angle, _pot_y_if_moved_by_y_angle, obj_wall);
-
 
 	var _pot_pos_if_move_by_original_angle = pixel_move_get_position_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
 	var _place_meeting_original_angle = against(_pot_pos_if_move_by_original_angle.x, _pot_pos_if_move_by_original_angle.y) || _place_meeting_x_angle || _place_meeting_y_angle;
-	//var _pot_x_if_moved_by_original_angle = pixel_move_get_x_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
-	//var _pot_y_if_moved_by_original_angle = pixel_move_get_y_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
-	//var _place_meeting_original_angle = place_meeting(_pot_x_if_moved_by_original_angle, _pot_y_if_moved_by_original_angle, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
 
 	var _collision_angle = angle;
 	var _max_delta = magnitude;
@@ -468,9 +415,6 @@ function pixel_move_by_vector_against(pixel_move, angle, magnitude, against) {
 	while (_checking) {
 		var _pos = pixel_move_get_position_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
 		var _place_meeting = against(_pos.x, _pos.y);
-		//var _pot_x = pixel_move_get_x_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
-		//var _pot_y = pixel_move_get_y_if_moved_by_vector(pixel_move, _collision_angle, _increased_delta);
-		//var _place_meeting = place_meeting(_pot_x, _pot_y, obj_wall);
 		_checking = false;
 		if (!_place_meeting) {
 			_mod_delta = _increased_delta
@@ -480,4 +424,19 @@ function pixel_move_by_vector_against(pixel_move, angle, magnitude, against) {
 	}
 
 	pixel_move_by_vector(pixel_move, _collision_angle, _mod_delta);
+}
+
+/**
+ * Move by the given x and y magnitudes. Movement on x and/or y axis will stop once
+ * against callback returns true.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
+ * @param {function} against Callback function defined as: (x: Real, y: Real) returns Bool. Movement along axis will stop if this function returns true for a give position.
+ */
+function pixel_move_by_magnitudes_against(pixel_move, magnitude_x, magnitude_y, against) {
+	var _angle = arctan2(magnitude_y, magnitude_x);
+	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
+	pixel_move_by_vector_against(pixel_move, _angle, _m, against);
 }
