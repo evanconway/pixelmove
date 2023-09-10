@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "test_smoothmove",
+  "name": "PixelMove",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "tests",
-    "path": "folders/SmoothMove/tests.yy",
+    "name": "PixelMove",
+    "path": "folders/PixelMove.yy",
   },
 }

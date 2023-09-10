@@ -30,7 +30,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	var _move_count = 1000;
 	
 	// north
-	var _n = new SmoothMove(0, 0);
+	var _n = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_n, 6*pi/4, 1);
 	}
@@ -41,7 +41,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_n), -1000, "Smooth move north test 2 y fail!");
 	
 	// south
-	var _s = new SmoothMove(0, 0);
+	var _s = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_s, 2*pi/4, 1);
 	}
@@ -52,7 +52,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_s), 1000, "Smooth move south test 2 y fail!");
 	
 	// east
-	var _e = new SmoothMove(0, 0);
+	var _e = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_e, 0*pi/4, 1);
 	}
@@ -63,7 +63,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_e), 0, "Smooth move east test 2 y fail!");
 	
 	// west
-	var _w = new SmoothMove(0, 0);
+	var _w = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_w, 4*pi/4, 1);
 	}
@@ -74,7 +74,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_w), 0, "Smooth move west test 2 y fail!");
 	
 	// north east
-	var _ne = new SmoothMove(0, 0);
+	var _ne = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_ne, 7*pi/4, 1);
 	}
@@ -85,7 +85,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_ne), -707, "Smooth move north east test 2 y fail!");
 	
 	// north west
-	var _nw = new SmoothMove(0, 0);
+	var _nw = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_nw, 5*pi/4, 1);
 	}
@@ -96,7 +96,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_nw), -707, "Smooth move north west test 2 y fail!");
 	
 	// south east
-	var _se = new SmoothMove(0, 0);
+	var _se = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_se, 1*pi/4, 1);
 	}
@@ -107,7 +107,7 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	__test_smooth_move_assert_real(smooth_move_get_y(_se), 707, "Smooth move south east test 2 y fail!");
 	
 	// south west
-	var _sw = new SmoothMove(0, 0);
+	var _sw = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_sw, 3*pi/4, 1);
 	}
@@ -130,7 +130,7 @@ function __test_smoothmove_perfect_diagonals() {
 	// @param {real} _mag
 	var _test_perfect_diagonals = function(_mag) {
 		var _func = function(_mag_x, _mag_y) {
-			var _sm = new SmoothMove(0, 0);
+			var _sm = new PixelMove(0, 0);
 			for (var _i = 0; _i < 1000; _i++) {
 				var _check_x = smooth_move_get_x(_sm);
 				var _check_y = smooth_move_get_y(_sm);
@@ -172,7 +172,7 @@ function __test_smoothmove_perfect_diagonals() {
 function __test_smoothmove_pixel_gaps() {
 	__test_smooth_move_show_test_message("No Pixel Gaps");
 	// pixel gaps and error correction
-	var _random = new SmoothMove(0, 0);
+	var _random = new PixelMove(0, 0);
 	
 	// there should never be a gap while showing stair steps and vector magnitude is 1
 	show_debug_message("move by random angle changes");
@@ -252,7 +252,7 @@ function __test_smoothmove_positions() {
 	__test_smooth_move_show_test_message("Set and Potential Position");
 	
 	// set position
-	var _set_pos = new SmoothMove(0, 0);
+	var _set_pos = new PixelMove(0, 0);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _x = irandom_range(-10000, 10000);
 		var _y = irandom_range(-10000, 10000);
@@ -262,7 +262,7 @@ function __test_smoothmove_positions() {
 	}
 	
 	// potential positions
-	var _potential = new SmoothMove(0, 0);
+	var _potential = new PixelMove(0, 0);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _mag_x = random_range(-1000, 1000);
 		var _mag_y = random_range(-1000, 1000);		
@@ -299,7 +299,7 @@ function __test_smoothmove_stairsteps() {
 	// stairsteps
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
-	var _sm = new SmoothMove(0, 0);
+	var _sm = new PixelMove(0, 0);
 	smooth_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
@@ -333,7 +333,7 @@ function __test_smoothmove_stairsteps() {
 function __test_smoothmove_stairsteps_on_cardinalintermediates() {
 	show_debug_message("No Stairsteps On Cardinal Intermediates");
 	
-	var _sm = new SmoothMove(0, 0);
+	var _sm = new PixelMove(0, 0);
 	smooth_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _angle_options = [1*pi/4, 3*pi/4, 5*pi/4, 7*pi/4];
 	var _angle = 0;
@@ -372,10 +372,10 @@ function __test_smoothmove_misc() {
 	show_debug_message("Miscellaneous");
 	
 	// angle diff
-	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
-	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
-	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
-	__test_smooth_move_assert_real(__smoothmove_util_get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__pixelmove_util_get_angle_diff(7*pi/4, 1*pi/4), 2*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__pixelmove_util_get_angle_diff(7*pi/4, 0*pi/4), 1*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__pixelmove_util_get_angle_diff(6*pi/4, 1*pi/4), 3*pi/4, "Smooth move angle check fail!");
+	__test_smooth_move_assert_real(__pixelmove_util_get_angle_diff(1*pi/4, 2*pi/4), 1*pi/4, "Smooth move angle check fail!");
 	show_debug_message("test complete");
 }
 
@@ -389,7 +389,7 @@ function __test_smoothmove_misc() {
 function __test_smoothmove_always_increase() {
 	__test_smooth_move_show_test_message("No Stairsteps On Lines");
 	
-	var _sm = new SmoothMove(0, 0);
+	var _sm = new PixelMove(0, 0);
 	var _x = smooth_move_get_x(_sm);
 	var _y = smooth_move_get_y(_sm);
 

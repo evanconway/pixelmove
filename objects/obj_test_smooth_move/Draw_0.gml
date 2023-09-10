@@ -30,10 +30,10 @@ if (stick_mag > 0) {
 //_angle = 2*pi/4 - 0.1;
 //_vel = 2.3;
 
-_angle = __smoothmove_util_get_cleaned_angle(_angle);
+_angle = __pixelmove_util_get_cleaned_angle(_angle);
 
-var _magnitude_x = __smoothmove_util_get_x_component(_angle, _vel)
-var _magnitude_y = __smoothmove_util_get_y_component(_angle, _vel)
+var _magnitude_x = __pixelmove_util_get_x_component(_angle, _vel)
+var _magnitude_y = __pixelmove_util_get_y_component(_angle, _vel)
 
 var _true_x = smooth_move.true_x;
 var _true_y = smooth_move.true_y;

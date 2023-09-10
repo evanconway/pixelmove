@@ -636,3 +636,6 @@ We got close, but we still have trouble at corners where the angle is slightly o
 As far as I can tell, that last change fixed it. We finally have collisions using pixel perfect line movements.
 
 Now that we've created functioning collisions. It's time to rip out the entire stair step system again in preparation of creating the functions I described above.
+
+
+Now let's rename everything to "pixel". PixelMove.

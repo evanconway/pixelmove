@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "SmoothMove",
+  "name": "PixelLine",
   "isCompatibility": false,
   "isDnD": false,
   "parent": {
-    "name": "SmoothMove",
-    "path": "folders/SmoothMove.yy",
+    "name": "PixelMove",
+    "path": "folders/PixelMove.yy",
   },
 }
