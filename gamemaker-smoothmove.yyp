@@ -13,8 +13,8 @@
   "Folders": [
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Demos","folderPath":"folders/Demos.yy",},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Circle","folderPath":"folders/Demos/Circle.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Diagonals Real","folderPath":"folders/Demos/Diagonals Real.yy",},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Diagonals Pixel","folderPath":"folders/Demos/Diagonals Pixel.yy",},
+    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Diagonals Real","folderPath":"folders/Demos/Diagonals Real.yy",},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Move Real","folderPath":"folders/Demos/Move Real.yy",},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Move Smooth","folderPath":"folders/Demos/Move Smooth.yy",},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"PixelMove","folderPath":"folders/PixelMove.yy",},

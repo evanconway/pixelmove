@@ -2,8 +2,8 @@
   "FolderOrderSettings": [
     {"name":"Demos","order":15,"path":"folders/Demos.yy",},
     {"name":"Circle","order":1,"path":"folders/Demos/Circle.yy",},
-    {"name":"Diagonals Real","order":7,"path":"folders/Demos/Diagonals Real.yy",},
     {"name":"Diagonals Pixel","order":8,"path":"folders/Demos/Diagonals Pixel.yy",},
+    {"name":"Diagonals Real","order":7,"path":"folders/Demos/Diagonals Real.yy",},
     {"name":"Move Real","order":6,"path":"folders/Demos/Move Real.yy",},
     {"name":"Move Smooth","order":5,"path":"folders/Demos/Move Smooth.yy",},
     {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
