@@ -2,6 +2,8 @@
 
 A GameMaker package to quickly setup pixel perfect movement in low resolution environments.
 
+# Currently A Work In Progress
+Everything here is subject to change.
 
 # Functions
 `PixelMove`
