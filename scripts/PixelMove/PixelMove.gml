@@ -1,11 +1,5 @@
 // feather disable all
 
-enum PIXEL_MOVE {
-	LINE,
-	SMOOTH,
-	HYBRID,
-}
-
 /**
  * Create a new PixelMove instance.
  * 
@@ -33,7 +27,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	true_y = start_y;
 	// @ignore
-	movement_type = PIXEL_MOVE.LINE;
+	movement_type = "LINE";
 	
 	/*
 	This is not for calculating x/y position. This is used to track how far this instance
@@ -94,7 +88,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		start_x = _x;
 		start_y = _y;
 		delta = 0;
-		movements_on_angle = movement_type == PIXEL_MOVE.LINE ? movements_on_angle_to_infer_from_line : 0;
+		movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
 	};
 	
 	/**
@@ -215,7 +209,7 @@ function pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(pixel_move,
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
 function pixel_move_set_movement_type_line(pixel_move) {
-	pixel_move.movement_type = PIXEL_MOVE.LINE;
+	pixel_move.movement_type = "LINE";
 }
 
 /**
@@ -224,7 +218,7 @@ function pixel_move_set_movement_type_line(pixel_move) {
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
 function pixel_move_set_movement_type_smooth(pixel_move) {
-	pixel_move.movement_type = PIXEL_MOVE.SMOOTH;
+	pixel_move.movement_type = "SMOOTH";
 }
 
 /**
@@ -233,8 +227,8 @@ function pixel_move_set_movement_type_smooth(pixel_move) {
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
 function pixel_move_set_movement_type_hybrid(pixel_move) {
-	if (pixel_move.movement_type != PIXEL_MOVE.HYBRID) pixel_move.movements_on_angle = 0;
-	pixel_move.movement_type = PIXEL_MOVE.HYBRID;
+	if (pixel_move.movement_type != "HYBRID") pixel_move.movements_on_angle = 0;
+	pixel_move.movement_type = "HYBRID";
 }
 
 /**
@@ -289,7 +283,7 @@ function pixel_move_set_position(pixel_move, x, y) {
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_by_vector(pixel_move, angle, magnitude) {
-	if (pixel_move.movement_type == PIXEL_MOVE.SMOOTH) pixel_move.movements_on_angle = -2;
+	if (pixel_move.movement_type == "SMOOTH") pixel_move.movements_on_angle = -2;
 	pixel_move.move_by_vector(angle, magnitude);
 }
 
