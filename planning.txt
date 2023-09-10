@@ -652,3 +652,4 @@ My current idea is to move the logic for movement back into a private function, 
 
 After adding the functions, I think it might actually be better to set the movement "mode" of a pixelmove instead of needing to use a completely different function. I suspect users will stick to just one mode for their entire game. And frankly it'll probably be the regular line mode.
 
+New movement types added. But our existing collision code fails when switch off of line mode. I don't undersatnd why that would break. It might be wise to figure out a collision code system that works regardless of the movement type. If it's not possible to write collisions with the smooth or hybrid types, that could seriously harm the usefuless of this library. But we'll worry about that tomorrow. Enough dev for today.
