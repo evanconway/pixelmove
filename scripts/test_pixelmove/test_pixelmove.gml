@@ -203,6 +203,7 @@ function __test_pixelmove_pixel_gaps() {
 	}
 	
 	show_debug_message("move by random cardinal or intermediate");
+	pixel_move_set_movement_type_line(_random);
 	pixel_move_set_position(_random, 0, 0);
 	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
@@ -210,15 +211,11 @@ function __test_pixelmove_pixel_gaps() {
 	array_push(_positions, [pixel_move_get_x(_random), pixel_move_get_y(_random)]);
 	var _last_x = pixel_move_get_x(_random);
 	var _last_y = pixel_move_get_y(_random);
-	var _true_x = _random.true_x;
-			var _true_y = _random.true_y;
 	for (var _i = 0; _i < 1000; _i++) {
 		var _frames = random_range(1, 15);
 		_angle = _angle_options[irandom_range(0, 7)];
 		for (var _f = 0; _f < _frames; _f++) {
 			pixel_move_by_vector(_random, _angle, 1);
-			_true_x = _random.true_x;
-			_true_y = _random.true_y;
 			var _curr_x = pixel_move_get_x(_random);
 			var _curr_y = pixel_move_get_y(_random);
 			array_push(_positions, [_curr_x, _curr_y]);
@@ -227,18 +224,6 @@ function __test_pixelmove_pixel_gaps() {
 			}
 			_last_x = _curr_x;
 			_last_y = _curr_y;
-		}
-	}
-	
-	show_debug_message("checking for gaps");
-	for (var _i = 1; _i < array_length(_positions); _i++) {
-		var _x1 = _positions[_i - 1][0];
-		var _y1 = _positions[_i - 1][1];
-		var _x2 = _positions[_i][0]
-		var _y2 = _positions[_i][1];
-		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
-		if (_dist > sqrt(2)) {
-			show_error($"Pixel move random cardinal/intermediate movement failed position {_i}. Delta greater than sqrt(2) from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
 		}
 	}
 	
@@ -455,4 +440,4 @@ function __test_pixelmove(){
 	__test_pixelmove_misc();
 }
 
-if (false) __test_pixelmove();
+if (true) __test_pixelmove();

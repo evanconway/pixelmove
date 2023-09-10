@@ -30,7 +30,7 @@ trail.add(x, y);
 trail.draw();
 
 // draw location
-draw_set_color(trail.position_color);
+draw_set_color(c_fuchsia);
 draw_set_alpha(1);
 
 draw_point(x, y);

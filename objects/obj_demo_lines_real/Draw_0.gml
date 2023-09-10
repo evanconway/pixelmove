@@ -23,8 +23,5 @@ if (draw_time >= 60) {
 	}
 }
 
-// draw location
-draw_point(position_x, position_y);
-
 trail.add(position_x, position_y);
 trail.draw();

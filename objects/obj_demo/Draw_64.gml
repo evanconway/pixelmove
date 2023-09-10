@@ -13,7 +13,7 @@ draw_text(0, 0, "Press 1-5 to choose a demo.");
 
 draw_set_valign(fa_bottom);
 if (room == rm_demo_circle_smooth) draw_text(0, room_height, "circle");
-if (room == rm_demo_lines_real) draw_text(0, room_height, "lines (real)");
+if (room == rm_demo_lines_real) draw_text(0, room_height, "lines (floored real)");
 if (room == rm_demo_lines_pixel) draw_text(0, room_height, "lines (pixel move)");
 if (room == rm_demo_move_real) draw_text(0, room_height, "free move (real)");
 if (room == rm_demo_move_pixel) draw_text(0, room_height, "free move (pixel move)");

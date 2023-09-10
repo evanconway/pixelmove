@@ -151,13 +151,23 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 */
 	move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
+		var _angle_diff = __pixelmove_util_get_angle_diff(angle, _angle);
 		var _angle_changed = angle != _angle;
 		
 		var _curr_x = pixel_move_get_x(self);
 		var _curr_y = pixel_move_get_y(self);
 		
 		// reset line data on no movement or angle change
-		if ((_magnitude == 0) || _angle_changed) reset_line_to_current();
+		if ((_magnitude == 0) || _angle_changed) {
+			var _x = pixel_move_get_x(self);
+			var _y = pixel_move_get_y(self);
+			start_x = _x;
+			start_y = _y;
+			var _delta_on_pixel = delta - floor(delta);
+			delta = _magnitude == 0 ? 0 : (_delta_on_pixel * _angle_diff/pi);
+			if (_angle_changed) show_debug_message($"delta: {delta}");
+			movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
+		}
 		
 		// reset true data on no movement
 		if (_magnitude == 0) {

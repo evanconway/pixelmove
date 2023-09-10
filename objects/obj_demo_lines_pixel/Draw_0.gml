@@ -23,8 +23,5 @@ if (draw_time >= 60) {
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
-// draw location
-draw_point(_x, _y);
-
 trail.add(_x, _y);
 trail.draw();

@@ -48,13 +48,14 @@ function gamepad_get_left_stick_data() {
  */
 function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 	alpha_decay = _decay_rate;
-	position_color = c_lime;
 	arr = array_create(_trail_size);
+	last_x = -1;
+	last_y = -1;
 	
 	for (var _i = 0; _i < array_length(arr); _i++) {
 		arr[_i] = {
-			pos_x: 0,
-			pos_y: 0,
+			pos_x: -1,
+			pos_y: -1,
 			alpha: 0,
 		}
 	}
@@ -65,6 +66,13 @@ function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 	 * @param {real} _y
 	 */
 	add = function(_x, _y) {
+		_x = floor(_x);
+		_y = floor(_y);
+		
+		if (_x == last_x && _y == last_y) return;
+		last_x = _x;
+		last_y = _y;
+		
 		arr[index].pos_x = _x;
 		arr[index].pos_y = _y;
 		arr[index].alpha = 1;
@@ -73,7 +81,7 @@ function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 	};
 	
 	draw = function() {
-		draw_set_color(position_color);
+		draw_set_color(c_lime);
 		for (var _i = array_length(arr) -1; _i >= 0; _i--) {
 			draw_set_alpha(arr[_i].alpha);
 			draw_point(arr[_i].pos_x, arr[_i].pos_y);
