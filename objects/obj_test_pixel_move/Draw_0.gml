@@ -33,66 +33,12 @@ if (stick_mag > 0) {
 
 _angle = __pixelmove_util_get_cleaned_angle(_angle);
 
-var _magnitude_x = __pixelmove_util_get_x_component(_angle, _vel)
-var _magnitude_y = __pixelmove_util_get_y_component(_angle, _vel)
-
-var _true_x = pixel_move.true_x;
-var _true_y = pixel_move.true_y;
-
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
-var _x_angle = _angle >= 3*pi/2 || _angle <= pi/2 ? 0 : pi;
-var _y_angle = _angle >= 0 && _angle <= pi ? pi/2 : 3*pi/2;
-
-var _pot_pos_if_move_by_x_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
-var _place_meeting_x_angle = place_meeting(_pot_pos_if_move_by_x_angle.x, _pot_pos_if_move_by_x_angle.y, obj_wall);
-//var _pot_x_if_moved_by_x_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
-//var _pot_y_if_moved_by_x_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
-//var _place_meeting_x_angle = place_meeting(_pot_x_if_moved_by_x_angle, _pot_y_if_moved_by_x_angle, obj_wall);
-
-
-var _pot_pos_if_move_by_y_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
-var _place_meeting_y_angle = place_meeting(_pot_pos_if_move_by_y_angle.x, _pot_pos_if_move_by_y_angle.y, obj_wall);
-//var _pot_x_if_moved_by_y_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
-//var _pot_y_if_moved_by_y_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
-//var _place_meeting_y_angle = place_meeting(_pot_x_if_moved_by_y_angle, _pot_y_if_moved_by_y_angle, obj_wall);
-
-
-var _pot_pos_if_move_by_original_angle = pixel_move_get_position_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
-var _place_meeting_original_angle = place_meeting(_pot_pos_if_move_by_original_angle.x, _pot_pos_if_move_by_original_angle.y, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
-//var _pot_x_if_moved_by_original_angle = pixel_move_get_x_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
-//var _pot_y_if_moved_by_original_angle = pixel_move_get_y_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
-//var _place_meeting_original_angle = place_meeting(_pot_x_if_moved_by_original_angle, _pot_y_if_moved_by_original_angle, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
-
-var _collision_angle = _angle;
-var _max_delta = _vel;
-if (_place_meeting_original_angle && !_place_meeting_x_angle){
-	_collision_angle = _x_angle;
-	_max_delta = abs(_magnitude_x);
-} else if (_place_meeting_original_angle && !_place_meeting_y_angle) {
-	_collision_angle = _y_angle;
-	_max_delta = abs(_magnitude_y);
-}
-
-var _checking = !_place_meeting_x_angle || !_place_meeting_y_angle || !_place_meeting_original_angle;
-var _mod_delta = 0;
-var _increased_delta = min(_max_delta, _mod_delta + 1);
-while (_checking) {
-	var _pos = pixel_move_get_position_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
-	var _place_meeting = place_meeting(_pos.x, _pos.y, obj_wall);
-	//var _pot_x = pixel_move_get_x_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
-	//var _pot_y = pixel_move_get_y_if_moved_by_vector(pixel_move, _collision_angle, _increased_delta);
-	//var _place_meeting = place_meeting(_pot_x, _pot_y, obj_wall);
-	_checking = false;
-	if (!_place_meeting) {
-		_mod_delta = _increased_delta
-		if (_mod_delta < _max_delta) _checking = true;
-	}
-	_increased_delta = min(_max_delta, _mod_delta + 1);
-}
-
-pixel_move_by_vector(pixel_move, _collision_angle, _mod_delta);
+pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
+	return place_meeting(x, y, obj_wall);
+});
 
 _x = pixel_move_get_x(pixel_move);
 _y = pixel_move_get_y(pixel_move);
