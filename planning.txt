@@ -634,3 +634,5 @@ When we first start detecting collisions, we'll first detect if the collision al
 We got close, but we still have trouble at corners where the angle is slightly off the cardinal directions. It looks like seince we're checking the pixel exactly sqrt(2) away at a diagonal, we end up not checking the pixel we'd actually approach. When moving by the actual vector, we could end up just 1 pixel different along the vertical but 0 along the horizontal, or the other way around. So I think this means that in order for diagonal movement to be valid, there can't be a place meeting 1 pixel away just horizontal, 1 pixel away just vertical, or 1 pixel away on both axis.
 
 As far as I can tell, that last change fixed it. We finally have collisions using pixel perfect line movements.
+
+Now that we've created functioning collisions. It's time to rip out the entire stair step system again in preparation of creating the functions I described above.

@@ -10,42 +10,7 @@ function SmoothMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	position = new __SmoothPosition(start_position_x, start_position_y);
 	
-	/*
-	Previous and anticipated positions are the actual internal values smooth move did or will have. The user facing
-	functions smooth_move_get_x/y_if_moved_by... do not use these. Instead they use our stair step logic to determine
-	whether to return the previous actual position, or the current actual position.
-	*/
 	
-	// last known position (only set if x/y vary from current)
-	
-	// @ignore
-	previous = position.copy();
-	
-	// the next position if moved along the same vector
-	
-	// @ignore
-	anticipated_x = position.get_x();
-	
-	// @ignore
-	anticipated_y = position.get_y();
-	
-	// if false, anticipated next vector movement will be used to determine and hide stairstep pixels
-	// @ignore
-	show_stairsteps = true;
-	
-	/**
-	 * Return boolean indicating if current position will likely be 
-	 * a stair step based on anticipated position.
-	 *
-	 * @ignore
-	 */
-	get_is_stair_step = function() {
-		if (show_stairsteps) return false;
-		var _dist_to_prev = sqrt(sqr(position.get_x() - previous.get_x()) + sqr(position.get_y() - previous.get_y()));
-		var _dist_to_ant = sqrt(sqr(position.get_x() - anticipated_x) + sqr(position.get_y() - anticipated_y));
-		var _dist_prev_to_ant = sqrt(sqr(previous.get_x() - anticipated_x) + sqr(previous.get_y() - anticipated_y));
-		return (_dist_to_prev == 1) && (_dist_to_ant == 1) && (_dist_prev_to_ant == sqrt(2));
-	};
 }
 
 /**
@@ -57,10 +22,6 @@ function smooth_move_get_copy(smooth_move) {
 	var _smooth_move = smooth_move
 	var _copy = new SmoothMove(0, 0);	
 	_copy.position = _smooth_move.position.copy();
-	_copy.previous = _smooth_move.previous.copy();
-	_copy.anticipated_x = _smooth_move.anticipated_x;
-	_copy.anticipated_y = _smooth_move.anticipated_y;
-	_copy.show_stairsteps = _smooth_move.show_stairsteps;
 	return _copy;
 }
 
@@ -77,19 +38,6 @@ function smooth_move_set_movements_on_angle_to_infer_from_line(smooth_move, thre
 }
 
 /**
- * Set whether to show or hide stairstep movement based on anticipated changes. Default value
- * for show_stairsteps is false.
- *
- * @param {Struct.SmoothMove} _smooth_move The SmoothMove instance to set show stairsteps for.
- * @param {bool} new_show_stairsteps True to show stairsteps, false to hide.
- */
-function smooth_move_show_stairsteps(smooth_move, new_show_stairsteps) {
-	var _smooth_move = smooth_move;
-	var _bool = new_show_stairsteps;
-	_smooth_move.show_stairsteps = _bool;
-}
-
-/**
  * Get the current x position.
  *
  * @param {Struct.SmoothMove} smooth_move The SmoothMove instance to get the x position of.
@@ -97,7 +45,7 @@ function smooth_move_show_stairsteps(smooth_move, new_show_stairsteps) {
  */
 function smooth_move_get_x(smooth_move) {
 	with (smooth_move) {
-		return get_is_stair_step() ? previous.get_x() : position.get_x();
+		return position.get_x();
 	}
 }
 
@@ -109,7 +57,7 @@ function smooth_move_get_x(smooth_move) {
  */
 function smooth_move_get_y(smooth_move) {
 	with (smooth_move) {
-		return get_is_stair_step() ? previous.get_y() : position.get_y();
+		return position.get_y();
 	}
 }
 
@@ -125,9 +73,6 @@ function smooth_move_set_position(smooth_move, x, y) {
 	var _y = floor(y);
 	with (smooth_move) {
 		position.set(_x, _y);
-		previous = position.copy();
-		anticipated_x = _x;
-		anticipated_y = _y;
 	}
 }
 
@@ -140,18 +85,7 @@ function smooth_move_set_position(smooth_move, x, y) {
  */
 function smooth_move_by_vector(smooth_move, angle, magnitude) {
 	with (smooth_move) {
-		if (magnitude == 0 && get_is_stair_step()) {
-			position = previous;
-			previous = position.copy();
-		}
-		if (smooth_move_get_x(self) != previous.get_x() || smooth_move_get_y(self) != previous.get_y()) previous = position.copy();
-		
 		position.move_by_vector(angle, magnitude);
-		
-		var _copy = position.copy();
-		_copy.move_by_vector(angle, magnitude);
-		anticipated_x = _copy.get_x();
-		anticipated_y = _copy.get_y();
 	}
 }
 

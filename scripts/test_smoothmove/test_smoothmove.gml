@@ -15,12 +15,10 @@ function __test_smooth_move_assert_real(_value, _expected, _msg = "Smooth move t
 
 /**
  * @param {string} _test_name
- * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
+function __test_smooth_move_show_test_message(_test_name) {
 	show_debug_message("smooth move testing " + _test_name + "...");
-	show_debug_message($"show_stairsteps: {_show_stairsteps ? "true" : "false"}");
 }
 
 /**
@@ -28,12 +26,11 @@ function __test_smooth_move_show_test_message(_test_name, _show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_cardinals(_show_stairsteps = false) {
-	__test_smooth_move_show_test_message("Cardinal Directions", _show_stairsteps);
+	__test_smooth_move_show_test_message("Cardinal Directions");
 	var _move_count = 1000;
 	
 	// north
 	var _n = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_n, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_n, 6*pi/4, 1);
 	}
@@ -45,7 +42,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// south
 	var _s = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_s, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_s, 2*pi/4, 1);
 	}
@@ -57,7 +53,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// east
 	var _e = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_e, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_e, 0*pi/4, 1);
 	}
@@ -69,7 +64,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// west
 	var _w = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_w, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_w, 4*pi/4, 1);
 	}
@@ -81,7 +75,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// north east
 	var _ne = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_ne, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_ne, 7*pi/4, 1);
 	}
@@ -93,7 +86,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// north west
 	var _nw = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_nw, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_nw, 5*pi/4, 1);
 	}
@@ -105,7 +97,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// south east
 	var _se = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_se, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_se, 1*pi/4, 1);
 	}
@@ -117,7 +108,6 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
 	
 	// south west
 	var _sw = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_sw, _show_stairsteps);
 	for (var _i = 0; _i < _move_count; _i++) {
 		smooth_move_by_vector(_sw, 3*pi/4, 1);
 	}
@@ -134,15 +124,13 @@ function __test_smoothmove_cardinals(_show_stairsteps = false) {
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
-	__test_smooth_move_show_test_message("Perfect Diagonals", _show_stairsteps);
+function __test_smoothmove_perfect_diagonals() {
+	__test_smooth_move_show_test_message("Perfect Diagonals");
 	
 	// @param {real} _mag
-	// @param {bool} _ss
-	var _test_perfect_diagonals = function(_mag, _show_stairsteps) {
-		var _func = function(_mag_x, _mag_y, _show_stairsteps) {
+	var _test_perfect_diagonals = function(_mag) {
+		var _func = function(_mag_x, _mag_y) {
 			var _sm = new SmoothMove(0, 0);
-			smooth_move_show_stairsteps(_sm, _show_stairsteps);
 			for (var _i = 0; _i < 1000; _i++) {
 				var _check_x = smooth_move_get_x(_sm);
 				var _check_y = smooth_move_get_y(_sm);
@@ -159,22 +147,22 @@ function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
 				}
 			}
 		};
-		_func(_mag, _mag, _show_stairsteps);
-		_func(_mag, _mag * -1, _show_stairsteps);
-		_func(_mag * -1, _mag, _show_stairsteps);
-		_func(_mag * -1, _mag * -1, _show_stairsteps);
+		_func(_mag, _mag);
+		_func(_mag, _mag * -1);
+		_func(_mag * -1, _mag);
+		_func(_mag * -1, _mag * -1);
 	};
 	
-	_test_perfect_diagonals(1/10, _show_stairsteps);
-	_test_perfect_diagonals(1/9, _show_stairsteps);
-	_test_perfect_diagonals(1/8, _show_stairsteps);
-	_test_perfect_diagonals(1/7, _show_stairsteps);
-	_test_perfect_diagonals(1/6, _show_stairsteps);
-	_test_perfect_diagonals(1/5, _show_stairsteps);
-	_test_perfect_diagonals(1/4, _show_stairsteps);
-	_test_perfect_diagonals(1/3, _show_stairsteps);
-	_test_perfect_diagonals(1/2, _show_stairsteps);
-	_test_perfect_diagonals(1, _show_stairsteps);
+	_test_perfect_diagonals(1/10);
+	_test_perfect_diagonals(1/9);
+	_test_perfect_diagonals(1/8);
+	_test_perfect_diagonals(1/7);
+	_test_perfect_diagonals(1/6);
+	_test_perfect_diagonals(1/5);
+	_test_perfect_diagonals(1/4);
+	_test_perfect_diagonals(1/3);
+	_test_perfect_diagonals(1/2);
+	_test_perfect_diagonals(1);
 	show_debug_message("test complete");
 }
 
@@ -182,13 +170,12 @@ function __test_smoothmove_perfect_diagonals(_show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove_pixel_gaps() {
-	__test_smooth_move_show_test_message("No Pixel Gaps", true);
+	__test_smooth_move_show_test_message("No Pixel Gaps");
 	// pixel gaps and error correction
 	var _random = new SmoothMove(0, 0);
 	
 	// there should never be a gap while showing stair steps and vector magnitude is 1
 	show_debug_message("move by random angle changes");
-	smooth_move_show_stairsteps(_random, true);
 	var _angle = 0;
 	var _positions = [];
 	array_push(_positions, [smooth_move_get_x(_random), smooth_move_get_y(_random)]);
@@ -214,11 +201,7 @@ function __test_smoothmove_pixel_gaps() {
 	}
 	
 	show_debug_message("move by random cardinal or intermediate");
-	// when not showing stair steps, but only moving at cardinals, there should still never be a gap
 	smooth_move_set_position(_random, 0, 0);
-	// fails when stair steps are hidden
-	//smooth_move_show_stairsteps(_random, false);
-	smooth_move_show_stairsteps(_random, true);
 	_random.position.movements_on_angle_to_infer_from_line = 100;
 	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
@@ -229,11 +212,7 @@ function __test_smoothmove_pixel_gaps() {
 	var _true_x = _random.position.true_x;
 			var _true_y = _random.position.true_y;
 	for (var _i = 0; _i < 1000; _i++) {
-		if (_i == 112) {
-			show_debug_message("debug");
-		}
 		var _frames = random_range(1, 15);
-		//_angle += (irandom_range(0, 1) == 0) ? -pi/4 : pi/4;
 		_angle = _angle_options[irandom_range(0, 7)];
 		for (var _f = 0; _f < _frames; _f++) {
 			smooth_move_by_vector(_random, _angle, 1);
@@ -269,12 +248,11 @@ function __test_smoothmove_pixel_gaps() {
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_smoothmove_positions(_show_stairsteps) {
-	__test_smooth_move_show_test_message("Set and Potential Position", _show_stairsteps);
+function __test_smoothmove_positions() {
+	__test_smooth_move_show_test_message("Set and Potential Position");
 	
 	// set position
 	var _set_pos = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_set_pos, _show_stairsteps);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _x = irandom_range(-10000, 10000);
 		var _y = irandom_range(-10000, 10000);
@@ -285,7 +263,6 @@ function __test_smoothmove_positions(_show_stairsteps) {
 	
 	// potential positions
 	var _potential = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_potential, _show_stairsteps);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _mag_x = random_range(-1000, 1000);
 		var _mag_y = random_range(-1000, 1000);		
@@ -316,14 +293,13 @@ function __test_smoothmove_positions(_show_stairsteps) {
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_smoothmove_stairsteps(_show_stairsteps) {
-	__test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
+function __test_smoothmove_stairsteps() {
+	__test_smooth_move_show_test_message("No Stairsteps On Lines");
 	
 	// stairsteps
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
 	var _sm = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_sm, _show_stairsteps);
 	smooth_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
@@ -358,8 +334,6 @@ function __test_smoothmove_stairsteps_on_cardinalintermediates() {
 	show_debug_message("No Stairsteps On Cardinal Intermediates");
 	
 	var _sm = new SmoothMove(0, 0);
-	// fails when stair steps are shown
-	smooth_move_show_stairsteps(_sm, false);
 	_sm.position.movements_on_angle_to_infer_from_line = 0;
 	var _angle_options = [1*pi/4, 3*pi/4, 5*pi/4, 7*pi/4];
 	var _angle = 0;
@@ -412,11 +386,10 @@ function __test_smoothmove_misc() {
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_smoothmove_always_increase(_show_stairsteps) {
-	__test_smooth_move_show_test_message("No Stairsteps On Lines", _show_stairsteps);
+function __test_smoothmove_always_increase() {
+	__test_smooth_move_show_test_message("No Stairsteps On Lines");
 	
 	var _sm = new SmoothMove(0, 0);
-	smooth_move_show_stairsteps(_sm, _show_stairsteps);
 	var _x = smooth_move_get_x(_sm);
 	var _y = smooth_move_get_y(_sm);
 
@@ -460,21 +433,15 @@ function __test_smoothmove_always_increase(_show_stairsteps) {
  * @ignore
  */
 function __test_smoothmove(){
-	__test_smoothmove_cardinals(false);
-	__test_smoothmove_cardinals(true);
-	__test_smoothmove_perfect_diagonals(false);
-	__test_smoothmove_perfect_diagonals(true);
+	__test_smoothmove_cardinals();
+	__test_smoothmove_perfect_diagonals();
 	__test_smoothmove_pixel_gaps();
-	__test_smoothmove_positions(false);
-	__test_smoothmove_positions(true);
-	__test_smoothmove_stairsteps(false);
-	__test_smoothmove_stairsteps(true);
-	__test_smoothmove_always_increase(false);
-	__test_smoothmove_always_increase(true);
+	__test_smoothmove_positions();
+	__test_smoothmove_stairsteps();
+	__test_smoothmove_always_increase();
 	__test_smoothmove_misc();
 }
 
-//if (true) __test_smoothmove();
+if (true) __test_smoothmove();
 
 //__test_smoothmove_stairsteps_on_cardinalintermediates();
-
