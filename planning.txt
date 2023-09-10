@@ -662,3 +662,5 @@ Oops, our error was that we forgot to add the "movement_type" field to the copy 
 After some toying around, it's very clear that copying structs is quite time expensive. I'm tempted to merge the line object back into the main class. And redo the "if_moved_by" functions to remember the state before moving, deriving position, then resetting it, instead of copying the entire PixelMove instance and moving that. The "if_moved_by" functions are called a LOT for our collision code, and would be heavily used by any collision code.
 
 Going to also add "if_moved_by_against" functions. This is mostly to make sure the library uses all its own functions in tests, but I could see that being helpful.
+
+The "if_moved_by_against" functions have been added and tests updated. time to write new demos.

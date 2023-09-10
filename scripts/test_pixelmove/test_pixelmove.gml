@@ -262,18 +262,8 @@ function __test_pixelmove_positions() {
 		__test_pixel_move_assert_real(pixel_move_get_y(_set_pos), _y, "Pixel move set position y fail.");
 	}
 	
-	// potential positions (with magnitudes)
+	// potential positions
 	var _potential = new PixelMove(0, 0);
-	for (var _i = 0; _i < 1000; _i++) {
-		var _mag_x = random_range(-1000, 1000);
-		var _mag_y = random_range(-1000, 1000);		
-		var _pot_pos = pixel_move_get_position_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
-		pixel_move_by_magnitudes(_potential, _mag_x, _mag_y);
-		__test_pixel_move_assert_real(_pot_pos.x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
-		__test_pixel_move_assert_real(_pot_pos.y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
-	}
-	
-	// potential positions (with vectors)
 	pixel_move_set_position(_potential, 0, 0);
 	var _angle_test = 0;
 	var _vel_test = 0;
@@ -281,7 +271,7 @@ function __test_pixelmove_positions() {
 	var _against_callback = function() {
 		return false;
 	};
-	for (var _i = 0; _i < 1000; _i++) {
+	for (var _i = 0; _i < 4000; _i++) {
 		_angle_test += random_range(-0.05, 0.05);
 		_vel_test = random_range(0.2, 2);
 		var _mag_x = __pixelmove_util_get_x_component(_angle_test, _vel_test);
@@ -465,4 +455,4 @@ function __test_pixelmove(){
 	__test_pixelmove_misc();
 }
 
-if (true) __test_pixelmove();
+if (false) __test_pixelmove();

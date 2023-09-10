@@ -2,8 +2,8 @@
   "FolderOrderSettings": [
     {"name":"Demos","order":15,"path":"folders/Demos.yy",},
     {"name":"Circle","order":1,"path":"folders/Demos/Circle.yy",},
-    {"name":"Diagonals Pixel","order":8,"path":"folders/Demos/Diagonals Pixel.yy",},
-    {"name":"Diagonals Real","order":7,"path":"folders/Demos/Diagonals Real.yy",},
+    {"name":"Lines Pixel","order":8,"path":"folders/Demos/Lines Pixel.yy",},
+    {"name":"Lines Real","order":7,"path":"folders/Demos/Lines Real.yy",},
     {"name":"Move Real","order":6,"path":"folders/Demos/Move Real.yy",},
     {"name":"Move Smooth","order":5,"path":"folders/Demos/Move Smooth.yy",},
     {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
@@ -11,10 +11,10 @@
   "ResourceOrderSettings": [
     {"name":"obj_demo","order":3,"path":"objects/obj_demo/obj_demo.yy",},
     {"name":"fnt_tiny","order":2,"path":"fonts/fnt_tiny/fnt_tiny.yy",},
-    {"name":"obj_demo_diagonals_real","order":1,"path":"objects/obj_demo_diagonals_real/obj_demo_diagonals_real.yy",},
+    {"name":"obj_demo_lines_real","order":1,"path":"objects/obj_demo_lines_real/obj_demo_lines_real.yy",},
     {"name":"fnt_demo_tiny","order":4,"path":"fonts/fnt_demo_tiny/fnt_demo_tiny.yy",},
     {"name":"spr_wall","order":11,"path":"sprites/spr_wall/spr_wall.yy",},
-    {"name":"obj_demo_diagonals_Pixel","order":1,"path":"objects/obj_demo_diagonals_Pixel/obj_demo_diagonals_Pixel.yy",},
+    {"name":"obj_demo_lines_pixel","order":1,"path":"objects/obj_demo_lines_pixel/obj_demo_lines_pixel.yy",},
     {"name":"obj_demo_move_pixel","order":1,"path":"objects/obj_demo_move_pixel/obj_demo_move_pixel.yy",},
     {"name":"obj_test_pixel_move","order":3,"path":"objects/obj_test_pixel_move/obj_test_pixel_move.yy",},
     {"name":"PixelUtil","order":3,"path":"scripts/PixelUtil/PixelUtil.yy",},

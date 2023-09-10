@@ -51,9 +51,6 @@ function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 	position_color = c_lime;
 	arr = array_create(_trail_size);
 	
-	last_added_x = 0;
-	last_added_y = 0;
-	
 	for (var _i = 0; _i < array_length(arr); _i++) {
 		arr[_i] = {
 			pos_x: 0,
@@ -68,9 +65,6 @@ function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 	 * @param {real} _y
 	 */
 	add = function(_x, _y) {
-		if (last_added_x == _x && last_added_y == _y) return;
-		last_added_x = _x;
-		last_added_y = _y;
 		arr[index].pos_x = _x;
 		arr[index].pos_y = _y;
 		arr[index].alpha = 1;
