@@ -119,8 +119,8 @@
   "lineHeight": 13,
   "maintainGms1Font": false,
   "parent": {
-    "name": "gamemaker-smoothmove",
-    "path": "gamemaker-smoothmove.yyp",
+    "name": "pixelmove",
+    "path": "pixelmove.yyp",
   },
   "pointRounding": 0,
   "ranges": [

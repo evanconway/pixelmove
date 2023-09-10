@@ -25,8 +25,8 @@
   "nineSlice": null,
   "origin": 4,
   "parent": {
-    "name": "gamemaker-smoothmove",
-    "path": "gamemaker-smoothmove.yyp",
+    "name": "pixelmove",
+    "path": "pixelmove.yyp",
   },
   "preMultiplyAlpha": false,
   "sequence": {

@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "gamemaker-smoothmove",
-    "path": "gamemaker-smoothmove.yyp",
+    "name": "pixelmove",
+    "path": "pixelmove.yyp",
   },
   "parentObjectId": null,
   "persistent": false,
