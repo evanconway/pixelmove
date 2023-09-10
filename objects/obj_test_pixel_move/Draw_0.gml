@@ -42,11 +42,6 @@ var _true_y = pixel_move.true_y;
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
-var _min_towards_zero = function(_a, _b) {
-	if (min(abs(_a), abs(_b)) == abs(_a)) return _a;
-	return _b;
-};
-
 var _x_angle = _angle >= 3*pi/2 || _angle <= pi/2 ? 0 : pi;
 var _y_angle = _angle >= 0 && _angle <= pi ? pi/2 : 3*pi/2;
 
@@ -82,7 +77,7 @@ if (_place_meeting_original_angle && !_place_meeting_x_angle){
 
 var _checking = !_place_meeting_x_angle || !_place_meeting_y_angle || !_place_meeting_original_angle;
 var _mod_delta = 0;
-var _increased_delta = _mod_delta;
+var _increased_delta = min(_max_delta, _mod_delta + 1);
 while (_checking) {
 	var _pos = pixel_move_get_position_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
 	var _place_meeting = place_meeting(_pos.x, _pos.y, obj_wall);
