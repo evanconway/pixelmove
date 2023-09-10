@@ -336,12 +336,26 @@ function pixel_move_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude) {
-	var _copy = pixel_move_get_copy(pixel_move);
-	pixel_move_by_vector(_copy, angle, magnitude);
-	return {
-		x: pixel_move_get_x(_copy),
-		y: pixel_move_get_y(_copy),
-	};
+	var _pre_move_start_x = pixel_move.start_x;
+	var _pre_move_start_y = pixel_move.start_y;
+	var _pre_move_angle = pixel_move.angle;
+	var _pre_move_delta = pixel_move.delta;
+	var _pre_move_true_x = pixel_move.true_x;
+	var _pre_move_true_y = pixel_move.true_y;
+	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
+	
+	pixel_move_by_vector(pixel_move, angle, magnitude);
+	var _result = { x: pixel_move_get_x(pixel_move), y: pixel_move_get_y(pixel_move) };
+	
+	pixel_move.start_x = _pre_move_start_x;
+	pixel_move.start_y = _pre_move_start_y;
+	pixel_move.angle = _pre_move_angle;
+	pixel_move.delta = _pre_move_delta;
+	pixel_move.true_x = _pre_move_true_x;
+	pixel_move.true_y = _pre_move_true_y;
+	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
+	
+	return _result;
 }
 
 /**

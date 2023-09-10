@@ -444,4 +444,4 @@ function __test_pixelmove(){
 	__test_pixelmove_misc();
 }
 
-if (false) __test_pixelmove();
+if (true) __test_pixelmove();
