@@ -1,5 +1,5 @@
-var _x = smooth_move_get_x(smooth_move);
-var _y = smooth_move_get_y(smooth_move);
+var _x = pixel_move_get_x(pixel_move);
+var _y = pixel_move_get_y(pixel_move);
 
 var _hor = 0;
 var _vrt = 0;
@@ -18,10 +18,10 @@ var _angle = arctan2(_vrt, _hor);
 
 var _vel = (_hor == 0 && _vrt == 0) ? 0 : 0.707;
 
-smooth_move_by_vector(smooth_move, _angle, _vel);
+pixel_move_by_vector(pixel_move, _angle, _vel);
 
-x = smooth_move_get_x(smooth_move);
-y = smooth_move_get_y(smooth_move);
+x = pixel_move_get_x(pixel_move);
+y = pixel_move_get_y(pixel_move);
 
 draw_self();
 

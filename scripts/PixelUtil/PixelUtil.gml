@@ -1,5 +1,3 @@
-// feather ignore all
-
 /**
 * Given real _a and real _b, returns _a rounded in the direction of _b. It is possible for 
 * sign(result - _b) to be different from sign(_a - _b) if _a and _b have the same whole

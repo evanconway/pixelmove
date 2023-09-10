@@ -48,8 +48,8 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @ignore
 	 */
 	reset_line_to_current = function() {
-		var _x = smooth_move_get_x(self);
-		var _y = smooth_move_get_y(self);
+		var _x = pixel_move_get_x(self);
+		var _y = pixel_move_get_y(self);
 		start_x = _x;
 		start_y = _y;
 		line.delta = 0;
@@ -78,11 +78,11 @@ function PixelMove(start_position_x, start_position_y) constructor {
 /**
  * Get a copy of the given PixelMove instance.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to copy.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to copy.
  */
-function smooth_move_get_copy(smooth_move) {
+function pixel_move_get_copy(pixel_move) {
 	var _copy = new PixelMove(0, 0);	
-	with (smooth_move) {
+	with (pixel_move) {
 		_copy.start_x = start_x;
 		_copy.start_y = start_y;
 		_copy.line = line.copy();
@@ -97,21 +97,21 @@ function smooth_move_get_copy(smooth_move) {
 /**
  * Set the number of movements at same angle before position is derived from line equation.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to set the threshold for.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the threshold for.
  * @param {real} threshold The new delta threshold.
  */
-function smooth_move_set_movements_on_angle_to_infer_from_line(smooth_move, threshold) {
-	smooth_move.movements_on_angle_to_infer_from_line = threshold;
+function pixel_move_set_movements_on_angle_to_infer_from_line(pixel_move, threshold) {
+	pixel_move.movements_on_angle_to_infer_from_line = threshold;
 }
 
 /**
  * Get the current x position.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the x position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the x position of.
  * @return {real}
  */
-function smooth_move_get_x(smooth_move) {
-	with (smooth_move) {
+function pixel_move_get_x(pixel_move) {
+	with (pixel_move) {
 		return get_movements_on_angle_passed_threshold() ? line.get_x(start_x, start_y) : get_true_round_to_start_x();
 	}
 }
@@ -119,11 +119,11 @@ function smooth_move_get_x(smooth_move) {
 /**
  * Get the current y position.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the y position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the y position of.
  * @return {real}
  */
-function smooth_move_get_y(smooth_move) {
-	with (smooth_move) {
+function pixel_move_get_y(pixel_move) {
+	with (pixel_move) {
 		return get_movements_on_angle_passed_threshold() ? line.get_y(start_x, start_y) : get_true_round_to_start_y();
 	}
 }
@@ -131,14 +131,14 @@ function smooth_move_get_y(smooth_move) {
 /**
  * Set the x,y position. 
  *
- * @param {Struct.PixelMove} _smooth_move The PixelMove instance to set the x and y position of.
+ * @param {Struct.PixelMove} _pixel_move The PixelMove instance to set the x and y position of.
  * @param {real} x The new x position.
  * @param {real} y The new y position.
  */
-function smooth_move_set_position(smooth_move, x, y) {
+function pixel_move_set_position(pixel_move, x, y) {
 	x = floor(x);
 	y = floor(y);
-	with (smooth_move) {
+	with (pixel_move) {
 		start_x = x;
 		start_y = y;
 		true_x = start_x;
@@ -151,17 +151,17 @@ function smooth_move_set_position(smooth_move, x, y) {
 /**
  * Move by the given vector. Angle of 0 corresponds to positive x axis.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to move.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
  * @param {real,undefined} angle The angle of the vector in radians.
  * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_by_vector(smooth_move, angle, magnitude) {
-	with (smooth_move) {
+function pixel_move_by_vector(pixel_move, angle, magnitude) {
+	with (pixel_move) {
 		angle = __pixelmove_util_get_cleaned_angle(angle);
 		var _angle_changed = line.angle != angle;
 		
-		var _curr_x = smooth_move_get_x(self);
-		var _curr_y = smooth_move_get_y(self);
+		var _curr_x = pixel_move_get_x(self);
+		var _curr_y = pixel_move_get_y(self);
 		
 		// reset line data on no movement or angle change
 		if ((magnitude == 0) || _angle_changed) reset_line_to_current();
@@ -177,13 +177,13 @@ function smooth_move_by_vector(smooth_move, angle, magnitude) {
 		// error correct based on true value
 		true_x += __pixelmove_util_get_x_component(angle, magnitude);
 		true_y += __pixelmove_util_get_y_component(angle, magnitude);
-		var _error = sqrt(sqr(get_true_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_true_round_to_start_y() - smooth_move_get_y(self)));
+		var _error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
 		
 		// determine if this movement crossed the movements_on_angle threshold, and new error
 		var _threshold_cross_before_movements_on_angle_change = get_movements_on_angle_passed_threshold();
 		movements_on_angle += 1;
 		var _crossed_delta_line_threshold = get_movements_on_angle_passed_threshold() != _threshold_cross_before_movements_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - smooth_move_get_x(self)) + sqr(get_true_round_to_start_y() - smooth_move_get_y(self)));
+		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
 		
 		// correct line towards error
 		if ((!get_movements_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
@@ -194,8 +194,8 @@ function smooth_move_by_vector(smooth_move, angle, magnitude) {
 		
 		// correct error towards line once passed threshold
 		if (get_movements_on_angle_passed_threshold()) {
-			true_x = smooth_move_get_x(self);
-			true_y = smooth_move_get_y(self);
+			true_x = pixel_move_get_x(self);
+			true_y = pixel_move_get_y(self);
 		}
 	}
 }
@@ -203,15 +203,15 @@ function smooth_move_by_vector(smooth_move, angle, magnitude) {
 /**
  * Move by the given x and y magnitudes.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to move.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
  * @param {real} magnitude_x The x magnitude.
  * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
-	with (smooth_move) {
+function pixel_move_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
+	with (pixel_move) {
 		var _angle = arctan2(magnitude_y, magnitude_x);
 		var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
-		smooth_move_by_vector(self, _angle, _m);
+		pixel_move_by_vector(self, _angle, _m);
 	}
 }
 
@@ -219,56 +219,56 @@ function smooth_move_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
  * Get the x position after movement by the given vector. Does not mutate the given
  * PixelMove instance.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the potential x position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
  * @param {real} angle The angle in radians of the vector.
  * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_get_x_if_moved_by_vector(smooth_move, angle, magnitude) {
-	var _copy = smooth_move_get_copy(smooth_move);
-	smooth_move_by_vector(_copy, angle, magnitude);
-	return smooth_move_get_x(_copy);
+function pixel_move_get_x_if_moved_by_vector(pixel_move, angle, magnitude) {
+	var _copy = pixel_move_get_copy(pixel_move);
+	pixel_move_by_vector(_copy, angle, magnitude);
+	return pixel_move_get_x(_copy);
 }
 
 /**
  * Get the y position after movement by the given vector. Does not mutate the given
  * PixelMove instance.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the potential y position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
  * @param {real} angle The angle in radians of the vector.
  * @param {real} magnitude The magnitude of the vector.
  */
-function smooth_move_get_y_if_moved_by_vector(smooth_move, angle, magnitude) {
-	var _copy = smooth_move_get_copy(smooth_move);
-	smooth_move_by_vector(_copy, angle, magnitude);
-	return smooth_move_get_y(_copy);
+function pixel_move_get_y_if_moved_by_vector(pixel_move, angle, magnitude) {
+	var _copy = pixel_move_get_copy(pixel_move);
+	pixel_move_by_vector(_copy, angle, magnitude);
+	return pixel_move_get_y(_copy);
 }
 
 /**
  * Get the x position after movement by the given x and y magnitudes. Does not mutate the given
  * PixelMove instance.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the potential x position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
  * @param {real} magnitude_x The x magnitude.
  * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_get_x_if_moved_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
-	var _copy = smooth_move_get_copy(smooth_move);
+function pixel_move_get_x_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
+	var _copy = pixel_move_get_copy(pixel_move);
 	var _angle = arctan2(magnitude_y, magnitude_x);
 	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
-	return smooth_move_get_x_if_moved_by_vector(_copy, _angle, _m);
+	return pixel_move_get_x_if_moved_by_vector(_copy, _angle, _m);
 }
 
 /**
  * Get the y position after movement by the given x and y magnitudes. Does not mutate the given
  * PixelMove instance.
  *
- * @param {Struct.PixelMove} smooth_move The PixelMove instance to get the potential y position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
  * @param {real} magnitude_x The x magnitude.
  * @param {real} magnitude_y The y magnitude.
  */
-function smooth_move_get_y_if_moved_by_magnitudes(smooth_move, magnitude_x, magnitude_y) {
-	var _copy = smooth_move_get_copy(smooth_move);
+function pixel_move_get_y_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
+	var _copy = pixel_move_get_copy(pixel_move);
 	var _angle = arctan2(magnitude_y, magnitude_x);
 	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
-	return smooth_move_get_y_if_moved_by_vector(_copy, _angle, _m);
+	return pixel_move_get_y_if_moved_by_vector(_copy, _angle, _m);
 }

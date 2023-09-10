@@ -1,7 +1,7 @@
 camera_init_basic(200, 112, 10);
-smooth_move = new PixelMove(x, y);
+pixel_move = new PixelMove(x, y);
 
-smooth_move_set_movements_on_angle_to_infer_from_line(smooth_move, 0);
+pixel_move_set_movements_on_angle_to_infer_from_line(pixel_move, 0);
 
 create_positions = function() {
 	return ds_map_create();
