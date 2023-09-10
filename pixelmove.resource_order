@@ -14,7 +14,6 @@
     {"name":"obj_demo_diagonals_real","order":1,"path":"objects/obj_demo_diagonals_real/obj_demo_diagonals_real.yy",},
     {"name":"fnt_demo_tiny","order":4,"path":"fonts/fnt_demo_tiny/fnt_demo_tiny.yy",},
     {"name":"spr_wall","order":11,"path":"sprites/spr_wall/spr_wall.yy",},
-    {"name":"PixelLine","order":2,"path":"scripts/PixelLine/PixelLine.yy",},
     {"name":"obj_demo_diagonals_Pixel","order":1,"path":"objects/obj_demo_diagonals_Pixel/obj_demo_diagonals_Pixel.yy",},
     {"name":"obj_demo_move_pixel","order":1,"path":"objects/obj_demo_move_pixel/obj_demo_move_pixel.yy",},
     {"name":"obj_test_pixel_move","order":3,"path":"objects/obj_test_pixel_move/obj_test_pixel_move.yy",},

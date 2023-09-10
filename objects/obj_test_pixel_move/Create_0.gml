@@ -1,7 +1,7 @@
 camera_init_basic(200, 112, 10);
 pixel_move = new PixelMove(x, y);
 
-pixel_move_set_movement_type_smooth(pixel_move);
+pixel_move_set_movement_type_hybrid(pixel_move);
 
 create_positions = function() {
 	return ds_map_create();
