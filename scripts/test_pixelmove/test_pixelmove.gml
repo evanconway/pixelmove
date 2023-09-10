@@ -173,6 +173,7 @@ function __test_pixelmove_pixel_gaps() {
 	__test_pixel_move_show_test_message("No Pixel Gaps");
 	// pixel gaps and error correction
 	var _random = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_random);
 	
 	// there should never be a gap while showing stair steps and vector magnitude is 1
 	show_debug_message("move by random angle changes");
@@ -202,7 +203,6 @@ function __test_pixelmove_pixel_gaps() {
 	
 	show_debug_message("move by random cardinal or intermediate");
 	pixel_move_set_position(_random, 0, 0);
-	pixel_move_set_movements_on_angle_to_infer_from_line(_random, 100);
 	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
 	_positions = [];
@@ -334,9 +334,9 @@ function __test_pixelmove_stairsteps_on_cardinalintermediates() {
 	show_debug_message("No Stairsteps On Cardinal Intermediates");
 	
 	var _sm = new PixelMove(0, 0);
-	pixel_move_set_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _angle_options = [1*pi/4, 3*pi/4, 5*pi/4, 7*pi/4];
 	var _angle = 0;
+	var _vel = 0;
 	var _prev2_x = pixel_move_get_x(_sm);
 	var _prev2_y = pixel_move_get_y(_sm);
 	var _prev1_x = pixel_move_get_x(_sm);
@@ -347,12 +347,13 @@ function __test_pixelmove_stairsteps_on_cardinalintermediates() {
 	for (var _i = 0; _i < 1000; _i++) {
 		var _frames = random_range(2, 15);
 		_angle = _angle_options[irandom_range(0, 3)];
+		_vel = random_range(0.1, 1);
 		for (var _f = 0; _f < _frames; _f++) {
 			_prev2_x = _prev1_x;
 			_prev2_y = _prev1_y;
 			_prev1_x = _curr_x;
 			_prev1_y = _curr_y;
-			pixel_move_by_vector(_sm, _angle, 1);
+			pixel_move_by_vector(_sm, _angle, _vel);
 			_curr_x = pixel_move_get_x(_sm);
 			_curr_y = pixel_move_get_y(_sm);
 			var _dist12 = sqrt(sqr(_prev2_x - _prev1_x) + sqr(_prev2_y - _prev1_y));
@@ -444,3 +445,5 @@ function __test_pixelmove(){
 }
 
 if (true) __test_pixelmove();
+
+//__test_pixelmove_pixel_gaps();

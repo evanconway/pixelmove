@@ -639,3 +639,15 @@ Now that we've created functioning collisions. It's time to rip out the entire s
 
 
 Now let's rename everything to "pixel". PixelMove.
+
+We've renamed everything. The next feature to add is the 3 different move types:
+
+regular (always reset start position and infer from line)
+smooth (always derive from true position rounded towards starting position)
+hybrid (use smooth move until threshold passed, then derive from line)
+
+We need to think about how we're going to best change our current implementation to add these. The current system uses what we're going to now call "hybrid". The differences between these three styles all hinge around how the movements_on_angle value is incremented. For perfect line movement it should immediately be at the threshold when we move. For smooth movement it should never reach that threshold. A question I need to answer for myself is when or if hybrid movement should reset the current movements_on_angle value.
+
+My current idea is to move the logic for movement back into a private function, which functions exactly as it does now as hybrid movement. But then we could invoke that function when calling regular, smooth, or hybrid and modify various internal state values before and after calling it. For example when calling regular movement, we simply set the movements_on_angle to the value of the current threshold. Actually I have a claim. We should do the simplest thing for our different functions, and simply reset state for that function. I was worried about trying to make it so that going from smooth movement to hybrid movement would account for the previous movements. But that's just more complicated and I don't think it's going to matter. Let's do this: we'll add another field "last_movement_type." And when we invoke a movement function we'll set that field to the movement type. But if the current movement type is different from the previous, we'll reset the state depending on what movement type was chosen. For regular it's easy, just change it and set movements_on_angle to the threshold. For smooth we'll always reset the movements_on_angle to -2, so it can never reach infer from line. If it's hybrid, we'll reset the movements_on_angle if last movement was different. Makes sense to me, let's try it.
+
+After adding the functions, I think it might actually be better to set the movement "mode" of a pixelmove instead of needing to use a completely different function. I suspect users will stick to just one mode for their entire game. And frankly it'll probably be the regular line mode.

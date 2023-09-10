@@ -1,5 +1,11 @@
 // feather disable all
 
+enum PIXEL_MOVE {
+	LINE,
+	SMOOTH,
+	HYBRID,
+}
+
 /**
  * Create a new PixelMove instance.
  * 
@@ -24,6 +30,8 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	true_y = start_y;
 	
+	movement_type = PIXEL_MOVE.LINE;
+	
 	/*
 	This is not for calculating x/y position. This is used to track how far this instance
 	has travelled along the same angle.
@@ -33,7 +41,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	
 	// once movements_on_angle has passed this value position will be derived from line equation instead of true
 	// @ignore
-	movements_on_angle_to_infer_from_line = 0;
+	movements_on_angle_to_infer_from_line = 5;
 	
 	/**
 	 * @ignore
@@ -53,7 +61,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		start_x = _x;
 		start_y = _y;
 		line.delta = 0;
-		movements_on_angle = 0;
+		movements_on_angle = movement_type == PIXEL_MOVE.LINE ? movements_on_angle_to_infer_from_line : 0;
 	};
 	
 	/**
@@ -72,6 +80,56 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 */
 	get_true_round_to_start_y = function() {
 		return __pixelmove_util_round_towards(__pixelmove_util_round_to_correct(true_y), start_y);
+	};
+	
+	/**
+	 * Move by the given vector. Angle of 0 corresponds to positive x axis.
+	 *
+	 * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
+	 * @param {real} angle The angle of the vector in radians.
+	 * @param {real} magnitude The magnitude of the vector.
+	 */
+	move_by_vector = function (_angle, _magnitude) {
+		_angle = __pixelmove_util_get_cleaned_angle(_angle);
+		var _angle_changed = line.angle != _angle;
+		
+		var _curr_x = pixel_move_get_x(self);
+		var _curr_y = pixel_move_get_y(self);
+		
+		// reset line data on no movement or angle change
+		if ((_magnitude == 0) || _angle_changed) reset_line_to_current();
+		
+		// reset true data on no movement
+		if (_magnitude == 0) {
+			true_x = _curr_x;
+			true_y = _curr_y;
+		}
+		
+		line.set(_angle, line.delta + _magnitude);
+		
+		// error correct based on true value
+		true_x += __pixelmove_util_get_x_component(_angle, _magnitude);
+		true_y += __pixelmove_util_get_y_component(_angle, _magnitude);
+		var _error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
+		
+		// determine if this movement crossed the movements_on_angle threshold, and new error
+		var _threshold_cross_before_movements_on_angle_change = get_movements_on_angle_passed_threshold();
+		movements_on_angle += 1;
+		var _crossed_delta_line_threshold = get_movements_on_angle_passed_threshold() != _threshold_cross_before_movements_on_angle_change;
+		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
+		
+		// correct line towards error
+		if ((!get_movements_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
+			start_x = get_true_round_to_start_x();
+			start_y = get_true_round_to_start_y();
+			line.delta = 0;
+		}
+		
+		// correct error towards line once passed threshold
+		if (get_movements_on_angle_passed_threshold()) {
+			true_x = pixel_move_get_x(self);
+			true_y = pixel_move_get_y(self);
+		}
 	};
 }
 
@@ -101,7 +159,35 @@ function pixel_move_get_copy(pixel_move) {
  * @param {real} threshold The new delta threshold.
  */
 function pixel_move_set_movements_on_angle_to_infer_from_line(pixel_move, threshold) {
-	pixel_move.movements_on_angle_to_infer_from_line = threshold;
+	pixel_move.movements_on_angle_to_infer_from_line = max(1, floor(abs(threshold)));
+}
+
+/**
+ * Set the movement type to line. Movement will be mathematically perfect lines.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
+ */
+function pixel_move_set_movement_type_line(pixel_move) {
+	pixel_move.movement_type = PIXEL_MOVE.LINE;
+}
+
+/**
+ * Set the movement type to smooth. Movement will be more responsive and fluid.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
+ */
+function pixel_move_set_movement_type_smooth(pixel_move) {
+	pixel_move.movement_type = PIXEL_MOVE.SMOOTH;
+}
+
+/**
+ * Set the movement type to hybrid. Movement will be responsive and fluid but change to mathematically perfect lines after repeated movements on the same angle.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
+ */
+function pixel_move_set_movement_type_hybrid(pixel_move) {
+	if (pixel_move.movement_type != PIXEL_MOVE.HYBRID) pixel_move.movements_on_angle = 0;
+	pixel_move.movement_type = PIXEL_MOVE.HYBRID;
 }
 
 /**
@@ -152,52 +238,12 @@ function pixel_move_set_position(pixel_move, x, y) {
  * Move by the given vector. Angle of 0 corresponds to positive x axis.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
- * @param {real,undefined} angle The angle of the vector in radians.
+ * @param {real} angle The angle of the vector in radians.
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_by_vector(pixel_move, angle, magnitude) {
-	with (pixel_move) {
-		angle = __pixelmove_util_get_cleaned_angle(angle);
-		var _angle_changed = line.angle != angle;
-		
-		var _curr_x = pixel_move_get_x(self);
-		var _curr_y = pixel_move_get_y(self);
-		
-		// reset line data on no movement or angle change
-		if ((magnitude == 0) || _angle_changed) reset_line_to_current();
-		
-		// reset true data on no movement
-		if (magnitude == 0) {
-			true_x = _curr_x;
-			true_y = _curr_y;
-		}
-		
-		line.set(angle, line.delta + magnitude);
-		
-		// error correct based on true value
-		true_x += __pixelmove_util_get_x_component(angle, magnitude);
-		true_y += __pixelmove_util_get_y_component(angle, magnitude);
-		var _error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
-		
-		// determine if this movement crossed the movements_on_angle threshold, and new error
-		var _threshold_cross_before_movements_on_angle_change = get_movements_on_angle_passed_threshold();
-		movements_on_angle += 1;
-		var _crossed_delta_line_threshold = get_movements_on_angle_passed_threshold() != _threshold_cross_before_movements_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
-		
-		// correct line towards error
-		if ((!get_movements_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
-			start_x = get_true_round_to_start_x();
-			start_y = get_true_round_to_start_y();
-			line.delta = 0;
-		}
-		
-		// correct error towards line once passed threshold
-		if (get_movements_on_angle_passed_threshold()) {
-			true_x = pixel_move_get_x(self);
-			true_y = pixel_move_get_y(self);
-		}
-	}
+	if (pixel_move.movement_type == PIXEL_MOVE.SMOOTH) pixel_move.movements_on_angle = -2;
+	pixel_move.move_by_vector(angle, magnitude);
 }
 
 /**
