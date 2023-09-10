@@ -53,7 +53,6 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
-/*
 position_add(x, y);
 
 array_foreach(ds_map_values_to_array(positions), function(_v) {
@@ -65,4 +64,3 @@ array_foreach(ds_map_values_to_array(positions), function(_v) {
 if (place_meeting(x, y, obj_wall)) draw_set_color(c_red);
 else draw_set_color(c_yellow);
 draw_point(x, y);
-*/

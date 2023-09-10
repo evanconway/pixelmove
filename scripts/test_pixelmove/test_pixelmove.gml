@@ -25,7 +25,7 @@ function __test_pixel_move_show_test_message(_test_name) {
  * @param {bool} _show_stairsteps
  * @ignore
  */
-function __test_pixelmove_cardinals(_show_stairsteps = false) {
+function __test_pixelmove_cardinals() {
 	__test_pixel_move_show_test_message("Cardinal Directions");
 	var _move_count = 1000;
 	
@@ -131,6 +131,7 @@ function __test_pixelmove_perfect_diagonals() {
 	var _test_perfect_diagonals = function(_mag) {
 		var _func = function(_mag_x, _mag_y) {
 			var _sm = new PixelMove(0, 0);
+			pixel_move_set_movement_type_line(_sm);
 			for (var _i = 0; _i < 1000; _i++) {
 				var _check_x = pixel_move_get_x(_sm);
 				var _check_y = pixel_move_get_y(_sm);
@@ -261,7 +262,7 @@ function __test_pixelmove_positions() {
 		__test_pixel_move_assert_real(pixel_move_get_y(_set_pos), _y, "Pixel move set position y fail.");
 	}
 	
-	// potential positions
+	// potential positions (with magnitudes)
 	var _potential = new PixelMove(0, 0);
 	for (var _i = 0; _i < 1000; _i++) {
 		var _mag_x = random_range(-1000, 1000);
@@ -276,11 +277,33 @@ function __test_pixelmove_positions() {
 	pixel_move_set_position(_potential, 0, 0);
 	var _angle_test = 0;
 	var _vel_test = 0;
+	var _pot_pos = { x: 0, y: 0 };
+	var _against_callback = function() {
+		return false;
+	};
 	for (var _i = 0; _i < 1000; _i++) {
 		_angle_test += random_range(-0.05, 0.05);
-		_vel_test = random_range(0.2, 2);	
-		var _pot_pos = pixel_move_get_position_if_moved_by_vector(_potential, _angle_test, _vel_test);
-		pixel_move_by_vector(_potential, _angle_test, _vel_test);
+		_vel_test = random_range(0.2, 2);
+		var _mag_x = __pixelmove_util_get_x_component(_angle_test, _vel_test);
+		var _mag_y = __pixelmove_util_get_x_component(_angle_test, _vel_test);
+		var _move_type = irandom_range(0, 2);
+		if (_move_type == 0) pixel_move_set_movement_type_line(_potential);
+		if (_move_type == 1) pixel_move_set_movement_type_smooth(_potential);
+		if (_move_type == 2) pixel_move_set_movement_type_hybrid(_potential);
+		var _move_equation = irandom_range(0, 3);
+		if (_move_equation == 0) {
+			_pot_pos = pixel_move_get_position_if_moved_by_vector(_potential, _angle_test, _vel_test);
+			pixel_move_by_vector(_potential, _angle_test, _vel_test);
+		} else if (_move_equation == 1) {
+			_pot_pos = pixel_move_get_position_if_moved_by_magnitudes(_potential, _mag_x, _mag_y);
+			pixel_move_by_magnitudes(_potential, _mag_x, _mag_y);
+		} else if (_move_equation == 2) {
+			_pot_pos = pixel_move_get_position_if_moved_by_vector_against(_potential, _angle_test, _vel_test, _against_callback);
+			pixel_move_by_vector_against(_potential, _angle_test, _vel_test, _against_callback);
+		} else if (_move_equation == 3) {
+			_pot_pos = pixel_move_get_position_if_moved_by_magnitudes_against(_potential, _mag_x, _mag_y, _against_callback);
+			pixel_move_by_magnitudes_against(_potential, _mag_x, _mag_y, _against_callback);
+		}
 		__test_pixel_move_assert_real(_pot_pos.x, pixel_move_get_x(_potential), $"Pixel move potential position x failed attempt {_i}");
 		__test_pixel_move_assert_real(_pot_pos.y, pixel_move_get_y(_potential), $"Pixel move potential position y failed attempt {_i}.");
 	}

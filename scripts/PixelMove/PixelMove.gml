@@ -200,27 +200,6 @@ function PixelMove(start_position_x, start_position_y) constructor {
 }
 
 /**
- * Get a copy of the given PixelMove instance.
- *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to copy.
- */
-function pixel_move_get_copy(pixel_move) {
-	var _copy = new PixelMove(0, 0);	
-	with (pixel_move) {
-		_copy.start_x = start_x;
-		_copy.start_y = start_y;
-		_copy.angle = angle;
-		_copy.delta = delta;
-		_copy.true_x = true_x;
-		_copy.true_y = true_y;
-		_copy.movement_type = movement_type;
-		_copy.movements_on_angle = movements_on_angle;
-		_copy.movements_on_angle_to_infer_from_line = movements_on_angle_to_infer_from_line;
-	}
-	return _copy;
-}
-
-/**
  * Set the number of movements at same angle before position is derived from line equation when using hybrid type movement.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the threshold for.
@@ -439,4 +418,49 @@ function pixel_move_by_magnitudes_against(pixel_move, magnitude_x, magnitude_y, 
 	var _angle = arctan2(magnitude_y, magnitude_x);
 	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
 	pixel_move_by_vector_against(pixel_move, _angle, _m, against);
+}
+
+/**
+ * Get the position after movement by the given vector using the against callback. Does not mutate the given PixelMove instance.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential position of.
+ * @param {real} angle The angle in radians of the vector.
+ * @param {real} magnitude The magnitude of the vector.
+ * @param {function} against Callback function defined as: (x: Real, y: Real) returns Bool. Movement along axis will stop if this function returns true for a give position.
+ */
+function pixel_move_get_position_if_moved_by_vector_against(pixel_move, angle, magnitude, against) {
+	var _pre_move_start_x = pixel_move.start_x;
+	var _pre_move_start_y = pixel_move.start_y;
+	var _pre_move_angle = pixel_move.angle;
+	var _pre_move_delta = pixel_move.delta;
+	var _pre_move_true_x = pixel_move.true_x;
+	var _pre_move_true_y = pixel_move.true_y;
+	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
+	
+	pixel_move_by_vector_against(pixel_move, angle, magnitude, against);
+	var _result = { x: pixel_move_get_x(pixel_move), y: pixel_move_get_y(pixel_move) };
+	
+	pixel_move.start_x = _pre_move_start_x;
+	pixel_move.start_y = _pre_move_start_y;
+	pixel_move.angle = _pre_move_angle;
+	pixel_move.delta = _pre_move_delta;
+	pixel_move.true_x = _pre_move_true_x;
+	pixel_move.true_y = _pre_move_true_y;
+	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
+	
+	return _result;
+}
+
+/**
+ * Get the position after movement by the given x and y magnitudes using the against callback. Does not mutate the given PixelMove instance.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential position of.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
+ * @param {function} against Callback function defined as: (x: Real, y: Real) returns Bool. Movement along axis will stop if this function returns true for a give position.
+ */
+function pixel_move_get_position_if_moved_by_magnitudes_against(pixel_move, magnitude_x, magnitude_y, against) {
+	var _angle = arctan2(magnitude_y, magnitude_x);
+	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
+	return pixel_move_get_position_if_moved_by_vector_against(pixel_move, _angle, _m, against);
 }
