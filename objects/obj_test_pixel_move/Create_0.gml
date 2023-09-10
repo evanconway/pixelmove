@@ -21,4 +21,4 @@ stick = gamepad_get_left_stick_data();
 stick_mag = sqrt(sqr(stick.axis_h) + sqr(stick.axis_v));
 stick_angle = arctan2(stick.axis_v, stick.axis_h) + pi/2;
 
-angle = 0;
+angle = 7*pi/4;

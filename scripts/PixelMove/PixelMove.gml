@@ -146,6 +146,7 @@ function pixel_move_get_copy(pixel_move) {
 		_copy.line = line.copy();
 		_copy.true_x = true_x;
 		_copy.true_y = true_y;
+		_copy.movement_type = movement_type;
 		_copy.movements_on_angle = movements_on_angle;
 		_copy.movements_on_angle_to_infer_from_line = movements_on_angle_to_infer_from_line;
 	}
@@ -262,59 +263,74 @@ function pixel_move_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
 }
 
 /**
- * Get the x position after movement by the given vector. Does not mutate the given
- * PixelMove instance.
+ * Get the position after movement by the given vector. Does not mutate the given PixelMove instance.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential position of.
+ * @param {real} angle The angle in radians of the vector.
+ * @param {real} magnitude The magnitude of the vector.
+ */
+function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude) {
+	var _copy = pixel_move_get_copy(pixel_move);
+	pixel_move_by_vector(_copy, angle, magnitude);
+	return {
+		x: pixel_move_get_x(_copy),
+		y: pixel_move_get_y(_copy),
+	};
+}
+
+/**
+ * Get the x position after movement by the given vector. Does not mutate the given PixelMove instance.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
  * @param {real} angle The angle in radians of the vector.
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_get_x_if_moved_by_vector(pixel_move, angle, magnitude) {
-	var _copy = pixel_move_get_copy(pixel_move);
-	pixel_move_by_vector(_copy, angle, magnitude);
-	return pixel_move_get_x(_copy);
+	return pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude).x;
 }
 
 /**
- * Get the y position after movement by the given vector. Does not mutate the given
- * PixelMove instance.
+ * Get the y position after movement by the given vector. Does not mutate the given PixelMove instance.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
  * @param {real} angle The angle in radians of the vector.
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_get_y_if_moved_by_vector(pixel_move, angle, magnitude) {
-	var _copy = pixel_move_get_copy(pixel_move);
-	pixel_move_by_vector(_copy, angle, magnitude);
-	return pixel_move_get_y(_copy);
+	return pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude).y;
 }
 
 /**
- * Get the x position after movement by the given x and y magnitudes. Does not mutate the given
- * PixelMove instance.
+ * Get the position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
+ *
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential position of.
+ * @param {real} magnitude_x The x magnitude.
+ * @param {real} magnitude_y The y magnitude.
+ */
+function pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
+	var _angle = arctan2(magnitude_y, magnitude_x);
+	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
+	return pixel_move_get_position_if_moved_by_vector(pixel_move, _angle, _m);
+}
+
+/**
+ * Get the x position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential x position of.
  * @param {real} magnitude_x The x magnitude.
  * @param {real} magnitude_y The y magnitude.
  */
 function pixel_move_get_x_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
-	var _copy = pixel_move_get_copy(pixel_move);
-	var _angle = arctan2(magnitude_y, magnitude_x);
-	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
-	return pixel_move_get_x_if_moved_by_vector(_copy, _angle, _m);
+	return pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y).x;
 }
 
 /**
- * Get the y position after movement by the given x and y magnitudes. Does not mutate the given
- * PixelMove instance.
+ * Get the y position after movement by the given x and y magnitudes. Does not mutate the given PixelMove instance.
  *
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to get the potential y position of.
  * @param {real} magnitude_x The x magnitude.
  * @param {real} magnitude_y The y magnitude.
  */
 function pixel_move_get_y_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
-	var _copy = pixel_move_get_copy(pixel_move);
-	var _angle = arctan2(magnitude_y, magnitude_x);
-	var _m = sqrt(sqr(magnitude_x) + sqr(magnitude_y));
-	return pixel_move_get_y_if_moved_by_vector(_copy, _angle, _m);
+	return pixel_move_get_position_if_moved_by_magnitudes(pixel_move, magnitude_x, magnitude_y).y;
 }

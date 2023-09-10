@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz);
 
-var _max_vel = 2.3;
+var _max_vel = 1.13;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -27,7 +27,8 @@ if (stick_mag > 0) {
 }
 
 // collision checking
-//_angle = 0;
+//angle += random_range(-0.01, 0.01);
+//_angle = angle;
 //_vel = 2.3;
 
 _angle = __pixelmove_util_get_cleaned_angle(_angle);
@@ -49,14 +50,22 @@ var _min_towards_zero = function(_a, _b) {
 var _x_angle = _angle >= 3*pi/2 || _angle <= pi/2 ? 0 : pi;
 var _y_angle = _angle >= 0 && _angle <= pi ? pi/2 : 3*pi/2;
 
+//var _pot_pos_if_move_by_x_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x);
+//var _place_meeting_x_angle = place_meeting(_pot_pos_if_move_by_x_angle.x, _pot_pos_if_move_by_x_angle.y, obj_wall);
 var _pot_x_if_moved_by_x_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
 var _pot_y_if_moved_by_x_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
 var _place_meeting_x_angle = place_meeting(_pot_x_if_moved_by_x_angle, _pot_y_if_moved_by_x_angle, obj_wall);
 
+
+//var _pot_pos_if_move_by_y_angle = pixel_move_get_position_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y);
+//var _place_meeting_y_angle = place_meeting(_pot_pos_if_move_by_y_angle.x, _pot_pos_if_move_by_y_angle.y, obj_wall);
 var _pot_x_if_moved_by_y_angle = pixel_move_get_x_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
 var _pot_y_if_moved_by_y_angle = pixel_move_get_y_if_moved_by_vector(pixel_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
 var _place_meeting_y_angle = place_meeting(_pot_x_if_moved_by_y_angle, _pot_y_if_moved_by_y_angle, obj_wall);
 
+
+//var _pot_pos_if_move_by_original_angle = pixel_move_get_position_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
+//var _place_meeting_original_angle = place_meeting(_pot_pos_if_move_by_original_angle.x, _pot_pos_if_move_by_original_angle.y, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
 var _pot_x_if_moved_by_original_angle = pixel_move_get_x_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
 var _pot_y_if_moved_by_original_angle = pixel_move_get_y_if_moved_by_magnitudes(pixel_move, sign(_magnitude_x), sign(_magnitude_y));
 var _place_meeting_original_angle = place_meeting(_pot_x_if_moved_by_original_angle, _pot_y_if_moved_by_original_angle, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
@@ -75,6 +84,8 @@ var _checking = !_place_meeting_x_angle || !_place_meeting_y_angle || !_place_me
 var _mod_delta = 0;
 var _increased_delta = _mod_delta;
 while (_checking) {
+	//var _pos = pixel_move_get_position_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
+	//var _place_meeting = place_meeting(_pos.x, _pos.y, obj_wall);
 	var _pot_x = pixel_move_get_x_if_moved_by_vector(pixel_move,_collision_angle, _increased_delta);
 	var _pot_y = pixel_move_get_y_if_moved_by_vector(pixel_move, _collision_angle, _increased_delta);
 	var _place_meeting = place_meeting(_pot_x, _pot_y, obj_wall);
@@ -101,6 +112,7 @@ if (keyboard_check_pressed(ord("C"))) {
 	positions = create_positions();
 }
 
+/*
 position_add(x, y);
 
 array_foreach(ds_map_values_to_array(positions), function(_v) {
@@ -112,4 +124,4 @@ array_foreach(ds_map_values_to_array(positions), function(_v) {
 if (place_meeting(x, y, obj_wall)) draw_set_color(c_red);
 else draw_set_color(c_yellow);
 draw_point(x, y);
-
+*/

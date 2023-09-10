@@ -653,3 +653,10 @@ My current idea is to move the logic for movement back into a private function, 
 After adding the functions, I think it might actually be better to set the movement "mode" of a pixelmove instead of needing to use a completely different function. I suspect users will stick to just one mode for their entire game. And frankly it'll probably be the regular line mode.
 
 New movement types added. But our existing collision code fails when switch off of line mode. I don't undersatnd why that would break. It might be wise to figure out a collision code system that works regardless of the movement type. If it's not possible to write collisions with the smooth or hybrid types, that could seriously harm the usefuless of this library. But we'll worry about that tomorrow. Enough dev for today.
+
+
+10th of September, 2023
+
+Oops, our error was that we forgot to add the "movement_type" field to the copy function.
+
+After some toying around, it's very clear that copying structs is quite time expensive. I'm tempted to merge the line object back into the main class. And redo the "if_moved_by" functions to remember the state before moving, deriving position, then resetting it, instead of copying the entire PixelMove instance and moving that. The "if_moved_by" functions are called a LOT for our collision code, and would be heavily used by any collision code.
