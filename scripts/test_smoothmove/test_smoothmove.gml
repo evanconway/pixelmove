@@ -360,7 +360,7 @@ function __test_smoothmove_stairsteps_on_cardinalintermediates() {
 	var _sm = new SmoothMove(0, 0);
 	// fails when stair steps are shown
 	smooth_move_show_stairsteps(_sm, false);
-	_sm.position.movements_on_angle_to_infer_from_line = 100;
+	_sm.position.movements_on_angle_to_infer_from_line = 0;
 	var _angle_options = [1*pi/4, 3*pi/4, 5*pi/4, 7*pi/4];
 	var _angle = 0;
 	var _prev2_x = smooth_move_get_x(_sm);
@@ -477,3 +477,4 @@ function __test_smoothmove(){
 //if (true) __test_smoothmove();
 
 //__test_smoothmove_stairsteps_on_cardinalintermediates();
+

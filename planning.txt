@@ -617,3 +617,20 @@ Before we commit hard to this though, let's make sure we can still do collisions
 I also had one more thought, we could keep our system of switching from drived true_x/y to line with another function called hybrid. 
 
 We were able to create functioning collisions using just derivation from line functions. I'm confident that our above description is the correct path forward. Maybe this will be the final major change up?
+
+First let's remove the anticipation and previous system again.
+
+Oof, our collision code wasn't quite right. It's tricky when we're at an exact angle because moving by 0.49 on both axis creates a situation where we have to check by +1 pixel along the axis, but only increment by 0.49 on that axis. Which results in a situation where the logic thinks there's no collision moving by 0.49 on x then 9, but in fact there very much is. We'll have to rewrite it so we either move both, either, or none.
+
+We're close but not there. I can tell I'm burnt out and not thinking well. Sleep and try again later. I know this is solvable. 
+
+
+9th of September, 2023
+
+Still messing with line based collisions. I still struggle to remember that using the line system doesn't let you just move by different magnitudes on the x/y axis. Now, although I'm sure it's possible to work this our using magnitudes, let's try a different approach. Let's try moving by vectors. For moving along an angled line, it should be simple, we'll just increase the delta until we either reach the goal delta, or there's a collision. Since increasing the delta by 1 would never create more than a 1 pixel change, that should be fine. The tricker part comes with determing the correct angle to move along if there is a collision at x/y movement.
+
+When we first start detecting collisions, we'll first detect if the collision allows for movement along just x axis, just y axis, or both. If it's both we can use the original angle, and just increase delta until collision or max delta reached. And although that same logic is true for x/y, we have to figure out what angle to use based on the original angle. Actually, it's not too hard. For x angle of 0, we use that if the original angle is between pi/2 or 3pi/2, we use x angle of pi if it's not 0. And for y we use angle pi/2 if the original angle is between 0 and pi, 3pi/2 if it's not. We can stress the inclusive/exclusives later. This all makes sense actually. Let's try it.
+
+We got close, but we still have trouble at corners where the angle is slightly off the cardinal directions. It looks like seince we're checking the pixel exactly sqrt(2) away at a diagonal, we end up not checking the pixel we'd actually approach. When moving by the actual vector, we could end up just 1 pixel different along the vertical but 0 along the horizontal, or the other way around. So I think this means that in order for diagonal movement to be valid, there can't be a place meeting 1 pixel away just horizontal, 1 pixel away just vertical, or 1 pixel away on both axis.
+
+As far as I can tell, that last change fixed it. We finally have collisions using pixel perfect line movements.

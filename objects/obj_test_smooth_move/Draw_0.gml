@@ -11,7 +11,7 @@ if (_dn) _vert += 1;
 if (_rt) _horz += 1;
 if (_lt) _horz -= 1;
 
-var _angle = arctan2(_vert, _horz)
+var _angle = arctan2(_vert, _horz);
 
 var _max_vel = 1;
 
@@ -27,11 +27,13 @@ if (stick_mag > 0) {
 }
 
 // collision checking
-//_angle = 3*pi/4 - 0.3;
-//_vel = 0.7;
+//_angle = 2*pi/4 - 0.1;
+//_vel = 2.3;
 
-var _magnitude_x = cos(_angle) * _vel;
-var _magnitude_y = sin(_angle) * _vel;
+_angle = __smoothmove_util_get_cleaned_angle(_angle);
+
+var _magnitude_x = __smoothmove_util_get_x_component(_angle, _vel)
+var _magnitude_y = __smoothmove_util_get_y_component(_angle, _vel)
 
 var _true_x = smooth_move.position.true_x;
 var _true_y = smooth_move.position.true_y;
@@ -39,43 +41,52 @@ var _true_y = smooth_move.position.true_y;
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);
 
-var _mod_x = 0;
-var _mod_y = 0;
-
 var _min_towards_zero = function(_a, _b) {
 	if (min(abs(_a), abs(_b)) == abs(_a)) return _a;
 	return _b;
 };
 
-if (keyboard_check_pressed(vk_space)) {
-	show_debug_message("debug");
+var _x_angle = _angle >= 3*pi/2 || _angle <= pi/2 ? 0 : pi;
+var _y_angle = _angle >= 0 && _angle <= pi ? pi/2 : 3*pi/2;
+
+var _pot_x_if_moved_by_x_angle = smooth_move_get_x_if_moved_by_vector(smooth_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
+var _pot_y_if_moved_by_x_angle = smooth_move_get_y_if_moved_by_vector(smooth_move, _x_angle, _magnitude_x == 0 ? 0 : 1);
+var _place_meeting_x_angle = place_meeting(_pot_x_if_moved_by_x_angle, _pot_y_if_moved_by_x_angle, obj_wall);
+
+var _pot_x_if_moved_by_y_angle = smooth_move_get_x_if_moved_by_vector(smooth_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
+var _pot_y_if_moved_by_y_angle = smooth_move_get_y_if_moved_by_vector(smooth_move, _y_angle, _magnitude_y == 0 ? 0 : 1);
+var _place_meeting_y_angle = place_meeting(_pot_x_if_moved_by_y_angle, _pot_y_if_moved_by_y_angle, obj_wall);
+
+var _pot_x_if_moved_by_original_angle = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, sign(_magnitude_x), sign(_magnitude_y));
+var _pot_y_if_moved_by_original_angle = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, sign(_magnitude_x), sign(_magnitude_y));
+var _place_meeting_original_angle = place_meeting(_pot_x_if_moved_by_original_angle, _pot_y_if_moved_by_original_angle, obj_wall) || _place_meeting_x_angle || _place_meeting_y_angle;
+
+var _collision_angle = _angle;
+var _max_delta = _vel;
+if (_place_meeting_original_angle && !_place_meeting_x_angle){
+	_collision_angle = _x_angle;
+	_max_delta = abs(_magnitude_x);
+} else if (_place_meeting_original_angle && !_place_meeting_y_angle) {
+	_collision_angle = _y_angle;
+	_max_delta = abs(_magnitude_y);
 }
 
 var _checking = true;
+var _mod_delta = 0;
+var _increased_delta = _mod_delta;
 while (_checking) {
-	var _moved = false;
-	if (_mod_x != _magnitude_x) {
-		var _increased_mod_x = sign(_magnitude_x);
-		var _new_x_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
-		var _new_x_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _increased_mod_x, _mod_y);
-		if (!place_meeting(_new_x_move_pot_x, _new_x_move_pot_y, obj_wall)) {
-			_mod_x = _min_towards_zero(_mod_x + sign(_magnitude_x), _magnitude_x);
-			_moved = true;
-		}
+	var _pot_x = smooth_move_get_x_if_moved_by_vector(smooth_move,_collision_angle, _increased_delta);
+	var _pot_y = smooth_move_get_y_if_moved_by_vector(smooth_move, _collision_angle, _increased_delta);
+	var _place_meeting = place_meeting(_pot_x, _pot_y, obj_wall);
+	_checking = false;
+	if (!_place_meeting) {
+		_mod_delta = _increased_delta
+		if (_mod_delta < _max_delta) _checking = true;
 	}
-	if (_mod_y != _magnitude_y) {
-		var _increased_mod_y = sign(_magnitude_y);
-		var _new_y_move_pot_x = smooth_move_get_x_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
-		var _new_y_move_pot_y = smooth_move_get_y_if_moved_by_magnitudes(smooth_move, _mod_x, _increased_mod_y);
-		if (_mod_y != _increased_mod_y && !place_meeting(_new_y_move_pot_x, _new_y_move_pot_y, obj_wall)) {
-			_mod_y = _min_towards_zero(_mod_y + sign(_magnitude_y), _magnitude_y);
-			_moved = true;
-		}
-	}
-	_checking = _moved;
+	_increased_delta = min(_max_delta, _mod_delta + 1);
 }
 
-smooth_move_by_magnitudes(smooth_move, _mod_x, _mod_y);
+smooth_move_by_vector(smooth_move, _collision_angle, _mod_delta);
 
 _x = smooth_move_get_x(smooth_move);
 _y = smooth_move_get_y(smooth_move);

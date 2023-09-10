@@ -55,6 +55,15 @@ function __smoothmove_util_snap_cos(_angle) {
 }
 
 /**
+ * Returns an angle between 0 and 2pi that is coterminal with the given angle.
+ *
+ * @param {real} angle
+ */
+function get_normal_coterminal(angle) {
+	return ((angle % (2*pi)) + (2*pi)) % (2*pi);
+}
+
+/**
 * Return the given angle in radians transformed to the equivalent position and rounded
 * roughly towards the cardinal directions and their intermediates.
 *
@@ -62,8 +71,7 @@ function __smoothmove_util_snap_cos(_angle) {
 * @ignore
 */
 function __smoothmove_util_get_cleaned_angle(_angle) {
-	if (_angle < 0) _angle = _angle % (-2*pi) + 2*pi;
-	if (_angle >= 2*pi) _angle %= 2*pi;
+	_angle = get_normal_coterminal(_angle);
 	
 	var round_to_thousandths = function(_value) {
 		return floor(_value * 1000 + 0.5) / 1000;
