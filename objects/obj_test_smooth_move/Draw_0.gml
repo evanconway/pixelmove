@@ -35,8 +35,8 @@ _angle = __smoothmove_util_get_cleaned_angle(_angle);
 var _magnitude_x = __smoothmove_util_get_x_component(_angle, _vel)
 var _magnitude_y = __smoothmove_util_get_y_component(_angle, _vel)
 
-var _true_x = smooth_move.position.true_x;
-var _true_y = smooth_move.position.true_y;
+var _true_x = smooth_move.true_x;
+var _true_y = smooth_move.true_y;
 
 var _x = smooth_move_get_x(smooth_move);
 var _y = smooth_move_get_y(smooth_move);

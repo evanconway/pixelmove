@@ -27,7 +27,6 @@
     {"name":"rm_test_smooth_move","order":12,"path":"rooms/rm_test_smooth_move/rm_test_smooth_move.yy",},
     {"name":"rm_demo","order":2,"path":"rooms/rm_demo/rm_demo.yy",},
     {"name":"util","order":1,"path":"scripts/util/util.yy",},
-    {"name":"SmoothPosition","order":4,"path":"scripts/SmoothPosition/SmoothPosition.yy",},
     {"name":"rm_demo_circle_smooth","order":1,"path":"rooms/rm_demo_circle_smooth/rm_demo_circle_smooth.yy",},
     {"name":"rm_test_smooth_move_walls","order":4,"path":"rooms/rm_test_smooth_move_walls/rm_test_smooth_move_walls.yy",},
   ],
