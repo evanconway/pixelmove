@@ -78,23 +78,18 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	}
 	
 	/**
-	 * Reset result of line equation to current position. Does not change angle.
-	 *
-	 * @param {real} _new_angle
-	 * @param {real} _magnitude
+	 * @ignore
 	 */
-	reset_line_to_current = function(_new_angle, _magnitude) {
-		var _x = pixel_move_get_x(self);
-		var _y = pixel_move_get_y(self);
-		start_x = _x;
-		start_y = _y;
-		movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
-		var _old_delta_to_change_pixel = __pixelmove_util_round_to_correct(1 + (sqrt(2) - 1) * abs(sin(2 * angle)));
-		var _new_delta_to_change_pixel = __pixelmove_util_round_to_correct(1 + (sqrt(2) - 1) * abs(sin(2 * _new_angle)));
-		var _delta_on_pixel = delta % _old_delta_to_change_pixel;
-		var _new_delta = _delta_on_pixel / _old_delta_to_change_pixel * _new_delta_to_change_pixel;
-		delta = _magnitude == 0 ? 0 : _new_delta;
+	get_line_real_x = function() {
+		return __pixelmove_util_round_to_correct(start_x + __pixelmove_util_get_x_component(angle, delta));
 	};
+	
+	/**
+	 * @ignore
+	 */
+	get_line_real_y = function() {
+		return __pixelmove_util_round_to_correct(start_y + __pixelmove_util_get_y_component(angle, delta));
+	}
 	
 	/**
 	 * @ignore
@@ -102,7 +97,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	get_line_x = function() {
 		if (delta == 0) return start_x;
 		if (infer_y_from_x()) {
-			var _x = __pixelmove_util_round_to_correct(start_x + __pixelmove_util_get_x_component(angle, delta));
+			var _x = get_line_real_x();
 			return __pixelmove_util_round_towards(_x, start_x);
 		}
 		
@@ -118,15 +113,36 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	get_line_y = function() {
 		if (delta == 0) return start_y;
 		if (!infer_y_from_x()) {
-			var _y = __pixelmove_util_round_to_correct(start_y + __pixelmove_util_get_y_component(angle, delta));
+			var _y = get_line_real_y();
 			return __pixelmove_util_round_towards(_y, start_y);
 		}
 		
 		// derive y position from linear line function of x
-		var _x_diff = get_line_x(start_x, start_y) - start_x;
+		var _x_diff = get_line_x() - start_x;
 		var _y = __pixelmove_util_round_to_correct(slope() * _x_diff + start_y);
 		return __pixelmove_util_round_towards(_y, start_y);
 	}
+	
+	/**
+	 * Reset result of line equation to current position. Does not change angle.
+	 *
+	 * @param {real} _new_angle
+	 * @param {real} _magnitude
+	 */
+	reset_line_to_current = function(_new_angle, _magnitude) {
+		// determine current real position from line
+		var _real_x = get_line_real_x();
+		var _real_y = get_line_real_y();
+		
+		// reset start positions and movements
+		var _x = pixel_move_get_x(self);
+		var _y = pixel_move_get_y(self);
+		start_x = _x;
+		start_y = _y;
+		movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
+		delta = 0;
+		
+	};
 	
 	/**
 	 * Get the integer x position derived from the true position rounded towards start position.
@@ -176,13 +192,13 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		// error correct based on true value
 		true_x += __pixelmove_util_get_x_component(_angle, _magnitude);
 		true_y += __pixelmove_util_get_y_component(_angle, _magnitude);
-		var _error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
+		var _error = sqrt(sqr(get_true_round_to_start_x() - get_line_x()) + sqr(get_true_round_to_start_y() - get_line_y()));
 		
 		// determine if this movement crossed the movements_on_angle threshold, and new error
 		var _threshold_cross_before_movements_on_angle_change = get_movements_on_angle_passed_threshold();
 		movements_on_angle += 1;
 		var _crossed_delta_line_threshold = get_movements_on_angle_passed_threshold() != _threshold_cross_before_movements_on_angle_change;
-		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - pixel_move_get_x(self)) + sqr(get_true_round_to_start_y() - pixel_move_get_y(self)));
+		var _post_delta_change_error = sqrt(sqr(get_true_round_to_start_x() - get_line_x()) + sqr(get_true_round_to_start_y() - get_line_y()));
 		
 		// correct line towards error
 		if ((!get_movements_on_angle_passed_threshold() && _error >= 1) || (_post_delta_change_error >= 1 && _crossed_delta_line_threshold)) {
@@ -193,8 +209,8 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		
 		// correct error towards line once passed threshold
 		if (get_movements_on_angle_passed_threshold()) {
-			true_x = pixel_move_get_x(self);
-			true_y = pixel_move_get_y(self);
+			true_x = get_line_real_x();
+			true_y = get_line_real_y();
 		}
 	};
 }
@@ -401,7 +417,7 @@ function pixel_move_by_vector_against(pixel_move, angle, magnitude, against) {
 		}
 		_increased_delta = min(_max_delta, _mod_delta + 1);
 	}
-
+	
 	pixel_move_by_vector(pixel_move, _collision_angle, _mod_delta);
 }
 

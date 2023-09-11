@@ -690,3 +690,35 @@ function test() {
 }
 
 While implementing this new delta change, we forgot that we have to proportionally change the delta based on not just the old delta on pixel progress, but the new as well. For example, if the old delta_to_change_pixel was 1.414, and the delta was 1.400, and our new delta_to_change_pixel is 1, then we have to observe that 1.400 is 99% of 1.414. So our new delta should be 99% of 1.
+
+var _old_delta_to_change_pixel = 1 + (sqrt(2) - 1) * abs(sin(2 * angle));
+		var _new_delta_to_change_pixel = 1 + (sqrt(2) - 1) * abs(sin(2 * _new_angle));
+		var _delta_on_pixel = delta / _old_delta_to_change_pixel * _new_delta_to_change_pixel;
+		
+
+
+Ah, I had this feeling that after changing the line derivation system to correctly transfer delta when changing angle, that we would no longer need true_x/y, and be able to rely totally on line derivation. But I remember now why this can never be true. If the slope of our line isn't exactly 1, then when we reach the threshold to change pixels it will only change on the main axis, not the off axis. But when we change angles we reset our starting position and transfer our delta on pixel. So if we have a case with frequent gentle changes in slope, like drawing a circle, everytime the angle changes our progress towards a change in the off axis pixel is lost. Sure we keep the progress along the line, but if we need more than 1 change in pixel to trigger an off axis change, and the angle changes every frame, we'll never make an off axis change.
+
+Only thing confusing me right now is with our current system, if we program our test object to draw a circle, there are skips in the line with a vel of 1. Need to investigate why that's happening.
+
+Ah, it's happening because although we correctly change the delta, we forgot to account for start_x/y changing. When we find the progress towards the next pixel of the delta, we're simply finding it along the current line derivation. But if the x/y start change, then the old delta value isn't actually accurate to where we'd derive from. I have an idea for how to fix this. Let's go by steps:
+
+on angle change:
+1. determine true x/y from line (real position, not rounded)
+2. change start_x/y, and determine new delta and angle to same point from new start_x/y
+3. perform same change in delta logic, but using this newly calculated delta and angle instead of stored state values
+
+Oh no, I think my concept here is way wrong. The reason we're seeing gaps is because, since we're changing delta according to pixel change, we've completely lost track of actual position change. I'm having trouble putting it down into words very clearly, but we can't do it like this. Trying to change the delta proportionally to pixel change ends up adding and removing distance, which we don't want to do. Let's revert a bunch of logic.
+
+What I believe we did get right however, is recalculating the delta from the real position after changing start_x/y. After changing the start_x/y the old delta doesn't make sense anymore. So we can think of delta as "progress from xtart_x/y towards the real position". Actually it's literally just "distance" from start_x/y to real position. Let's see how it feels if we retain this correctly calculated delta on angle change.
+
+Ah, we're failing our tests again, but this time it makes sense why. If we simply retain the old delta (correctly), then any angle change in the opposite direction could trigger a gap if the previous delta was very close to changing pixels. Let's try changing the delta porportionally to the change in angle. an angle change of pi should cause the new delta to be 0 exactly.
+
+
+Oh bother. I was reflecting on our angle changing behavior and had a fairly significant thought regarding the point of this project and how the behavior works. Our ultimate goal is to ensure that when moving at a perfectly straight line, our position displays linear line equation results for pixels, ensureing that there is no stair stepping. However I think 99% of the time we actually want to display the true real_x/y. So we shouldn't be deleting data on movement from the PixelMove instance on angle change. It feels bad, and it's not helpful to whoever is using the library.
+
+I have a new strategy idea. It's a frustrating strategy idea because I think we've had this before. Firstly, let's derive our position from true_x/y instead of another, integer only start_x/y. The reason for this is that we could continue to always have perfect lines dervied from anywhere, however we could display the true position (even if that means including stair steps) on any angle change. Admittedley, yes, this means we'd show pixel gaps when moving at 1 sometimes, but I think that's the important realization I'm starting to have: it's ok to show pixel gaps sometimes. And that's because they're technically the truth.
+
+The trickiest part will be ensuring correct rounding now that we're rounding towards real values instead of always an integer, but I'm sure we'll figure it out.
+
+Let's try it.

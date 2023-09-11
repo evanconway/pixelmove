@@ -26,23 +26,20 @@ if (stick_mag > 0) {
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
 
-// collision checking
-//angle += random_range(-0.01, 0.01);
-//_angle = angle;
-//_vel = 2.3;
-
-_angle = __pixelmove_util_get_cleaned_angle(_angle);
+_angle = angle;
+_vel = 1;
+angle += 0.03;
 
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
-if (keyboard_check(vk_space) && _angle != pixel_move.angle) {
-		show_debug_message("debug")
-	}
+pixel_move_by_vector(pixel_move, _angle, _vel);
 
+/*
 pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
 	return place_meeting(x, y, obj_wall);
 });
+*/
 
 _x = pixel_move_get_x(pixel_move);
 _y = pixel_move_get_y(pixel_move);
