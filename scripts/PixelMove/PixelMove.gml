@@ -80,15 +80,20 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	/**
 	 * Reset result of line equation to current position. Does not change angle.
 	 *
-	 * @ignore
+	 * @param {real} _new_angle
+	 * @param {real} _magnitude
 	 */
-	reset_line_to_current = function() {
+	reset_line_to_current = function(_new_angle, _magnitude) {
 		var _x = pixel_move_get_x(self);
 		var _y = pixel_move_get_y(self);
 		start_x = _x;
 		start_y = _y;
-		delta = 0;
 		movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
+		var _old_delta_to_change_pixel = __pixelmove_util_round_to_correct(1 + (sqrt(2) - 1) * abs(sin(2 * angle)));
+		var _new_delta_to_change_pixel = __pixelmove_util_round_to_correct(1 + (sqrt(2) - 1) * abs(sin(2 * _new_angle)));
+		var _delta_on_pixel = delta % _old_delta_to_change_pixel;
+		var _new_delta = _delta_on_pixel / _old_delta_to_change_pixel * _new_delta_to_change_pixel;
+		delta = _magnitude == 0 ? 0 : _new_delta;
 	};
 	
 	/**
@@ -158,16 +163,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		var _curr_y = pixel_move_get_y(self);
 		
 		// reset line data on no movement or angle change
-		if ((_magnitude == 0) || _angle_changed) {
-			var _x = pixel_move_get_x(self);
-			var _y = pixel_move_get_y(self);
-			start_x = _x;
-			start_y = _y;
-			var _delta_on_pixel = delta - floor(delta);
-			delta = _magnitude == 0 ? 0 : (_delta_on_pixel * _angle_diff/pi);
-			if (_angle_changed) show_debug_message($"delta: {delta}");
-			movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
-		}
+		if ((_magnitude == 0) || _angle_changed) reset_line_to_current(_angle, _magnitude);
 		
 		// reset true data on no movement
 		if (_magnitude == 0) {

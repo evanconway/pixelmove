@@ -668,3 +668,25 @@ The "if_moved_by_against" functions have been added and tests updated. time to w
 I was finally able to fix the stupid trail drawing function. Now looking at the green trails in the demos is much clearer, and makes it more obvious why pixel draw is smoother. I am noticing however that going from regular real free move to pixel move doesn't feel good. Pixel move feels like I get stuck whenever I move. And the reason for this is obvious, it's because we completely reset our position when we change angle. So any progress towards the next pixel is totally lost. I have an idea. What if we allowed the delta to retain some of its previous delta on angle change? It could depend on how far away the new angle is from the previous. Actually that makes sense. We just measure the change in angle and decrease delta by in proportionally. For example a complete 180 should result in 100% of the previous delta being subtracted. It's clear that PI is our point of reference here. Oh wait I'm dumb, the percentage is just PI/(change in angle). Let's try that and see what happens.
 
 That might have helped. I needed to remember however that we don't change to a percentage of delta, we change to a percentage of the progress through the current pixel. I feel like we still don't quite have it right, need to review.
+
+
+11th of September, 2023
+
+Had a realization last night. If we want to correctly transfer the delta to the new angle, we have to account for the differences in delta needed to trigger a pixel change. For example, at angle 0 the delta needed to trigger a pixel change is 1. But an angle of pi/4 the delta needed to trigger a pixel change is sqrt(2). So we need to figure out how to get the delta_to_pixel_change for the current angle before shifting. Ah, I have an idea. First let's note that the distance needed for pixel change moves in a cycle as the angle increases. And the period of that cycle is pi/2. Since the sine function outputs between 0 and 1 depending on how far through pi you are, we could input 2*angle to determine how far away from pi/2 we are. Since we know the distance will always be between 1 and sqrt(2). Our equation for delta_to_change_pixel is:
+
+delta_to_change_pixel = 1 + (sqrt(2) - 1) * sin(2*angle);
+
+Scratch that. I made some errors. After playing around with it here's our actual final equation:
+
+delta_to_change_pixel = 1 + (sqrt(2) - 1) * abs(sin(2 * angle));
+
+We need to use absolute value. I forgot that sin goes negative.  Let's paste the exact code we used here as reference.
+
+function test() {
+	for (var _angle = 0; _angle <= (2*pi); _angle += (pi/100)) {
+		var _delta_to_change_pixel = 1 + (sqrt(2) - 1) * abs(sin(2 * _angle));
+		show_debug_message($"angle: {_angle}, delta_to_change_pixel: {_delta_to_change_pixel}");
+	}
+}
+
+While implementing this new delta change, we forgot that we have to proportionally change the delta based on not just the old delta on pixel progress, but the new as well. For example, if the old delta_to_change_pixel was 1.414, and the delta was 1.400, and our new delta_to_change_pixel is 1, then we have to observe that 1.400 is 99% of 1.414. So our new delta should be 99% of 1.

@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz);
 
-var _max_vel = 1.13;
+var _max_vel = sqrt(2)/2;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -35,6 +35,10 @@ _angle = __pixelmove_util_get_cleaned_angle(_angle);
 
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
+
+if (keyboard_check(vk_space) && _angle != pixel_move.angle) {
+		show_debug_message("debug")
+	}
 
 pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
 	return place_meeting(x, y, obj_wall);

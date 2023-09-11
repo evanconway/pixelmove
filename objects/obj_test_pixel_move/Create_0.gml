@@ -2,6 +2,7 @@ camera_init_basic(200, 112, 10);
 pixel_move = new PixelMove(x, y);
 
 //pixel_move_set_movement_type_hybrid(pixel_move);
+show_debug_message($"Pixel move type is:{pixel_move.movement_type}");
 
 create_positions = function() {
 	return ds_map_create();
