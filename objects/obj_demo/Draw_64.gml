@@ -19,5 +19,5 @@ if (room == rm_demo_lines_real) draw_text(0, room_height, "lines (floored real)"
 if (room == rm_demo_lines_pixel) draw_text(0, room_height, "lines (pixel move)");
 if (room == rm_demo_move_real) draw_text(0, room_height, "free move (real)");
 if (room == rm_demo_move_pixel) draw_text(0, room_height, "free move (pixel move)");
-if (room == rm_demo_topdown) draw_text(0, room_height, "Line Type Movement");
-if (room == rm_demo_platformer) draw_text(0, room_height, "Hybrid Type Movement");
+//if (room == rm_demo_topdown) draw_text(0, room_height, "Line Type Movement");
+//if (room == rm_demo_platformer) draw_text(0, room_height, "Hybrid Type Movement");
