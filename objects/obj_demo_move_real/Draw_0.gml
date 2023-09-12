@@ -6,11 +6,6 @@ if (keyboard_check(vk_right)) _hor += 1;
 if (keyboard_check(vk_up)) _vrt -= 1;
 if (keyboard_check(vk_down)) _vrt += 1;
 
-if (mouse_check_button(mb_any)) {
-	_hor = mouse_x - x;
-	_vrt = mouse_y - y;
-}
-
 var _angle = arctan2(_vrt, _hor);
 var _vel = (_hor == 0 && _vrt == 0) ? 0 : 0.707;
 
