@@ -3,10 +3,11 @@
 A GameMaker package to quickly setup pixel perfect movement in low resolution environments.
 
 ### The Problem
-When moving elements around in very low rest environments, there is a frustrating stair step effect that happens when moving non-integer values at certain diagonals.
+When moving elements around in very low resolution environments, there is a frustrating stairstep effect that happens when moving at non-integer values on certain diagonals.
+
 ![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
 
-By default GameMaker floors non-integer x and y values when drawing them, as seen in the above gif. Unfortunately no matter how a position is rounded there will be inconsistent stairstep style changes on a diagonal:
+By default, GameMaker floors non-integer x and y values when drawing them, as seen in the above gif. Unfortunately no matter how a position is rounded there will be inconsistent stairstep style changes on a diagonal:
 
 | Rounding       | Position   |  Result   |
 | ----------- | ----------- | -----------|
@@ -38,7 +39,7 @@ x = pixel_move_get_x(pixel_move);
 y = pixel_move_get_y(pixel_move);
 ```
 
-PixelMove maintains its position internally and yeilds consistent integer results regardless of vector changes applied to it.
+PixelMove maintains its position internally and yeilds consistent integer positions regardless of the vector changes applied to it.
 
 ![Fixed Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement.gif)
 
