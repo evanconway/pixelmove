@@ -2,6 +2,12 @@
 
 A GameMaker package to quickly setup pixel perfect movement in low resolution environments.
 
+![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
+![Stairstep Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps_fast.gif)
+![Fixed Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement.gif)
+![Fixed Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement_fast.gif)
+
+
 # Currently A Work In Progress
 Everything here is subject to change.
 
