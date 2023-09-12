@@ -722,3 +722,5 @@ I have a new strategy idea. It's a frustrating strategy idea because I think we'
 The trickiest part will be ensuring correct rounding now that we're rounding towards real values instead of always an integer, but I'm sure we'll figure it out.
 
 Let's try it.
+
+Ok. After spending way too much time, it's clear why we stopped doing it like that. And it's because integer line equations remove positions when inferring position. That's simultaneously the point, but also why we can't use it to track main position. 
