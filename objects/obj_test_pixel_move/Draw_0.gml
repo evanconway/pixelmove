@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz);
 
-var _max_vel = sqrt(2)/2;
+var _max_vel = 1;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -26,20 +26,20 @@ if (stick_mag > 0) {
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
 
-_angle = angle;
-_vel = 1;
-angle += 0.03;
+//_angle = angle;
+//_vel = 1;
+//angle += 0.03;
 
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
-pixel_move_by_vector(pixel_move, _angle, _vel);
+//pixel_move_by_vector(pixel_move, _angle, _vel);
 
-/*
+
 pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
 	return place_meeting(x, y, obj_wall);
 });
-*/
+
 
 _x = pixel_move_get_x(pixel_move);
 _y = pixel_move_get_y(pixel_move);
