@@ -441,5 +441,3 @@ function __test_pixelmove(){
 }
 
 if (false) __test_pixelmove();
-
-//__test_pixelmove_pixel_gaps();

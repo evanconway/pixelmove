@@ -128,6 +128,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @param {real} _new_angle
 	 * @param {real} _magnitude
+	 * @ignore
 	 */
 	reset_line_to_current = function(_new_angle, _magnitude) {
 		// determine current real position from line
@@ -239,18 +240,18 @@ function pixel_move_set_movement_type_smooth(pixel_move) {
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
 function pixel_move_set_movement_type_hybrid(pixel_move) {
-	if (pixel_move.movement_type != "HYBRID") pixel_move.movements_on_angle = 0;
+	if (pixel_move.movement_type != "HYBRID") pixel_move.movements_on_angle = -2;
 	pixel_move.movement_type = "HYBRID";
 }
 
 /**
  * Set the number of movements at same angle before position is derived from line equation when using hybrid type movement.
  *
- * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the threshold for.
- * @param {real} threshold The new delta threshold.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set movements to infer from line threshold for.
+ * @param {real} threshold The new number of movements to infer from line.
  */
 function pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(pixel_move, threshold) {
-	pixel_move.movements_on_angle_to_infer_from_line = max(1, floor(abs(threshold)));
+	pixel_move.movements_on_angle_to_infer_from_line = max(0, floor(abs(threshold)));
 }
 
 /**
@@ -280,7 +281,7 @@ function pixel_move_get_y(pixel_move) {
 /**
  * Set the x,y position. 
  *
- * @param {Struct.PixelMove} _pixel_move The PixelMove instance to set the x and y position of.
+ * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the x and y position of.
  * @param {real} x The new x position.
  * @param {real} y The new y position.
  */

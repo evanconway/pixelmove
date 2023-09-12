@@ -104,14 +104,14 @@ _Returns:_  NA(`undefined`)
 
 Set the number of movements at same angle before position is derived from line equation when using hybrid type movement.
 
-_Full function name:_  `pixel_move_set_delta_line_threshold(pixel_move, threshold)`
+_Full function name:_  `pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(pixel_move, threshold)`
 
 _Returns:_  NA(`undefined`)
 
 | Name        | DataType    |  Purpose   |
 | ----------- | ----------- | -----------|
-| pixel_move | Struct.PixelMove | The PixelMove instance to set the threshold for. |
-| threshold | Real | The new delta threshold. |
+| pixel_move | Struct.PixelMove | The PixelMove instance to set movements to infer from line threshold for. |
+| threshold | Real | The new number of movements to infer from line. |
 ---
 
 `pixel_move_get_x`
