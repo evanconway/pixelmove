@@ -53,10 +53,10 @@ function __pixelmove_util_snap_cos(_angle) {
 }
 
 /**
- * @param {real} _value
- *
- * @ignore
- */
+* @param {real} _value
+*
+* @ignore
+*/
 function __pixelmove_util_round_to_thousandths(_value) {
 	return floor(_value * 1000 + 0.5) / 1000;
 }
@@ -116,12 +116,12 @@ function __pixelmove_util_get_angle_diff(_a, _b) {
 }
 
 /**
-	* Get the x component of the given vector.
-	*
-	* @param {real} _angle
-	* @param {real} _delta
-	* @ignore
-	*/
+* Get the x component of the given vector.
+*
+* @param {real} _angle
+* @param {real} _delta
+* @ignore
+*/
 function __pixelmove_util_get_x_component(_angle, _delta) {
 	_angle = __pixelmove_util_get_cleaned_angle(_angle);
 	if (_delta == 0 || _angle == 2*pi/4 || _angle == 6*pi/4) return 0;
@@ -129,12 +129,12 @@ function __pixelmove_util_get_x_component(_angle, _delta) {
 }
 	
 /**
-	* Get the y component of the given vector.
-	*
-	* @param {real} _angle
-	* @param {real} _delta
-	* @ignore
-	*/
+* Get the y component of the given vector.
+*
+* @param {real} _angle
+* @param {real} _delta
+* @ignore
+*/
 function __pixelmove_util_get_y_component(_angle, _delta) {
 	_angle = __pixelmove_util_get_cleaned_angle(_angle);
 	if (_delta == 0 || _angle == 0 || _angle == 4*pi/4) return 0;

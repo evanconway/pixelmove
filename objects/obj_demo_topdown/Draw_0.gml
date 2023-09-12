@@ -26,9 +26,6 @@ if (_stick_mag > 0) {
 	_vel = min(_stick_mag * _max_vel, _max_vel);
 }
 
-var _x = pixel_move_get_x(pixel_move);
-var _y = pixel_move_get_y(pixel_move);
-
 pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
 	return place_meeting(x, y, obj_wall);
 });

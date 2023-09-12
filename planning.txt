@@ -738,3 +738,4 @@ Since our old system meets our goals. I think we should try to release it as is.
 
 12th of September, 2023
 
+Today has been a day of documentation, double checking, and adding last minute fixes. We're just about ready for release.

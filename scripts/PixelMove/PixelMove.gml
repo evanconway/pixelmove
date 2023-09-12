@@ -126,16 +126,10 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	/**
 	 * Reset result of line equation to current position. Does not change angle.
 	 *
-	 * @param {real} _new_angle
 	 * @param {real} _magnitude
 	 * @ignore
 	 */
-	reset_line_to_current = function(_new_angle, _magnitude) {
-		// determine current real position from line
-		var _real_x = get_line_real_x();
-		var _real_y = get_line_real_y();
-		
-		// reset start positions and movements
+	reset_line_to_current = function(_magnitude) {
 		var _x = pixel_move_get_x(self);
 		var _y = pixel_move_get_y(self);
 		start_x = _x;
@@ -173,14 +167,12 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 */
 	move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
-		var _angle_diff = __pixelmove_util_get_angle_diff(angle, _angle);
-		var _angle_changed = angle != _angle;
 		
 		var _curr_x = pixel_move_get_x(self);
 		var _curr_y = pixel_move_get_y(self);
 		
 		// reset line data on no movement or angle change
-		if ((_magnitude == 0) || _angle_changed) reset_line_to_current(_angle, _magnitude);
+		if ((_magnitude == 0) || angle != _angle) reset_line_to_current(_magnitude);
 		
 		// reset true data on no movement
 		if (_magnitude == 0) {
