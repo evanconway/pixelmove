@@ -2,14 +2,51 @@
 
 A GameMaker package to quickly setup pixel perfect movement in low resolution environments.
 
+### The Problem
+When moving elements around in very low rest environments, there is a frustrating stair step effect that happens when moving non-integer values at certain diagonals.
 ![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
+
+By default GameMaker floors non-integer x and y values when drawing them, as seen in the above gif. Unfortunately no matter how a position is rounded there will be inconsistent stairstep style changes on a diagonal:
+
+| Rounding       | Position   |  Result   |
+| ----------- | ----------- | -----------|
+| (floor, floor) | (0.5, -0.5) | (0, -1) |
+| (floor, ceil) | (0.5, 0.5) | (0, 1) |
+| (ceil, ceil) | (0.5, -0.5) | (1, 0) |
+---
+
+The effect in motion is jagged and messy looking.
+
 ![Stairstep Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps_fast.gif)
+
+In order for pixel-by-pixel motion with non-integer changes to look consistent, the result of any position adjustments has to have consistent change regardless of the direction.
+
+That is what PixelMove does.
+
+```
+// create event
+pixel_move = new PixelMove(0, 0);
+
+// step event
+pixel_move_by_vector(pixel_move, pi/4, 1);
+
+// or...
+pixel_move_by_magnitudes(pixel_move, 0.5, -0.5);
+
+// draw event
+x = pixel_move_get_x(pixel_move);
+y = pixel_move_get_y(pixel_move);
+```
+
+PixelMove maintains its position internally and yeilds consistent integer results regardless of vector changes applied to it.
+
 ![Fixed Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement.gif)
+
+The result is pixel-by-pixel movement that is smoother and much more consistent.
+
 ![Fixed Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement_fast.gif)
 
-
-# Currently A Work In Progress
-Everything here is subject to change.
+Check out the [demo at itch.io](https://gla55world.itch.io/pixelmove-demo) for more examples.
 
 # Functions
 `PixelMove`
