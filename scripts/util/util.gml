@@ -45,7 +45,7 @@ function gamepad_get_left_stick_data() {
 function gamepad_get_jump() {
 	var _result = false;
 	for (var _i = 0; _i < gamepad_get_device_count(); _i++) {
-		if (gamepad_button_check(_i, gp_face1)) _result = true;
+		if (gamepad_button_check_pressed(_i, gp_face1)) _result = true;
 	}
 	return _result;
 }
