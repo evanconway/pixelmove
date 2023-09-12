@@ -138,6 +138,8 @@ function __test_pixelmove_perfect_diagonals() {
 				pixel_move_by_magnitudes(_sm, _mag_x, _mag_y);
 				var _x_after_move = pixel_move_get_x(_sm);
 				var _y_after_move = pixel_move_get_y(_sm);
+				var _x_real = _sm.get_real_x();
+				var _y_real = _sm.get_real_y();
 				var _divider = 1 / abs(_mag_x);
 				if ((_i + 1) % _divider == 0) {
 					__test_pixel_move_assert_real(_x_after_move, _check_x + sign(_mag_x), $"Pixel diagonal test {_mag_x} x fail!");
@@ -207,8 +209,6 @@ function __test_pixelmove_pixel_gaps() {
 	pixel_move_set_position(_random, 0, 0);
 	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
-	_positions = [];
-	array_push(_positions, [pixel_move_get_x(_random), pixel_move_get_y(_random)]);
 	var _last_x = pixel_move_get_x(_random);
 	var _last_y = pixel_move_get_y(_random);
 	for (var _i = 0; _i < 1000; _i++) {
@@ -218,7 +218,6 @@ function __test_pixelmove_pixel_gaps() {
 			pixel_move_by_vector(_random, _angle, 1);
 			var _curr_x = pixel_move_get_x(_random);
 			var _curr_y = pixel_move_get_y(_random);
-			array_push(_positions, [_curr_x, _curr_y]);
 			if (point_distance(_last_x, _last_y, _curr_x, _curr_y) > sqrt(2)) {
 				show_error($"Pixel move random cardinal/intermediate movement failed move {_i} frame {_f}. Delta greater than sqrt(2) from ({_last_x}, {_last_y})  to ({_curr_x}, {_curr_y})", true);
 			}
@@ -387,6 +386,7 @@ function __test_pixelmove_always_increase() {
 	__test_pixel_move_show_test_message("No Stairsteps On Lines");
 	
 	var _sm = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_sm);
 	var _x = pixel_move_get_x(_sm);
 	var _y = pixel_move_get_y(_sm);
 

@@ -13,7 +13,7 @@ if (_lt) _horz -= 1;
 
 var _angle = arctan2(_vert, _horz);
 
-var _max_vel = sqrt(2)/2;
+var _max_vel = 1;
 
 var _vel = (_vert != 0 || _horz != 0) ? _max_vel : 0;
 
@@ -26,14 +26,35 @@ if (stick_mag > 0) {
 	_vel = min(stick_mag * _max_vel, _max_vel);
 }
 
-_angle = angle;
+//_angle = angle;
 _vel = 1;
-angle += 0.03;
+angle +=  random_range(-0.03, 0.03);
+
+_angle = __pixelmove_util_get_cleaned_angle(angle);
 
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);
 
+if (_vel == 0) {
+	position_x = pixel_move_get_x(pixel_move);
+	position_y = pixel_move_get_y(pixel_move);
+}
+
+var _potential_position_x = position_x + __pixelmove_util_get_x_component(_angle, _vel);
+var _potential_position_y = position_y + __pixelmove_util_get_y_component(_angle, _vel);
+
+var _potential_pixel_position = pixel_move_get_real_position_if_moved_by_vector(pixel_move, _angle, _vel);
+
+var _flawed = abs(_potential_pixel_position.x - _potential_position_x) > 0.0001 || abs(_potential_pixel_position.y - _potential_position_y) > 0.0001;
+
+if (_flawed) {
+	show_debug_message("show time");
+}
+
 pixel_move_by_vector(pixel_move, _angle, _vel);
+
+position_x += __pixelmove_util_get_x_component(_angle, _vel);
+position_y += __pixelmove_util_get_y_component(_angle, _vel);
 
 /*
 pixel_move_by_vector_against(pixel_move, _angle, _vel, function(x, y) {
