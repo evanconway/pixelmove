@@ -1,3 +1,16 @@
+draw_set_color(c_white);
+draw_set_alpha(1);
+draw_set_font(fnt_demo_tiny);
+
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
+
+if (!begun) {
+	if (mouse_check_button_pressed(mb_any)) begun = true;
+	draw_text(room_width/2, room_height/2, "click to begin");
+	exit;
+}
+
 if (keyboard_check_pressed(ord("1"))) room_goto(rm_demo_circle_smooth);
 if (keyboard_check_pressed(ord("2"))) room_goto(rm_demo_lines_real);
 if (keyboard_check_pressed(ord("3"))) room_goto(rm_demo_lines_pixel);
@@ -8,9 +21,6 @@ if (keyboard_check_pressed(ord("7"))) room_goto(rm_demo_platformer);
 
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
-draw_set_color(c_white);
-draw_set_alpha(1);
-draw_set_font(fnt_demo_tiny);
 draw_text(0, 0, "Press 1-7 to choose a demo.");
 
 draw_set_valign(fa_bottom);
