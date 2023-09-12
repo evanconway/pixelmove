@@ -29,14 +29,11 @@ angle = 0;
 position_x = x;
 position_y = y;
 
+/*
 var _flawed = false;
 
 var _count = 0;
-while (!_flawed)  {
-	if (_count == 580) {
-		show_debug_message("show time");
-	}
-	
+while (!_flawed)  {	
 	var _vel = 1;
 	angle +=  random_range(-0.03, 0.03);
 	
@@ -49,3 +46,8 @@ while (!_flawed)  {
 }
 
 pixel_move_set_position(pixel_move, room_width/2, room_height/2);
+
+pixel_move_set_position(pixel_move, x, y);
+position_x = x;
+position_y = y;
+*/

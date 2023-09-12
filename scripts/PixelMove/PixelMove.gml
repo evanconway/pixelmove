@@ -38,15 +38,6 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		return movements_on_angle >= movements_on_angle_to_infer_from_line;
 	};
 	
-	/**
-	 * @param {real} _angle
-	 * @param {real} _delta
-	 * @ignore
-	 */
-	set_line = function(_angle, _delta) {
-		angle = __pixelmove_util_get_cleaned_angle(_angle);
-		delta = _delta;
-	};
 	
 	/**
 	 * Returns if y is inferred from x, or x is inferred from y.
@@ -102,7 +93,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	get_line_x = function() {
 		if (delta == 0) return round_to_start_x(start_x);
 		if (infer_y_from_x()) {
-			var _x = get_real_x();
+			var _x = __pixelmove_util_round_to_correct(get_real_x());
 			return round_to_start_x(_x);
 		}
 		
@@ -118,7 +109,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	get_line_y = function() {
 		if (delta == 0) return round_to_start_y(start_y);
 		if (!infer_y_from_x()) {
-			var _y = get_real_y();
+			var _y = __pixelmove_util_round_to_correct(get_real_y());
 			return round_to_start_y(_y);
 		}
 		
@@ -165,7 +156,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 				start_x = _x;
 				start_y = _y;
 			} else {
-				start_x =  _real_x;
+				start_x = _real_x;
 				start_y = _real_y;
 			}
 			movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;

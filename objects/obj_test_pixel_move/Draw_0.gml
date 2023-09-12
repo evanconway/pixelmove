@@ -27,10 +27,10 @@ if (stick_mag > 0) {
 }
 
 //_angle = angle;
-_vel = 1;
-angle +=  random_range(-0.03, 0.03);
+//_vel = 1;
+//angle +=  random_range(-0.03, 0.03);
 
-_angle = __pixelmove_util_get_cleaned_angle(angle);
+//_angle = __pixelmove_util_get_cleaned_angle(angle);
 
 var _x = pixel_move_get_x(pixel_move);
 var _y = pixel_move_get_y(pixel_move);

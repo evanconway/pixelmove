@@ -21,6 +21,55 @@ function __test_pixel_move_show_test_message(_test_name) {
 	show_debug_message("Pixel move testing " + _test_name + "...");
 }
 
+function __test_pixelmove_components() {
+	__test_pixel_move_show_test_message("Component Function");
+	
+	for (var _i = 0 ; _i < 1000; _i++) {
+		var _angle = random(2*pi);
+		var _vel = 1;
+		var _delta = 0;
+		var _check_x = 0;
+		var _check_y = 0
+		for (var _k = 0; _k < 100; _k ++) {
+			_delta += 1;
+			_check_x += __pixelmove_util_get_x_component(_angle, _vel);
+			_check_y += __pixelmove_util_get_y_component(_angle, _vel);
+		}
+		
+		var _component_x = __pixelmove_util_get_x_component(_angle, _delta);
+		var _component_y = __pixelmove_util_get_y_component(_angle, _delta);
+		
+		__test_pixel_move_assert_real(_check_x, _component_x, "Pixel move compoment x fail!");
+		__test_pixel_move_assert_real(_check_y, _component_y, "Pixel move compoment x fail!");
+	}
+	
+	show_debug_message("test complete");
+}
+
+function __test_pixelmove_real_stays_true() {
+	__test_pixel_move_show_test_message("Real Position");
+	
+	var _pm = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_pm);
+	var _position_x = 0;
+	var _position_y = 0;
+	for (var _i = 0; _i < 10000; _i++) {	
+		var _angle = random(2*pi);
+		var _vel = random_range(0.01, 1);
+		var _frames = irandom(20);
+		for (var _f = 0; _f < _frames; _f++) {
+			pixel_move_by_vector(_pm, _angle, _vel);
+			_position_x += __pixelmove_util_get_x_component(_angle, _vel);
+			_position_y += __pixelmove_util_get_y_component(_angle, _vel);
+			var _real_x = _pm.get_real_x();
+			var _real_y = _pm.get_real_y();
+			__test_pixel_move_assert_real(_position_x, _real_x, $"Pixel move real position x fail movement {_i} frame {_f}. Expected {_position_x} got {_real_x}");
+			__test_pixel_move_assert_real(_position_y, _real_y, $"Pixel move real position y fail movement {_i} frame {_f}. Expected {_position_y} got {_real_y}");
+		}
+	}
+	show_debug_message("test complete");
+}
+
 /**
  * @param {bool} _show_stairsteps
  * @ignore
@@ -138,8 +187,6 @@ function __test_pixelmove_perfect_diagonals() {
 				pixel_move_by_magnitudes(_sm, _mag_x, _mag_y);
 				var _x_after_move = pixel_move_get_x(_sm);
 				var _y_after_move = pixel_move_get_y(_sm);
-				var _x_real = _sm.get_real_x();
-				var _y_real = _sm.get_real_y();
 				var _divider = 1 / abs(_mag_x);
 				if ((_i + 1) % _divider == 0) {
 					__test_pixel_move_assert_real(_x_after_move, _check_x + sign(_mag_x), $"Pixel diagonal test {_mag_x} x fail!");
@@ -181,26 +228,20 @@ function __test_pixelmove_pixel_gaps() {
 	// there should never be a gap while showing stair steps and vector magnitude is 1
 	show_debug_message("move by random angle changes");
 	var _angle = 0;
-	var _positions = [];
-	array_push(_positions, [pixel_move_get_x(_random), pixel_move_get_y(_random)]);
-	for (var _i = 0; _i < 1000; _i++) {
+	var _last_x = pixel_move_get_x(_random);
+	var _last_y = pixel_move_get_y(_random);
+	for (var _i = 0; _i < 50000; _i++) {
 		var _frames = irandom_range(1, 20);
 		_angle += random_range(-pi/8, pi/8);
 		for (var _f = 0; _f < _frames; _f++) {
 			pixel_move_by_vector(_random, _angle, 1);
-			array_push(_positions, [pixel_move_get_x(_random), pixel_move_get_y(_random)]);
-		}
-	}
-	
-	show_debug_message("checking for gaps");
-	for (var _i = 1; _i < array_length(_positions); _i++) {
-		var _x1 = _positions[_i -1][0];
-		var _x2 = _positions[_i][0]
-		var _y1 = _positions[_i - 1][1];
-		var _y2 = _positions[_i][1];
-		var _dist = sqrt(sqr(_x1 - _x2) + sqr(_y1 - _y2));
-		if (_dist > sqrt(2)) {
-			show_error($"Pixel move random movement failed position {_i}. Delta greater than 1 from ({_x1}, {_y1})  to ({_x2}, {_y2})", true);
+			var _curr_x = pixel_move_get_x(_random);
+			var _curr_y = pixel_move_get_y(_random);
+			if (point_distance(_last_x, _last_y, _curr_x, _curr_y) > sqrt(2)) {
+				show_error($"Pixel move random movement failed move {_i} frame {_f}. Delta greater than sqrt(2) from ({_last_x}, {_last_y})  to ({_curr_x}, {_curr_y})", true);
+			}
+			_last_x = _curr_x;
+			_last_y = _curr_y;
 		}
 	}
 	
@@ -209,9 +250,9 @@ function __test_pixelmove_pixel_gaps() {
 	pixel_move_set_position(_random, 0, 0);
 	var _angle_options = [0*pi/4, 1*pi/4, 2*pi/4, 3*pi/4, 4*pi/4, 5*pi/4, 6*pi/4, 7*pi/4];
 	_angle = 0;
-	var _last_x = pixel_move_get_x(_random);
-	var _last_y = pixel_move_get_y(_random);
-	for (var _i = 0; _i < 1000; _i++) {
+	_last_x = pixel_move_get_x(_random);
+	_last_y = pixel_move_get_y(_random);
+	for (var _i = 0; _i < 50000; _i++) {
 		var _frames = random_range(1, 15);
 		_angle = _angle_options[irandom_range(0, 7)];
 		for (var _f = 0; _f < _frames; _f++) {
@@ -429,7 +470,9 @@ function __test_pixelmove_always_increase() {
 /**
  * @ignore
  */
-function __test_pixelmove(){
+function __test_pixelmove() {
+	__test_pixelmove_components();
+	__test_pixelmove_real_stays_true();
 	__test_pixelmove_cardinals();
 	__test_pixelmove_perfect_diagonals();
 	__test_pixelmove_pixel_gaps();
