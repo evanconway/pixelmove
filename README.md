@@ -6,7 +6,7 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 
 [Demo](https://gla55world.itch.io/pixelmove-demo)
 
-### The Problem
+## The Problem
 When moving elements around in very low resolution environments, there is a frustrating stairstep effect that happens when moving at non-integer values on certain diagonals.
 
 ![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
@@ -49,6 +49,8 @@ PixelMove maintains its position internally and yeilds consistent integer positi
 The result is pixel-by-pixel movement that is smoother and much more consistent.
 
 ![Fixed Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement_fast.gif)
+
+## Movement Types
 
 Since every game is different, PixelMove provides a provides a variety of movement types.
 
