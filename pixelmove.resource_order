@@ -14,6 +14,7 @@
     {"name":"Stairsteps","order":2,"path":"folders/Examples/Stairsteps.yy",},
     {"name":"Starsteps Fast","order":6,"path":"folders/Examples/Starsteps Fast.yy",},
     {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
+    {"name":"Types","order":8,"path":"folders/Examples/Types.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_demo","order":3,"path":"objects/obj_demo/obj_demo.yy",},
@@ -36,6 +37,7 @@
     {"name":"spr_player","order":6,"path":"sprites/spr_player/spr_player.yy",},
     {"name":"obj_wall","order":10,"path":"objects/obj_wall/obj_wall.yy",},
     {"name":"rm_test_pixel_move","order":12,"path":"rooms/rm_test_pixel_move/rm_test_pixel_move.yy",},
+    {"name":"obj_example_types","order":1,"path":"objects/obj_example_types/obj_example_types.yy",},
     {"name":"rm_demo","order":2,"path":"rooms/rm_demo/rm_demo.yy",},
     {"name":"obj_example_stairsteps_clean_fast","order":1,"path":"objects/obj_example_stairsteps_clean_fast/obj_example_stairsteps_clean_fast.yy",},
     {"name":"util","order":1,"path":"scripts/util/util.yy",},

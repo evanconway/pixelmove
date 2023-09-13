@@ -50,6 +50,20 @@ The result is pixel-by-pixel movement that is smoother and much more consistent.
 
 ![Fixed Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement_fast.gif)
 
+Since every game is different, PixelMove provides a provides a variety of movement types.
+
+Line type movement is straight and consistent. This produces the most mathematically correct changes for a given vector.
+
+![Line Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_line.gif)
+
+Smooth type movement is more fluid and responsive. This is closer to the results of just rounding the real x, y position.
+
+![Smooth Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_smooth.gif)
+
+Hybrid type movement is a mix of both. PixelMove will start using smooth type movment, but switch to line type once the threshold for number of movements has been crossed. The default is 5, but in this example it's been increased to 50 so the change from smooth to line is clearer.
+
+![Hybrid Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_hybrid.gif)
+
 Check out the [demo at itch.io](https://gla55world.itch.io/pixelmove-demo) for more examples.
 
 # Functions
