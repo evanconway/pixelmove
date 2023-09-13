@@ -59,7 +59,7 @@ Line type movement is straight and consistent. This produces the most mathematic
 
 ![Line Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_line.gif)
 
-Smooth type movement is more fluid and responsive. This is closer to the results of just rounding the real x, y position. Because of this, it produces clean lines along the cardinal directions. This type works well for platformers.
+Smooth type movement is more fluid and responsive. This is closer to the results of just rounding the real x, y position. Because of this, it produces clean lines along the cardinal directions but reintroduces stairsteps on other angles. This type works well for platformers.
 
 ![Smooth Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_smooth.gif)
 
