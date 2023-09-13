@@ -6,6 +6,8 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 
 [Demo](https://gla55world.itch.io/pixelmove-demo)
 
+[GameMaker Marketplace](https://marketplace.gamemaker.io/assets/11781/pixelmove)
+
 ## The Problem
 When moving elements around in very low resolution environments, there is a frustrating stairstep effect that happens when moving at non-integer values on certain diagonals.
 
