@@ -18,6 +18,11 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	delta = 0;
 	
 	// @ignore
+	round_target_x = start_x;
+	// @ignore
+	round_target_y = start_y;
+	
+	// @ignore
 	movement_type = "LINE";
 	
 	/*
@@ -63,14 +68,14 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @param {value} _value
 	 */
 	round_to_start_x = function(_value) {
-		return __pixelmove_util_round_towards(_value, floor(start_x));
+		return __pixelmove_util_round_towards(_value, round_target_x);
 	};
 	
 	/**
 	 * @param {value} _value
 	 */
 	round_to_start_y = function(_value) {
-		return __pixelmove_util_round_towards(_value, floor(start_y));
+		return __pixelmove_util_round_towards(_value, round_target_y);
 	};
 	
 	/**
@@ -147,24 +152,36 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 */
 	move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
-		if ((_magnitude == 0) || angle != _angle) {
-			var _real_x = get_real_x();
-			var _real_y = get_real_y();
-			var _x = pixel_move_get_x(self);
-			var _y = pixel_move_get_y(self);
-			if (_magnitude == 0 || movement_type == "LINE") {
-				start_x = _x;
-				start_y = _y;
-			} else {
-				start_x = _real_x;
-				start_y = _real_y;
-			}
-			movements_on_angle = movement_type == "LINE" ? movements_on_angle_to_infer_from_line : 0;
-			delta = 0;
+		var _real_x = get_real_x();
+		var _real_y = get_real_y();
+		var _integer_x = pixel_move_get_x(self);
+		var _integer_y = pixel_move_get_y(self);
+		
+		if (_angle != angle) {
+			start_x = _real_x;
+			start_y = _real_y;
 		}
+		
+		if (_angle != angle || _magnitude == 0) {
+			delta = 0;
+			movements_on_angle = 0;
+		}
+		
+		if (_magnitude == 0 || (_angle != angle && movement_type == "LINE")) {
+			start_x = _integer_x;
+			start_y = _integer_y;
+			round_target_x = _integer_x;
+			round_target_y = _integer_y;
+		}
+		
+		delta += _magnitude;
 		angle = _angle;
-		delta +=  _magnitude;
-		movements_on_angle = movement_type == "SMOOTH" ? 0 : (movements_on_angle + 1);
+		movements_on_angle += 1;
+		
+		if (movement_type != "LINE" && (pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
+			round_target_x = _integer_x;
+			round_target_y = _integer_y;
+		}
 	};
 }
 
@@ -192,7 +209,6 @@ function pixel_move_set_movement_type_smooth(pixel_move) {
  * @param {Struct.PixelMove} pixel_move The PixelMove instance to set the movement type for.
  */
 function pixel_move_set_movement_type_hybrid(pixel_move) {
-	if (pixel_move.movement_type != "HYBRID") pixel_move.movements_on_angle = -2;
 	pixel_move.movement_type = "HYBRID";
 }
 
@@ -214,6 +230,9 @@ function pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(pixel_move,
  */
 function pixel_move_get_x(pixel_move) {
 	with (pixel_move) {
+		if (movement_type == "LINE") return get_line_x();
+		if (movement_type == "SMOOTH") return get_true_x();
+		// must be hybrid
 		return get_movements_on_angle_passed_threshold() ? get_line_x() : get_true_x();
 	}
 }
@@ -226,6 +245,9 @@ function pixel_move_get_x(pixel_move) {
  */
 function pixel_move_get_y(pixel_move) {
 	with (pixel_move) {
+		if (movement_type == "LINE") return get_line_y();
+		if (movement_type == "SMOOTH") return get_true_y();
+		// must be hybrid
 		return get_movements_on_angle_passed_threshold() ? get_line_y() : get_true_y();
 	}
 }
@@ -243,6 +265,8 @@ function pixel_move_set_position(pixel_move, x, y) {
 	with (pixel_move) {
 		start_x = x;
 		start_y = y;
+		round_target_x = x;
+		round_target_y = y;
 		delta = 0;
 		movements_on_angle = 0;	
 	}
@@ -256,7 +280,6 @@ function pixel_move_set_position(pixel_move, x, y) {
  * @param {real} magnitude The magnitude of the vector.
  */
 function pixel_move_by_vector(pixel_move, angle, magnitude) {
-	if (pixel_move.movement_type == "SMOOTH") pixel_move.movements_on_angle = -2;
 	pixel_move.move_by_vector(angle, magnitude);
 }
 
@@ -285,6 +308,8 @@ function pixel_move_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
 function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude) {
 	var _pre_move_start_x = pixel_move.start_x;
 	var _pre_move_start_y = pixel_move.start_y;
+	var _pre_move_round_target_x = pixel_move.round_target_x;
+	var _pre_move_round_target_y = pixel_move.round_target_y;
 	var _pre_move_angle = pixel_move.angle;
 	var _pre_move_delta = pixel_move.delta;
 	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
@@ -294,6 +319,8 @@ function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude
 	
 	pixel_move.start_x = _pre_move_start_x;
 	pixel_move.start_y = _pre_move_start_y;
+	pixel_move.round_target_x = _pre_move_round_target_x;
+	pixel_move.round_target_y = _pre_move_round_target_y;
 	pixel_move.angle = _pre_move_angle;
 	pixel_move.delta = _pre_move_delta;
 	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
@@ -394,6 +421,8 @@ function pixel_move_by_magnitudes_against(pixel_move, magnitude_x, magnitude_y, 
 function pixel_move_get_position_if_moved_by_vector_against(pixel_move, angle, magnitude, against) {
 	var _pre_move_start_x = pixel_move.start_x;
 	var _pre_move_start_y = pixel_move.start_y;
+	var _pre_move_round_target_x = pixel_move.round_target_x;
+	var _pre_move_round_target_y = pixel_move.round_target_y;
 	var _pre_move_angle = pixel_move.angle;
 	var _pre_move_delta = pixel_move.delta;
 	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
@@ -403,6 +432,8 @@ function pixel_move_get_position_if_moved_by_vector_against(pixel_move, angle, m
 	
 	pixel_move.start_x = _pre_move_start_x;
 	pixel_move.start_y = _pre_move_start_y;
+	pixel_move.round_target_x = _pre_move_round_target_x;
+	pixel_move.round_target_y = _pre_move_round_target_y;
 	pixel_move.angle = _pre_move_angle;
 	pixel_move.delta = _pre_move_delta;
 	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
