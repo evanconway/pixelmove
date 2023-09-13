@@ -13,8 +13,8 @@
     {"name":"Clean","order":5,"path":"folders/Examples/Clean.yy",},
     {"name":"Stairsteps","order":2,"path":"folders/Examples/Stairsteps.yy",},
     {"name":"Starsteps Fast","order":6,"path":"folders/Examples/Starsteps Fast.yy",},
-    {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
     {"name":"Types","order":8,"path":"folders/Examples/Types.yy",},
+    {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_demo","order":3,"path":"objects/obj_demo/obj_demo.yy",},
