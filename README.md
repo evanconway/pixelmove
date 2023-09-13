@@ -52,7 +52,7 @@ The result is pixel-by-pixel movement that is smoother and much more consistent.
 
 ## Movement Types
 
-Since every game is different, PixelMove provides a provides a variety of movement types.
+Since every game is different, PixelMove provides a variety of movement types.
 
 Line type movement is straight and consistent. This produces the most mathematically correct changes for a given vector. This is best for when vector changes are relatively infrequent (5-10 or more frames between each change). This works well for games using 8 way directional input on a pad. 
 
@@ -62,7 +62,7 @@ Smooth type movement is more fluid and responsive. This is closer to the results
 
 ![Smooth Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_smooth.gif)
 
-Hybrid type movement is a mix of both. PixelMove will start using smooth type movment, but switch to line type once the threshold for number of movements has been crossed. The default is 5, but in this example it's been increased to 50 so the change from smooth to line is clearer. This type is best for situations where perfect line movement is needed when vectors are held for a long time but allows for responsiveness when the vector changes frequently, such as movement vectors derived from an analog stick.
+Hybrid type movement is a mix of both. PixelMove will start using smooth type movement, but switch to line type once the threshold for number of movements has been crossed. The default is 5, but in this example it's been increased to 50 so the change from smooth to line is clearer. This type is best for situations where perfect line movement is needed when vectors are held for a long time but allows for responsiveness when the vector changes frequently, such as movement vectors derived from an analog stick.
 
 ![Hybrid Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_hybrid.gif)
 
