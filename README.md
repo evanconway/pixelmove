@@ -68,6 +68,7 @@ Hybrid type movement is a mix of both. PixelMove will start using smooth type mo
 
 Check out the [demo at itch.io](https://gla55world.itch.io/pixelmove-demo) for more examples.
 
+
 # Functions
 `PixelMove`
  
