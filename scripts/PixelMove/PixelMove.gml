@@ -190,7 +190,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		angle = _angle;
 		movements_on_angle += 1;
 		
-		if (!get_derive_position_from_line() && (pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
+		if ((pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
 			round_target_x = _integer_x;
 			round_target_y = _integer_y;
 		}
