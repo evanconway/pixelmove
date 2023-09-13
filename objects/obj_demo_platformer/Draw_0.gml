@@ -26,6 +26,7 @@ var _jump_pressed = gamepad_get_jump() || keyboard_check_pressed(vk_space);
 
 if (place_meeting(x, y - 1, obj_wall) || place_meeting(x, y + 1, obj_wall)) vertical_vel = 0;
 vertical_vel += 0.1;
+if (place_meeting(x, y - 1, obj_wall)) vertical_vel += 0.2; // get away from ceiling faster
 if (place_meeting(x, y + 1, obj_wall) && _jump_pressed) vertical_vel = -3;
 
 var _vel_x = cos(_angle) * _vel;

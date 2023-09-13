@@ -78,8 +78,8 @@
     {"id":{"name":"rm_test_pixel_move_walls","path":"rooms/rm_test_pixel_move_walls/rm_test_pixel_move_walls.yy",},},
   ],
   "RoomOrderNodes": [
-    {"roomId":{"name":"rm_test_pixel_move","path":"rooms/rm_test_pixel_move/rm_test_pixel_move.yy",},},
     {"roomId":{"name":"rm_demo","path":"rooms/rm_demo/rm_demo.yy",},},
+    {"roomId":{"name":"rm_test_pixel_move","path":"rooms/rm_test_pixel_move/rm_test_pixel_move.yy",},},
     {"roomId":{"name":"rm_example_types","path":"rooms/rm_example_types/rm_example_types.yy",},},
     {"roomId":{"name":"rm_example_stairsteps_fast","path":"rooms/rm_example_stairsteps_fast/rm_example_stairsteps_fast.yy",},},
     {"roomId":{"name":"rm_example_stairsteps","path":"rooms/rm_example_stairsteps/rm_example_stairsteps.yy",},},
