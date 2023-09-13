@@ -4,7 +4,6 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 
 [Download](https://drive.google.com/file/d/176QvhoNCwMBUFKoUCxCq_dzqxczZYG-g/view?usp=sharing)
 
-[Demo](https://gla55world.itch.io/pixelmove-demo)
 
 [GameMaker Marketplace](https://marketplace.gamemaker.io/assets/11781/pixelmove)
 
