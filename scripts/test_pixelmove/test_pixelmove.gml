@@ -81,7 +81,6 @@ function __test_pixelmove_real_stays_true() {
 }
 
 /**
- * @param {bool} _show_stairsteps
  * @ignore
  */
 function __test_pixelmove_cardinals() {
@@ -180,7 +179,6 @@ function __test_pixelmove_cardinals() {
 }
 
 /**
- * @param {bool} _show_stairsteps
  * @ignore
  */
 function __test_pixelmove_perfect_diagonals() {
@@ -223,6 +221,142 @@ function __test_pixelmove_perfect_diagonals() {
 	_test_perfect_diagonals(1/3);
 	_test_perfect_diagonals(1/2);
 	_test_perfect_diagonals(1);
+	show_debug_message("test complete");
+}
+
+/**
+ * Ensure that pixel movement is consistently distant from start position regardless of direction.
+ *
+ * @ignore
+ */
+function __test_pixelmove_consistent_all_directions() {
+	__test_pixel_move_show_test_message("Consistent Movement All Directions");
+	
+	// se
+	var _pm_se_line = new PixelMove(0, 0);
+	pixel_move_set_movement_type_line(_pm_se_line);
+	var _pm_se_smooth = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_pm_se_smooth);
+	var _pm_se_hybrid = new PixelMove(0, 0);
+	pixel_move_set_movement_type_hybrid(_pm_se_hybrid);
+	// sw
+	var _pm_sw_line = new PixelMove(0, 0);
+	pixel_move_set_movement_type_line(_pm_sw_line);
+	var _pm_sw_smooth = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_pm_sw_smooth);
+	var _pm_sw_hybrid = new PixelMove(0, 0);
+	pixel_move_set_movement_type_hybrid(_pm_sw_hybrid);
+	// nw
+	var _pm_nw_line = new PixelMove(0, 0);
+	pixel_move_set_movement_type_line(_pm_nw_line);
+	var _pm_nw_smooth = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_pm_nw_smooth);
+	var _pm_nw_hybrid = new PixelMove(0, 0);
+	pixel_move_set_movement_type_hybrid(_pm_nw_hybrid);
+	// ne
+	var _pm_ne_line = new PixelMove(0, 0);
+	pixel_move_set_movement_type_line(_pm_ne_line);
+	var _pm_ne_smooth = new PixelMove(0, 0);
+	pixel_move_set_movement_type_smooth(_pm_ne_smooth);
+	var _pm_ne_hybrid = new PixelMove(0, 0);
+	pixel_move_set_movement_type_hybrid(_pm_ne_hybrid);
+	
+	for (var _i = 0; _i < 1000; _i++) {
+		var _vel_x = random(1);
+		var _vel_y = random(1);
+		var _frames = irandom(10);
+		for (var _f = 0; _f <= _frames; _f++) {
+			var _positions_x = [];
+			var _positions_y = [];
+			
+			pixel_move_by_magnitudes(_pm_se_line, _vel_x, _vel_y);
+			pixel_move_by_magnitudes(_pm_sw_line, _vel_x * -1, _vel_y);
+			pixel_move_by_magnitudes(_pm_nw_line, _vel_x * -1, _vel_y * -1);
+			pixel_move_by_magnitudes(_pm_ne_line, _vel_x, _vel_y * -1);
+			pixel_move_by_magnitudes(_pm_se_smooth, _vel_x, _vel_y);
+			pixel_move_by_magnitudes(_pm_sw_smooth, _vel_x * -1, _vel_y);
+			pixel_move_by_magnitudes(_pm_nw_smooth, _vel_x * -1, _vel_y * -1);
+			pixel_move_by_magnitudes(_pm_ne_smooth, _vel_x, _vel_y * -1);
+			pixel_move_by_magnitudes(_pm_se_hybrid, _vel_x, _vel_y);
+			pixel_move_by_magnitudes(_pm_sw_hybrid, _vel_x * -1, _vel_y);
+			pixel_move_by_magnitudes(_pm_nw_hybrid, _vel_x * -1, _vel_y * -1);
+			pixel_move_by_magnitudes(_pm_ne_hybrid, _vel_x, _vel_y * -1);
+			
+			var _ne_line_x = _pm_ne_line.get_real_x();
+			var _se_line_x = _pm_se_line.get_real_x();
+			
+			// check line
+			var _real_positions_x = [
+				_pm_se_line.get_real_x(),
+				_pm_sw_line.get_real_x(),
+				_pm_nw_line.get_real_x(),
+				_pm_ne_line.get_real_x(),
+			];
+			
+			_positions_x = [
+				pixel_move_get_x(_pm_se_line),
+				pixel_move_get_x(_pm_sw_line),
+				pixel_move_get_x(_pm_nw_line),
+				pixel_move_get_x(_pm_ne_line),
+			];
+			for (var _p = 1; _p < array_length(_positions_x); _p++) {
+				__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. LINE movement {_i} frame {_f} mismatch x index {_p}.");
+			}
+			_positions_y = [
+				pixel_move_get_y(_pm_se_line),
+				pixel_move_get_y(_pm_sw_line),
+				pixel_move_get_y(_pm_nw_line),
+				pixel_move_get_y(_pm_ne_line),
+			];
+			
+			for (var _p = 1; _p < array_length(_positions_y); _p++) {
+				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. LINE movement {_i} frame {_f} mismatch y index {_p}.");
+			}
+			
+			// check smooth
+			_positions_x = [
+				pixel_move_get_x(_pm_se_smooth),
+				pixel_move_get_x(_pm_sw_smooth),
+				pixel_move_get_x(_pm_nw_smooth),
+				pixel_move_get_x(_pm_ne_smooth),
+			];
+			for (var _p = 1; _p < array_length(_positions_x); _p++) {
+				//__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch x index {_p}.");
+			}
+			_positions_y = [
+				pixel_move_get_y(_pm_se_smooth),
+				pixel_move_get_y(_pm_sw_smooth),
+				pixel_move_get_y(_pm_nw_smooth),
+				pixel_move_get_y(_pm_ne_smooth),
+			];
+			
+			for (var _p = 1; _p < array_length(_positions_y); _p++) {
+				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch y index {_p}.");
+			}
+			
+			// check hybrid
+			_positions_x = [
+				pixel_move_get_x(_pm_se_hybrid),
+				pixel_move_get_x(_pm_sw_hybrid),
+				pixel_move_get_x(_pm_nw_hybrid),
+				pixel_move_get_x(_pm_ne_hybrid),
+			];
+			for (var _p = 1; _p < array_length(_positions_x); _p++) {
+				//__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch x index {_p}.");
+			}
+			_positions_y = [
+				pixel_move_get_y(_pm_se_hybrid),
+				pixel_move_get_y(_pm_sw_hybrid),
+				pixel_move_get_y(_pm_nw_hybrid),
+				pixel_move_get_y(_pm_ne_hybrid),
+			];
+			
+			for (var _p = 1; _p < array_length(_positions_y); _p++) {
+				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch y index {_p}.");
+			}
+		}
+	}
+	
 	show_debug_message("test complete");
 }
 
@@ -281,7 +415,6 @@ function __test_pixelmove_pixel_gaps() {
 }
 
 /**
- * @param {bool} _show_stairsteps
  * @ignore
  */
 function __test_pixelmove_positions() {
@@ -336,7 +469,6 @@ function __test_pixelmove_positions() {
 }
 
 /**
- * @param {bool} _show_stairsteps
  * @ignore
  */
 function __test_pixelmove_stairsteps() {
@@ -497,3 +629,5 @@ function __test_pixelmove() {
 }
 
 if (false) __test_pixelmove();
+
+//__test_pixelmove_consistent_all_directions();
