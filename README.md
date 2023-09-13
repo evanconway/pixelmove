@@ -42,7 +42,7 @@ x = pixel_move_get_x(pixel_move);
 y = pixel_move_get_y(pixel_move);
 ```
 
-PixelMove maintains its position internally and yeilds consistent integer positions regardless of the vector changes applied to it.
+PixelMove maintains its position internally and yields consistent integer positions regardless of the vector changes applied to it.
 
 ![Fixed Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement.gif)
 
