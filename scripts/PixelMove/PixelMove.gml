@@ -18,9 +18,9 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	delta = 0;
 	
 	// @ignore
-	round_target_x = start_x;
+	last_integer_position_x = start_x;
 	// @ignore
-	round_target_y = start_y;
+	last_integer_position_y = start_y;
 	
 	// @ignore
 	movement_type = "LINE";
@@ -67,15 +67,15 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	/**
 	 * @param {value} _value
 	 */
-	round_to_start_x = function(_value) {
-		return __pixelmove_util_round_towards(_value, round_target_x);
+	round_to_last_integer_position_x = function(_value) {
+		return __pixelmove_util_round_towards(_value, last_integer_position_x);
 	};
 	
 	/**
 	 * @param {value} _value
 	 */
-	round_to_start_y = function(_value) {
-		return __pixelmove_util_round_towards(_value, round_target_y);
+	round_to_last_integer_position_y = function(_value) {
+		return __pixelmove_util_round_towards(_value, last_integer_position_y);
 	};
 	
 	/**
@@ -96,50 +96,50 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @ignore
 	 */
 	get_line_x = function() {
-		if (delta == 0) return round_to_start_x(start_x);
+		if (delta == 0) return round_to_last_integer_position_x(start_x);
 		if (infer_y_from_x()) {
 			var _x = __pixelmove_util_round_to_correct(get_real_x());
-			return round_to_start_x(_x);
+			return round_to_last_integer_position_x(_x);
 		}
 		
 		// derive x position from linear line function of y
 		var _y_diff = get_line_y() - floor(start_y);
 		var _x = __pixelmove_util_round_to_correct(slope() * _y_diff + start_x);
-		return round_to_start_x(_x);
+		return round_to_last_integer_position_x(_x);
 	};
 	
 	/**
 	 * @ignore
 	 */
 	get_line_y = function() {
-		if (delta == 0) return round_to_start_y(start_y);
+		if (delta == 0) return round_to_last_integer_position_y(start_y);
 		if (!infer_y_from_x()) {
 			var _y = __pixelmove_util_round_to_correct(get_real_y());
-			return round_to_start_y(_y);
+			return round_to_last_integer_position_y(_y);
 		}
 		
 		// derive y position from linear line function of x
 		var _x_diff = get_line_x() - floor(start_x);
 		var _y = __pixelmove_util_round_to_correct(slope() * _x_diff + start_y);
-		return round_to_start_y(_y);
+		return round_to_last_integer_position_y(_y);
 	}
 	
 	/**
-	 * Get the integer x position derived from the true position rounded towards start position.
+	 * Get the integer x position derived from the real position rounded towards last integer position.
 	 *
 	 * @ignore
 	 */
 	get_true_x = function() {
-		return round_to_start_x(get_real_x());
+		return round_to_last_integer_position_x(get_real_x());
 	};
 	
 	/**
-	 * Get the integer x position derived from the true position rounded towards start position.
+	 * Get the integer x position derived from the real position rounded towards last integer position.
 	 *
 	 * @ignore
 	 */
 	get_true_y = function() {
-		return round_to_start_y(get_real_y());
+		return round_to_last_integer_position_y(get_real_y());
 	};
 	
 	/**
@@ -163,15 +163,15 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 */
 	move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
-		var _real_x = get_real_x();
-		var _real_y = get_real_y();
-		var _integer_x = pixel_move_get_x(self);
-		var _integer_y = pixel_move_get_y(self);
+		var _prev_real_x = get_real_x();
+		var _prev_real_y = get_real_y();
+		var _prev_int_x = pixel_move_get_x(self);
+		var _prev_int_y = pixel_move_get_y(self);
 		var _derive_from_line = get_derive_position_from_line();
 		
 		if (_angle != angle) {
-			start_x = _real_x;
-			start_y = _real_y;
+			start_x = _prev_real_x;
+			start_y = _prev_real_y;
 		}
 		
 		if (_angle != angle || _magnitude == 0) {
@@ -180,20 +180,18 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		}
 		
 		if (_magnitude == 0 || (_angle != angle && _derive_from_line)) {
-			start_x = _integer_x;
-			start_y = _integer_y;
-			round_target_x = _integer_x;
-			round_target_y = _integer_y;
+			start_x = _prev_int_x;
+			start_y = _prev_int_y;
+			last_integer_position_x = _prev_int_x;
+			last_integer_position_y = _prev_int_y;
 		}
 		
 		delta += _magnitude;
 		angle = _angle;
 		movements_on_angle += 1;
 		
-		if ((pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
-			round_target_x = _integer_x;
-			round_target_y = _integer_y;
-		}
+		last_integer_position_x = pixel_move_get_x(self) != _prev_int_x ? _prev_int_x : last_integer_position_x;
+		last_integer_position_y = pixel_move_get_y(self) != _prev_int_y ? _prev_int_y : last_integer_position_y;
 	};
 }
 
@@ -277,8 +275,8 @@ function pixel_move_set_position(pixel_move, x, y) {
 	with (pixel_move) {
 		start_x = x;
 		start_y = y;
-		round_target_x = x;
-		round_target_y = y;
+		last_integer_position_x = x;
+		last_integer_position_y = y;
 		delta = 0;
 		movements_on_angle = 0;	
 	}
@@ -320,8 +318,8 @@ function pixel_move_by_magnitudes(pixel_move, magnitude_x, magnitude_y) {
 function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude) {
 	var _pre_move_start_x = pixel_move.start_x;
 	var _pre_move_start_y = pixel_move.start_y;
-	var _pre_move_round_target_x = pixel_move.round_target_x;
-	var _pre_move_round_target_y = pixel_move.round_target_y;
+	var _pre_move_last_integer_position_x = pixel_move.last_integer_position_x;
+	var _pre_move_last_integer_position_y = pixel_move.last_integer_position_y;
 	var _pre_move_angle = pixel_move.angle;
 	var _pre_move_delta = pixel_move.delta;
 	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
@@ -331,8 +329,8 @@ function pixel_move_get_position_if_moved_by_vector(pixel_move, angle, magnitude
 	
 	pixel_move.start_x = _pre_move_start_x;
 	pixel_move.start_y = _pre_move_start_y;
-	pixel_move.round_target_x = _pre_move_round_target_x;
-	pixel_move.round_target_y = _pre_move_round_target_y;
+	pixel_move.last_integer_position_x = _pre_move_last_integer_position_x;
+	pixel_move.last_integer_position_y = _pre_move_last_integer_position_y;
 	pixel_move.angle = _pre_move_angle;
 	pixel_move.delta = _pre_move_delta;
 	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
@@ -433,8 +431,8 @@ function pixel_move_by_magnitudes_against(pixel_move, magnitude_x, magnitude_y, 
 function pixel_move_get_position_if_moved_by_vector_against(pixel_move, angle, magnitude, against) {
 	var _pre_move_start_x = pixel_move.start_x;
 	var _pre_move_start_y = pixel_move.start_y;
-	var _pre_move_round_target_x = pixel_move.round_target_x;
-	var _pre_move_round_target_y = pixel_move.round_target_y;
+	var _pre_move_last_integer_position_x = pixel_move.last_integer_position_x;
+	var _pre_move_last_integer_position_y = pixel_move.last_integer_position_y;
 	var _pre_move_angle = pixel_move.angle;
 	var _pre_move_delta = pixel_move.delta;
 	var _pre_move_movements_on_angle = pixel_move.movements_on_angle;
@@ -444,8 +442,8 @@ function pixel_move_get_position_if_moved_by_vector_against(pixel_move, angle, m
 	
 	pixel_move.start_x = _pre_move_start_x;
 	pixel_move.start_y = _pre_move_start_y;
-	pixel_move.round_target_x = _pre_move_round_target_x;
-	pixel_move.round_target_y = _pre_move_round_target_y;
+	pixel_move.last_integer_position_x = _pre_move_last_integer_position_x;
+	pixel_move.last_integer_position_y = _pre_move_last_integer_position_y;
 	pixel_move.angle = _pre_move_angle;
 	pixel_move.delta = _pre_move_delta;
 	pixel_move.movements_on_angle = _pre_move_movements_on_angle;
