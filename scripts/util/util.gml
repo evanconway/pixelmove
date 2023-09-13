@@ -97,3 +97,21 @@ function PositionTrail(_trail_size = 60, _decay_rate = 1/60) constructor {
 		}
 	};
 }
+
+/**
+* Return the given angle in radians transformed rounded to the nearest cardinal or intermediate.
+*
+* @param {real} _angle
+* @ignore
+*/
+function __pixelmove_util_get_angle_to_8way(_angle) {
+	_angle = __pixelmove_util_get_cleaned_angle(_angle);
+	if (_angle >= 15*pi/8 || _angle < 1*pi/8) return 0*pi/4;
+	if (_angle >= 1*pi/8 && _angle < 3*pi/8) return 1*pi/4;
+	if (_angle >= 3*pi/8 && _angle < 5*pi/8) return 2*pi/4;
+	if (_angle >= 5*pi/8 && _angle < 7*pi/8) return 3*pi/4;
+	if (_angle >= 7*pi/8 && _angle < 9*pi/8) return 4*pi/4;
+	if (_angle >= 9*pi/8 && _angle < 11*pi/8) return 5*pi/4;
+	if (_angle >= 11*pi/8 && _angle < 13*pi/8) return 6*pi/4;
+	if (_angle >= 13*pi/8 && _angle < 15*pi/8) return 7*pi/4;
+}
