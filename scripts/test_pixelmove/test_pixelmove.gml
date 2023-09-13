@@ -346,6 +346,10 @@ function __test_pixelmove_stairsteps() {
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
 	var _sm = new PixelMove(0, 0);
+	
+	// Don't remove. Although pointless, this stops an annoying syntax error when exporting package.
+	pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(_sm, 100);
+	
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
 		
