@@ -346,7 +346,6 @@ function __test_pixelmove_stairsteps() {
 	// moving along the same line, stairsteps should never occur (more than 1 y for an x when inferring y from x)
 	
 	var _sm = new PixelMove(0, 0);
-	pixel_move_set_hybrid_movements_on_angle_to_infer_from_line(_sm, 0);
 	var _positions = ds_map_create();
 	for (var _i = 0; _i < 100; _i++) {
 		
@@ -493,4 +492,4 @@ function __test_pixelmove() {
 	__test_pixelmove_misc();
 }
 
-if (false) __test_pixelmove();
+if (true) __test_pixelmove();

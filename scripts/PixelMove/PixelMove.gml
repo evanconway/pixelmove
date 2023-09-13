@@ -143,6 +143,17 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	};
 	
 	/**
+	 * Return true if current integer position should be derived from line.
+	 *
+	 * @ignore
+	 */
+	get_derive_position_from_line = function() {
+		if (movement_type == "LINE") return true;
+		if (movement_type == "HYBRID" && get_movements_on_angle_passed_threshold()) return true;
+		return false;
+	};
+	
+	/**
 	 * Move by the given vector. Angle of 0 corresponds to positive x axis.
 	 *
 	 * @param {Struct.PixelMove} pixel_move The PixelMove instance to move.
@@ -156,6 +167,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		var _real_y = get_real_y();
 		var _integer_x = pixel_move_get_x(self);
 		var _integer_y = pixel_move_get_y(self);
+		var _derive_from_line = get_derive_position_from_line();
 		
 		if (_angle != angle) {
 			start_x = _real_x;
@@ -167,7 +179,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 			movements_on_angle = 0;
 		}
 		
-		if (_magnitude == 0 || (_angle != angle && movement_type == "LINE")) {
+		if (_magnitude == 0 || (_angle != angle && _derive_from_line)) {
 			start_x = _integer_x;
 			start_y = _integer_y;
 			round_target_x = _integer_x;
@@ -178,7 +190,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		angle = _angle;
 		movements_on_angle += 1;
 		
-		if (movement_type != "LINE" && (pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
+		if (!get_derive_position_from_line() && (pixel_move_get_x(self) != _integer_x || pixel_move_get_y(self) != _integer_y)) {
 			round_target_x = _integer_x;
 			round_target_y = _integer_y;
 		}
