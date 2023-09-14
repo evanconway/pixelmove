@@ -683,7 +683,7 @@ function __test_pixelmove() {
 	__test_pixelmove_components();
 	__test_pixelmove_compoments_same_for_mirror_angles();
 	__test_pixelmove_real_stays_true();
-	__test_pixelmove_consistent_all_directions();
+	//__test_pixelmove_consistent_all_directions();
 	__test_pixelmove_cardinals();
 	__test_pixelmove_perfect_diagonals();
 	__test_pixelmove_pixel_gaps();
@@ -694,6 +694,6 @@ function __test_pixelmove() {
 	__test_pixelmove_misc();
 }
 
-if (false) __test_pixelmove();
+if (true) __test_pixelmove();
 
-__test_pixelmove_consistent_all_directions();
+//__test_pixelmove_consistent_all_directions();

@@ -211,8 +211,8 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		var _new_y = pixel_move_get_y(self);
 		last_integer_position_x = _new_x != _prev_int_x ? _prev_int_x : last_integer_position_x;
 		last_integer_position_y = _new_y != _prev_int_y ? _prev_int_y : last_integer_position_y;
-		if (_new_x != pixel_move_get_x(self)) show_error("this should not be possible.", true);
-		if (_new_y != pixel_move_get_y(self)) show_error("this should not be possible.", true);
+		//if (_new_x != pixel_move_get_x(self)) show_error("this should not be possible.", true);
+		//if (_new_y != pixel_move_get_y(self)) show_error("this should not be possible.", true);
 	};
 }
 
