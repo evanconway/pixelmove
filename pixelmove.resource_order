@@ -16,6 +16,7 @@
     {"name":"Types","order":8,"path":"folders/Examples/Types.yy",},
     {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
     {"name":"Inconsistent","order":9,"path":"folders/Examples/Inconsistent.yy",},
+    {"name":"Consistent","order":10,"path":"folders/Examples/Consistent.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_demo","order":3,"path":"objects/obj_demo/obj_demo.yy",},
@@ -32,6 +33,7 @@
     {"name":"obj_test_pixel_move","order":3,"path":"objects/obj_test_pixel_move/obj_test_pixel_move.yy",},
     {"name":"PixelUtil","order":3,"path":"scripts/PixelUtil/PixelUtil.yy",},
     {"name":"obj_example_stairsteps_clean","order":1,"path":"objects/obj_example_stairsteps_clean/obj_example_stairsteps_clean.yy",},
+    {"name":"obj_example_consistent","order":1,"path":"objects/obj_example_consistent/obj_example_consistent.yy",},
     {"name":"obj_demo_topdown","order":1,"path":"objects/obj_demo_topdown/obj_demo_topdown.yy",},
     {"name":"obj_test_auto_complete","order":13,"path":"objects/obj_test_auto_complete/obj_test_auto_complete.yy",},
     {"name":"spr_background","order":5,"path":"sprites/spr_background/spr_background.yy",},
