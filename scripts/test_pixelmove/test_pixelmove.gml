@@ -29,7 +29,7 @@ function __test_pixel_move_show_test_message(_test_name) {
 function __test_pixelmove_components() {
 	__test_pixel_move_show_test_message("Component Function");
 	
-	for (var _i = 0 ; _i < 1000; _i++) {
+	for (var _i = 0 ; _i < 10000; _i++) {
 		var _angle = random(2*pi);
 		var _vel = 1;
 		var _delta = 0;
@@ -225,6 +225,69 @@ function __test_pixelmove_perfect_diagonals() {
 }
 
 /**
+ *	Confirm that component utils return same value for all angles and their mirrors. For example, 7*pi/4 and 1*pi/4 should return the same x component.
+ *
+ * @ignore
+ */
+function __test_pixelmove_compoments_same_for_mirror_angles() {
+	__test_pixel_move_show_test_message("Components at Angle and Mirror");
+	var _x_component = 0;
+	var _y_component = 0;
+	var _x_component_y_reflection = 0;
+	var _y_component_y_reflection = 0;
+	var _x_component_x_reflection = 0;
+	var _y_component_x_reflection = 0;
+	var _x_component_xy_reflection = 0;
+	var _y_component_xy_reflection = 0;
+	
+	// known raw values
+	_x_component = __pixelmove_util_get_x_component(1*pi/4, 1);
+	_y_component = __pixelmove_util_get_y_component(1*pi/4, 1);
+	
+	_x_component_y_reflection = __pixelmove_util_get_x_component(3*pi/4, 1);
+	_y_component_y_reflection = __pixelmove_util_get_y_component(3*pi/4, 1);
+	__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_y_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_x_component} and {_x_component_y_reflection}.");
+	__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_y_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_y_component} and {_y_component_y_reflection}.");
+	
+	_x_component_x_reflection = __pixelmove_util_get_x_component(7*pi/4, 1);
+	_y_component_x_reflection = __pixelmove_util_get_y_component(7*pi/4, 1);
+	__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_x_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_x_component} and {_x_component_x_reflection}.");
+	__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_x_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_y_component} and {_y_component_x_reflection}.");
+	
+	_x_component_xy_reflection = __pixelmove_util_get_x_component(5*pi/4, 1);
+	_y_component_xy_reflection = __pixelmove_util_get_y_component(5*pi/4, 1);
+	__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_xy_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_x_component} and {_x_component_xy_reflection}.");
+	__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_xy_reflection), $"Pixel move compoment mirror fail. Angle {1*pi/4} yeilds x component {_y_component} and {_y_component_xy_reflection}.");
+	
+	for (var _i = 0; _i < 10000; _i++) {
+		var _angle = random(pi/2); // in positive quadrant
+		var _dist_from_y_axis = pi/2 - _angle;
+		var _y_axis_mirror = _angle + _dist_from_y_axis * 2;
+		var _x_axis_mirror = _y_axis_mirror + pi;
+		var _xy_axis_mirror = _angle + pi;
+		
+		_x_component = __pixelmove_util_get_x_component(_angle, 1);
+		_y_component = __pixelmove_util_get_y_component(_angle, 1);
+	
+		_x_component_y_reflection = __pixelmove_util_get_x_component(_y_axis_mirror, 1);
+		_y_component_y_reflection = __pixelmove_util_get_y_component(_y_axis_mirror, 1);
+		__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_y_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_x_component} and {_x_component_y_reflection}.");
+		__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_y_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_y_component} and {_y_component_y_reflection}.");
+	
+		_x_component_x_reflection = __pixelmove_util_get_x_component(_x_axis_mirror, 1);
+		_y_component_x_reflection = __pixelmove_util_get_y_component(_x_axis_mirror, 1);
+		__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_x_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_x_component} and {_x_component_x_reflection}.");
+		__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_x_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_y_component} and {_y_component_x_reflection}.");
+	
+		_x_component_xy_reflection = __pixelmove_util_get_x_component(_xy_axis_mirror, 1);
+		_y_component_xy_reflection = __pixelmove_util_get_y_component(_xy_axis_mirror, 1);
+		__test_pixel_move_assert_real(abs(_x_component), abs(_x_component_xy_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_x_component} and {_x_component_xy_reflection}.");
+		__test_pixel_move_assert_real(abs(_y_component), abs(_y_component_xy_reflection), $"Pixel move compoment mirror fail. Angle {_angle} yeilds x component {_y_component} and {_y_component_xy_reflection}.");
+	}
+	show_debug_message("test complete");
+}
+
+/**
  * Ensure that pixel movement is consistently distant from start position regardless of direction.
  *
  * @ignore
@@ -261,7 +324,7 @@ function __test_pixelmove_consistent_all_directions() {
 	var _pm_ne_hybrid = new PixelMove(0, 0);
 	pixel_move_set_movement_type_hybrid(_pm_ne_hybrid);
 	
-	for (var _i = 0; _i < 1000; _i++) {
+	for (var _i = 0; _i < 5000; _i++) {
 		var _vel_x = random(1);
 		var _vel_y = random(1);
 		var _frames = irandom(10);
@@ -281,17 +344,6 @@ function __test_pixelmove_consistent_all_directions() {
 			pixel_move_by_magnitudes(_pm_sw_hybrid, _vel_x * -1, _vel_y);
 			pixel_move_by_magnitudes(_pm_nw_hybrid, _vel_x * -1, _vel_y * -1);
 			pixel_move_by_magnitudes(_pm_ne_hybrid, _vel_x, _vel_y * -1);
-			
-			var _ne_line_x = _pm_ne_line.get_real_x();
-			var _se_line_x = _pm_se_line.get_real_x();
-			
-			// check line
-			var _real_positions_x = [
-				_pm_se_line.get_real_x(),
-				_pm_sw_line.get_real_x(),
-				_pm_nw_line.get_real_x(),
-				_pm_ne_line.get_real_x(),
-			];
 			
 			_positions_x = [
 				pixel_move_get_x(_pm_se_line),
@@ -617,7 +669,9 @@ function __test_pixelmove_always_increase() {
  */
 function __test_pixelmove() {
 	__test_pixelmove_components();
+	__test_pixelmove_compoments_same_for_mirror_angles()
 	__test_pixelmove_real_stays_true();
+	__test_pixelmove_consistent_all_directions();
 	__test_pixelmove_cardinals();
 	__test_pixelmove_perfect_diagonals();
 	__test_pixelmove_pixel_gaps();
@@ -629,5 +683,3 @@ function __test_pixelmove() {
 }
 
 if (false) __test_pixelmove();
-
-//__test_pixelmove_consistent_all_directions();

@@ -53,15 +53,6 @@ function __pixelmove_util_snap_cos(_angle) {
 }
 
 /**
-* @param {real} _value
-*
-* @ignore
-*/
-function __pixelmove_util_round_to_thousandths(_value) {
-	return floor(_value * 1000 + 0.5) / 1000;
-}
-
-/**
 * Return the given angle in radians transformed to the equivalent position between 0 and 2pi 
 * and rounded roughly towards the cardinal directions and their intermediates.
 *
@@ -70,14 +61,6 @@ function __pixelmove_util_round_to_thousandths(_value) {
 */
 function __pixelmove_util_get_cleaned_angle(_angle) {
 	_angle = ((_angle % (2*pi)) + (2*pi)) % (2*pi);
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(0*pi/4)) _angle = 0*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(1*pi/4)) _angle = 1*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(2*pi/4)) _angle = 2*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(3*pi/4)) _angle = 3*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(4*pi/4)) _angle = 4*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(5*pi/4)) _angle = 5*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(6*pi/4)) _angle = 6*pi/4;
-	if (__pixelmove_util_round_to_thousandths(_angle) == __pixelmove_util_round_to_thousandths(7*pi/4)) _angle = 7*pi/4;
 	return _angle;
 }
 
