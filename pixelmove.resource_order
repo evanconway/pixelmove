@@ -15,6 +15,7 @@
     {"name":"Starsteps Fast","order":6,"path":"folders/Examples/Starsteps Fast.yy",},
     {"name":"Types","order":8,"path":"folders/Examples/Types.yy",},
     {"name":"tests","order":1,"path":"folders/PixelMove/tests.yy",},
+    {"name":"Inconsistent","order":9,"path":"folders/Examples/Inconsistent.yy",},
   ],
   "ResourceOrderSettings": [
     {"name":"obj_demo","order":3,"path":"objects/obj_demo/obj_demo.yy",},
@@ -25,6 +26,7 @@
     {"name":"spr_wall","order":11,"path":"sprites/spr_wall/spr_wall.yy",},
     {"name":"rm_example_stairsteps","order":1,"path":"rooms/rm_example_stairsteps/rm_example_stairsteps.yy",},
     {"name":"obj_demo_platformer","order":1,"path":"objects/obj_demo_platformer/obj_demo_platformer.yy",},
+    {"name":"obj_example_inconsistent","order":1,"path":"objects/obj_example_inconsistent/obj_example_inconsistent.yy",},
     {"name":"obj_demo_lines_pixel","order":1,"path":"objects/obj_demo_lines_pixel/obj_demo_lines_pixel.yy",},
     {"name":"obj_demo_move_pixel","order":1,"path":"objects/obj_demo_move_pixel/obj_demo_move_pixel.yy",},
     {"name":"obj_test_pixel_move","order":3,"path":"objects/obj_test_pixel_move/obj_test_pixel_move.yy",},
