@@ -324,13 +324,17 @@ function __test_pixelmove_consistent_all_directions() {
 	var _pm_ne_hybrid = new PixelMove(0, 0);
 	pixel_move_set_movement_type_hybrid(_pm_ne_hybrid);
 	
-	for (var _i = 0; _i < 5000; _i++) {
+	for (var _i = 0; _i < 10000; _i++) {
 		var _vel_x = random(1);
 		var _vel_y = random(1);
 		var _frames = irandom(10);
 		for (var _f = 0; _f <= _frames; _f++) {
 			var _positions_x = [];
 			var _positions_y = [];
+			
+			if (_i == 3 && _f == 6) {
+				show_debug_message("debug");
+			}
 			
 			pixel_move_by_magnitudes(_pm_se_line, _vel_x, _vel_y);
 			pixel_move_by_magnitudes(_pm_sw_line, _vel_x * -1, _vel_y);
@@ -362,7 +366,7 @@ function __test_pixelmove_consistent_all_directions() {
 			];
 			
 			for (var _p = 1; _p < array_length(_positions_y); _p++) {
-				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. LINE movement {_i} frame {_f} mismatch y index {_p}.");
+				__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. LINE movement {_i} frame {_f} mismatch y index {_p}.");
 			}
 			
 			// check smooth
@@ -373,7 +377,7 @@ function __test_pixelmove_consistent_all_directions() {
 				pixel_move_get_x(_pm_ne_smooth),
 			];
 			for (var _p = 1; _p < array_length(_positions_x); _p++) {
-				//__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch x index {_p}.");
+				__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch x index {_p}.");
 			}
 			_positions_y = [
 				pixel_move_get_y(_pm_se_smooth),
@@ -383,7 +387,7 @@ function __test_pixelmove_consistent_all_directions() {
 			];
 			
 			for (var _p = 1; _p < array_length(_positions_y); _p++) {
-				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch y index {_p}.");
+				__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. SMOOTH movement {_i} frame {_f} mismatch y index {_p}.");
 			}
 			
 			// check hybrid
@@ -394,8 +398,12 @@ function __test_pixelmove_consistent_all_directions() {
 				pixel_move_get_x(_pm_ne_hybrid),
 			];
 			for (var _p = 1; _p < array_length(_positions_x); _p++) {
-				//__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch x index {_p}.");
+				__test_pixel_move_assert_real(abs(_positions_x[0]), abs(_positions_x[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch x index {_p}.");
 			}
+			var _se_real_y = _pm_se_hybrid.get_real_y();
+			var _sw_real_y = _pm_sw_hybrid.get_real_y();
+			var _nw_real_y = _pm_nw_hybrid.get_real_y();
+			var _ne_real_y = _pm_ne_hybrid.get_real_y();
 			_positions_y = [
 				pixel_move_get_y(_pm_se_hybrid),
 				pixel_move_get_y(_pm_sw_hybrid),
@@ -403,8 +411,12 @@ function __test_pixelmove_consistent_all_directions() {
 				pixel_move_get_y(_pm_ne_hybrid),
 			];
 			
+			if (_i == 3 && _f == 5) {
+				show_debug_message("debug");
+			}
+			
 			for (var _p = 1; _p < array_length(_positions_y); _p++) {
-				//__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch y index {_p}.");
+				__test_pixel_move_assert_real(abs(_positions_y[0]), abs(_positions_y[_p]), $"Pixel move consistent movement fail. HYBRID movement {_i} frame {_f} mismatch y index {_p}.");
 			}
 		}
 	}
@@ -669,7 +681,7 @@ function __test_pixelmove_always_increase() {
  */
 function __test_pixelmove() {
 	__test_pixelmove_components();
-	__test_pixelmove_compoments_same_for_mirror_angles()
+	__test_pixelmove_compoments_same_for_mirror_angles();
 	__test_pixelmove_real_stays_true();
 	__test_pixelmove_consistent_all_directions();
 	__test_pixelmove_cardinals();
@@ -683,3 +695,5 @@ function __test_pixelmove() {
 }
 
 if (false) __test_pixelmove();
+
+__test_pixelmove_consistent_all_directions();

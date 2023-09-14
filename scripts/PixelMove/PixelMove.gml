@@ -17,6 +17,9 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	// @ignore
 	delta = 0;
 	
+	line_integer_start_x = start_x;
+	line_integer_start_y = start_y;
+	
 	// @ignore
 	last_integer_position_x = start_x;
 	// @ignore
@@ -63,6 +66,20 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		if (delta == 0) return 0;
 		return infer_y_from_x() ? __pixelmove_util_get_y_component(angle, delta) / __pixelmove_util_get_x_component(angle, delta) : __pixelmove_util_get_x_component(angle, delta) / __pixelmove_util_get_y_component(angle, delta);
 	}
+	
+	/**
+	 * @param {value} _value
+	 */
+	round_to_line_integer_start_x = function(_value) {
+		return __pixelmove_util_round_towards(_value, line_integer_start_x);
+	};
+	
+	/**
+	 * @param {value} _value
+	 */
+	round_to_line_integer_start_y = function(_value) {
+		return __pixelmove_util_round_towards(_value, line_integer_start_y);
+	};
 	
 	/**
 	 * @param {value} _value
@@ -190,8 +207,12 @@ function PixelMove(start_position_x, start_position_y) constructor {
 		angle = _angle;
 		movements_on_angle += 1;
 		
-		last_integer_position_x = pixel_move_get_x(self) != _prev_int_x ? _prev_int_x : last_integer_position_x;
-		last_integer_position_y = pixel_move_get_y(self) != _prev_int_y ? _prev_int_y : last_integer_position_y;
+		var _new_x = pixel_move_get_x(self);
+		var _new_y = pixel_move_get_y(self);
+		last_integer_position_x = _new_x != _prev_int_x ? _prev_int_x : last_integer_position_x;
+		last_integer_position_y = _new_y != _prev_int_y ? _prev_int_y : last_integer_position_y;
+		if (_new_x != pixel_move_get_x(self)) show_error("this should not be possible.", true);
+		if (_new_y != pixel_move_get_y(self)) show_error("this should not be possible.", true);
 	};
 }
 
