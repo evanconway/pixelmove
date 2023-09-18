@@ -32,6 +32,8 @@ In order for pixel-by-pixel motion with non-integer changes to look consistent, 
 
 That is what PixelMove does.
 
+## The Solution
+
 ```
 // create event
 pixel_move = new PixelMove(0, 0);
