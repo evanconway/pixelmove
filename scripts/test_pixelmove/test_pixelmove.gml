@@ -87,8 +87,16 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_show_test_message("Cardinal Directions");
 	var _move_count = 1000;
 	
-	// north
 	var _n = new PixelMove(0, 0);
+	var _s = new PixelMove(0, 0);
+	var _e = new PixelMove(0, 0);
+	var _w = new PixelMove(0, 0);
+	var _ne = new PixelMove(0, 0);
+	var _nw = new PixelMove(0, 0);
+	var _se = new PixelMove(0, 0);
+	var _sw = new PixelMove(0, 0);
+	
+	// north
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_n, 6*pi/4, 1);
 	}
@@ -99,7 +107,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_n), -1000, "Pixel move north test 2 y fail!");
 	
 	// south
-	var _s = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_s, 2*pi/4, 1);
 	}
@@ -110,7 +117,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_s), 1000, "Pixel move south test 2 y fail!");
 	
 	// east
-	var _e = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_e, 0*pi/4, 1);
 	}
@@ -121,7 +127,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_e), 0, "Pixel move east test 2 y fail!");
 	
 	// west
-	var _w = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_w, 4*pi/4, 1);
 	}
@@ -132,7 +137,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_w), 0, "Pixel move west test 2 y fail!");
 	
 	// north east
-	var _ne = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_ne, 7*pi/4, 1);
 	}
@@ -143,7 +147,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_ne), -707, "Pixel move north east test 2 y fail!");
 	
 	// north west
-	var _nw = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_nw, 5*pi/4, 1);
 	}
@@ -154,7 +157,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_nw), -707, "Pixel move north west test 2 y fail!");
 	
 	// south east
-	var _se = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_se, 1*pi/4, 1);
 	}
@@ -165,7 +167,6 @@ function __test_pixelmove_cardinals() {
 	__test_pixel_move_assert_real(pixel_move_get_y(_se), 707, "Pixel move south east test 2 y fail!");
 	
 	// south west
-	var _sw = new PixelMove(0, 0);
 	for (var _i = 0; _i < _move_count; _i++) {
 		pixel_move_by_vector(_sw, 3*pi/4, 1);
 	}

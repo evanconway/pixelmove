@@ -39,7 +39,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	/**
 	 * @ignore
 	 */
-	get_movements_on_angle_passed_threshold = function () {
+	static get_movements_on_angle_passed_threshold = function () {
 		return movements_on_angle >= movements_on_angle_to_infer_from_line;
 	};
 	
@@ -49,7 +49,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @ignore
 	 */
-	infer_y_from_x = function() {
+	static infer_y_from_x = function() {
 		return (angle <= 1*pi/4 || angle >= 7*pi/4 || (angle >= 3*pi/4 && angle <= 5*pi/4));
 	};
 	
@@ -59,7 +59,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @ignore
 	 */
-	slope = function() {
+	static slope = function() {
 		if (delta == 0) return 0;
 		return infer_y_from_x() ? __pixelmove_util_get_y_component(angle, delta) / __pixelmove_util_get_x_component(angle, delta) : __pixelmove_util_get_x_component(angle, delta) / __pixelmove_util_get_y_component(angle, delta);
 	}
@@ -68,7 +68,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @param {value} _value
 	 * @ignore
 	 */
-	round_to_start_integer_x = function(_value) {
+	static round_to_start_integer_x = function(_value) {
 		return __pixelmove_util_round_towards(_value, start_integer_x);
 	};
 	
@@ -76,28 +76,28 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @param {value} _value
 	 * @ignore
 	 */
-	round_to_start_integer_y = function(_value) {
+	static round_to_start_integer_y = function(_value) {
 		return __pixelmove_util_round_towards(_value, start_integer_y);
 	};
 	
 	/**
 	 * @ignore
 	 */
-	get_real_x = function() {
+	static get_real_x = function() {
 		return start_x + __pixelmove_util_get_x_component(angle, delta);
 	};
 	
 	/**
 	 * @ignore
 	 */
-	get_real_y = function() {
+	static get_real_y = function() {
 		return start_y + __pixelmove_util_get_y_component(angle, delta);
 	}
 	
 	/**
 	 * @ignore
 	 */
-	get_line_x = function() {
+	static get_line_x = function() {
 		if (delta == 0) return round_to_start_integer_x(start_x);
 		if (infer_y_from_x()) {
 			var _x = __pixelmove_util_round_to_correct(get_real_x());
@@ -113,7 +113,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	/**
 	 * @ignore
 	 */
-	get_line_y = function() {
+	static get_line_y = function() {
 		if (delta == 0) return round_to_start_integer_y(start_y);
 		if (!infer_y_from_x()) {
 			var _y = __pixelmove_util_round_to_correct(get_real_y());
@@ -131,7 +131,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @ignore
 	 */
-	get_true_x = function() {
+	static get_true_x = function() {
 		return round_to_start_integer_x(get_real_x());
 	};
 	
@@ -140,7 +140,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @ignore
 	 */
-	get_true_y = function() {
+	static get_true_y = function() {
 		return round_to_start_integer_y(get_real_y());
 	};
 	
@@ -149,7 +149,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 *
 	 * @ignore
 	 */
-	get_derive_position_from_line = function() {
+	static get_derive_position_from_line = function() {
 		if (movement_type == "LINE") return true;
 		if (movement_type == "HYBRID" && get_movements_on_angle_passed_threshold()) return true;
 		return false;
@@ -163,7 +163,7 @@ function PixelMove(start_position_x, start_position_y) constructor {
 	 * @param {real} magnitude The magnitude of the vector.
 	 * @ignore
 	 */
-	move_by_vector = function (_angle, _magnitude) {
+	static move_by_vector = function (_angle, _magnitude) {
 		_angle = __pixelmove_util_get_cleaned_angle(_angle);
 		var _prev_real_x = get_real_x();
 		var _prev_real_y = get_real_y();
