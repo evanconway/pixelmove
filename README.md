@@ -5,23 +5,30 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 [Download from GameMaker Marketplace](https://marketplace.gamemaker.io/assets/11781/pixelmove)
 
 ## The Problem
-When moving elements around in very low resolution environments, there is a frustrating stairstep effect that happens when moving at non-integer values on certain diagonals.
+When moving elements around in a low resolution environment, non-integer values must be rounded before being displayed to the screen. Unfortunatley this can create inconsistent and frustrating behavior. In the gif below we can see non-integer values displayed using GamerMakers default rounding. Notice how the x value rounds to 49 at 49.5, but doesn't become 50 until it's at 50.6.
+
+![Inconsistent Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_inconsistent.gif)
+
+Even if a more consistent rounding function was used, like `floor`, an x value of -0.1 would immediately become -1 while an x value of 0.1 would remain at 0.
+
+In addition to inconsistent integer changes, non-integer movement on diagonals produces a frustrating starstep effect.
 
 ![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
 
-By default, GameMaker floors non-integer x and y values when drawing them, as seen in the above gif. Unfortunately no matter how a position is rounded there will always be inconsistent stairstep style changes on a diagonal:
+Unfortunately no matter how a position is rounded there will always be inconsistent stairstep style changes on a diagonal:
 
 | Rounding       | Position   |  Result   |
 | ----------- | ----------- | -----------|
 | floor, floor | 0.5, -0.5 | 0, -1 |
 | floor, ceil | 0.5, 0.5 | 0, 1 |
 | ceil, ceil | 0.5, -0.5 | 1, 0 |
+| floor(value + 0.5), floor(value + 0.5) | 0.5, -0.5 | 1, 0 |
 
 The effect in motion is jagged and messy looking.
 
 ![Stairstep Fast Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps_fast.gif)
 
-In order for pixel-by-pixel motion with non-integer changes to look consistent, the result of any position adjustments has to have consistent change regardless of the direction.
+In order for pixel-by-pixel motion with non-integer changes to look consistent, the result of any position adjustments must have consistent change regardless of the direction.
 
 That is what PixelMove does.
 
@@ -41,6 +48,8 @@ y = pixel_move_get_y(pixel_move);
 ```
 
 PixelMove maintains its position internally and yields consistent integer positions regardless of the vector changes applied to it.
+
+![Consistent Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_consistent.gif)
 
 ![Fixed Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_fixed_movement.gif)
 
