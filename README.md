@@ -5,7 +5,7 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 [Download from GameMaker Marketplace](https://marketplace.gamemaker.io/assets/11781/pixelmove)
 
 ## The Problem
-Before being drawn to a screen, non-integer values must be rounded. Unfortunatley this can create inconsistent behavior in low resolution environments. In the gif below we can see non-integer values displayed using GamerMakers default rounding. Notice how the x value rounds to 49 at 49.5, but doesn't become 51 until it's at 50.6.
+Before being drawn to a screen, non-integer values must be rounded. Unfortunatley this can create inconsistent behavior in low resolutions. In the gif below we can see non-integer values displayed using GamerMakers default rounding. Notice how the x value rounds to 49 at 49.5, but doesn't become 51 until it's at 50.6.
 
 ![Inconsistent Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_inconsistent.gif)
 
@@ -69,7 +69,7 @@ Smooth type movement is more fluid and responsive. This is closer to the results
 
 ![Smooth Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_smooth.gif)
 
-Hybrid type movement is a mix of both. PixelMove will start using smooth type movement, but switch to line type once the threshold for number of movements has been crossed. The default is 5, but in this example it's been increased to 50 so the change from smooth to line is clearer. This type is best for situations where perfect line movement is needed when vectors are held for a long time but allows for responsiveness when the vector changes frequently, such as movement vectors derived from an analog stick.
+Hybrid type movement is a mix of both. PixelMove will start using smooth type movement, but switch to line type once the threshold for number of movements has been crossed. The default is 5, but in this example it's been increased to 50 so the change from smooth to line is clear. This type is best for situations where perfect line movement is needed when vectors are held for a long time but allows for responsiveness when the vector changes frequently, such as movement vectors derived from an analog stick.
 
 ![Hybrid Type](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_type_hybrid.gif)
 
