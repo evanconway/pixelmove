@@ -5,11 +5,11 @@ A GameMaker package to quickly setup pixel perfect movement in low resolution en
 [Download from GameMaker Marketplace](https://marketplace.gamemaker.io/assets/11781/pixelmove)
 
 ## The Problem
-Before being drawn to a screen, non-integer values must be rounded. Unfortunatley this can create inconsistent behavior in low resolutions. In the gif below we can see non-integer values displayed using GamerMakers default rounding. Notice how the x value rounds to 49 at 49.5, but doesn't become 51 until it's at 50.6.
+Before being drawn to a screen, non-integer values must be rounded. Unfortunately this can create inconsistent behavior in low resolutions. In the gif below we can see non-integer values displayed using GamerMakers default rounding. Notice how the x value rounds to 49 at 49.5, but doesn't become 51 until it's at 50.6.
 
 ![Inconsistent Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_inconsistent.gif)
 
-Even if a more consistent rounding function was used, like `floor`, an x value of -0.1 would immediately become -1 while an x value of 0.1 would remain at 0. In addition to inconsistent integer changes, non-integer movement on diagonals produces a frustrating starstep effect.
+Even if a more consistent rounding function was used, like `floor`, an x value of -0.1 would immediately become -1 while an x value of 0.1 would remain at 0. In addition to inconsistent integer changes, non-integer movement on diagonals produces a frustrating stairstep effect.
 
 ![Stairstep Example](https://github.com/AceOfHeart5/pixelmove/blob/main/example%20gifs/pixelmove_stairsteps.gif)
 
